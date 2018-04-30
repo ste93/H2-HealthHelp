@@ -1,6 +1,5 @@
-package datacenter.mqtt;
+package core.pub_sub;
 
-import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -10,7 +9,7 @@ import com.rabbitmq.client.Channel;
  *
  * @author manuBottax
  */
-public class TemplateEmitter {
+public class TemplatePublisher {
 
     // the name has to be changed every time you change the exchange type
     private static final String EXCHANGE_NAME = "topic_logs";

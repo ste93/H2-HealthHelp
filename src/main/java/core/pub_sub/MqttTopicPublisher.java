@@ -1,4 +1,4 @@
-package datacenter.mqtt;
+package core.pub_sub;
 
 import com.rabbitmq.client.*;
 
@@ -12,14 +12,14 @@ public class MqttTopicPublisher {
     private Connection connection;
     private Channel channel;
 
-    public MqttTopicPublisher(String name) {
-        this.exchangeName = name;
+    public MqttTopicPublisher(String exchangeName) {
+        this.exchangeName = exchangeName;
         mqttSetup();
         this.factory.setHost("localhost");
     }
 
-    public MqttTopicPublisher(String name, String hostIP) {
-        this.exchangeName = name;
+    public MqttTopicPublisher(String exchangeName, String hostIP) {
+        this.exchangeName = exchangeName;
         mqttSetup();
         this.factory.setHost(hostIP);
     }

@@ -1,15 +1,11 @@
-package datacenter.mqtt;
+package core.pub_sub;
 
 public class MqttTest {
 
     public static void main(String[] args) {
         MqttTopicPublisher pub = new MqttTopicPublisher("myTest");
-        MqttTopicSubscriber sub1 = new MqttTopicSubscriber("myTest");
-        MqttTopicSubscriber sub2 = new MqttTopicSubscriber("myTest");
-
-        sub1.bindTopic("*.warning");
-
-        sub2.bindTopic("advice.#");
+        MqttTopicSubscriber sub1 = new MqttTopicSubscriber("myTest", "*.warning");
+        BaseSubscriber sub2 = new BaseSubscriber("myTest", "advice.#");
 
         pub.publishMessage("test1 (solo sub 2)", "advice.mypatient.abcd");
         pub.publishMessage("test2 (solo sub 1)", "mypatient.warning");

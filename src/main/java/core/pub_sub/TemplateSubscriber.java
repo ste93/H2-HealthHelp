@@ -1,4 +1,4 @@
-package datacenter.mqtt;
+package core.pub_sub;
 
 import com.rabbitmq.client.*;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
  *
  * @author manuBottax
  */
-public class TemplateReceiver {
+public class TemplateSubscriber {
     // the name has to be changed every time you change the exchange type
     private static final String EXCHANGE_NAME = "topic_logs";
 
