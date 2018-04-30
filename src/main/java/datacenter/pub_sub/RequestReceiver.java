@@ -22,11 +22,18 @@ public class RequestReceiver extends MqttTopicSubscriber {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.println(" [HistoryRequestReceiver] Received a new history request ! message -> " + envelope.getRoutingKey() + " : ' " + message + " '");
-                handleRequest();
+                try {
+                    handleRequest();
+                } finally {
+                    System.out.println(" [x] Done");
+                    //If the worker die before complete the message handling the message is send to another one.
+                    channel.basicAck(envelope.getDeliveryTag(), false);
+                }
             }
         };
+
         try {
-            channel.basicConsume(queueName, true, consumer);
+                channel.basicConsume(queueName, false, consumer);
         } catch (IOException e) {
             System.err.println("Error during starting operation");
             e.printStackTrace();

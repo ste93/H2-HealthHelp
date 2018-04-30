@@ -69,7 +69,8 @@ public class MqttTopicSubscriber {
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
-            this.queueName = this.channel.queueDeclare().getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
+            channel.basicQos(1);
+            this.queueName = this.channel.queueDeclare(this.exchangeName + ".queue", true, false, false, null).getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
             this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
         } catch (IOException e) {
             System.err.println("Error during setup operation");
