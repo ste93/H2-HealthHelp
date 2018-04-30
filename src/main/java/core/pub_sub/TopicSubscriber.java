@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
  * Base subscriber class for publish/subscribe communication.
  * It handle the basic configuration for RabbitMQ client and define a default behaviour.
  *
- * The method setConsumer() has to be overridden in order to define a custom behaviour.
+ * The method setBehaviour() has to be overridden in order to define a custom behaviour.
  *
  * @author manuBottax
  */
@@ -21,6 +21,8 @@ public class TopicSubscriber {
     private ConnectionFactory factory;
     private Connection connection;
     protected Channel channel;
+
+    private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 
     /**
      * Default constructor for class TopicSubscriber.
@@ -35,7 +37,7 @@ public class TopicSubscriber {
         this.topicBindKey = topicKey;
         this.mqttSetup();
         this.factory.setHost("localhost");
-        this.setConsumer();
+        this.setBehaviour(defaultBehaviour);
     }
 
     /**
@@ -51,7 +53,7 @@ public class TopicSubscriber {
         this.topicBindKey = topicKey;
         this.mqttSetup();
         this.factory.setHost(hostIP);
-        this.setConsumer();
+        this.setBehaviour(defaultBehaviour);
     }
 
     /**
@@ -59,22 +61,30 @@ public class TopicSubscriber {
      * By default it print the message received.
      * This method has to be redefined in order to achieve a custom behaviour.
      */
-    public void setConsumer (){
+    public void setBehaviour(SubscriberBehaviour behaviour){
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received -> " + envelope.getRoutingKey() + " : ' " + message + " '");
+                try {
+                    behaviour.handleMessage(message);
+                }
+                finally {
+                    //System.out.println(" [x] Done");
+                    //If the worker die before complete the message handling the message is send to another one.
+                    channel.basicAck(envelope.getDeliveryTag(), false);
+                }
             }
         };
+
         try {
-            channel.basicConsume(queueName, true, consumer);
+            channel.basicConsume(queueName, false, consumer);
+
         } catch (IOException e) {
             System.err.println("Error during starting operation");
             e.printStackTrace();
         }
     }
-
 
     /**
      * method for closing the connection to the RabbitMQ server.
