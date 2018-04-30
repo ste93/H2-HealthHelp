@@ -1,11 +1,15 @@
-package core.pub_sub;
+package core.pub_sub.example;
 
-public class MqttTest {
+import core.pub_sub.TopicPublisher;
+import core.pub_sub.TopicSubscriber;
 
+public class PubSubTest {
+
+    // potrebbe diventare un test in JUnit ? boh...
     public static void main(String[] args) {
-        MqttTopicPublisher pub = new MqttTopicPublisher("myTest");
-        MqttTopicSubscriber sub1 = new MqttTopicSubscriber("myTest", "*.warning");
-        BaseSubscriber sub2 = new BaseSubscriber("myTest", "advice.#");
+        TopicPublisher pub = new TopicPublisher("myTest");
+        TopicSubscriber sub1 = new TopicSubscriber("myTest", "*.warning");
+        TopicSubscriber sub2 = new TopicSubscriber("myTest", "advice.#");
 
         pub.publishMessage("test1 (solo sub 2)", "advice.mypatient.abcd");
         pub.publishMessage("test2 (solo sub 1)", "mypatient.warning");

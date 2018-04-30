@@ -2,6 +2,8 @@ package control_unit;
 
 import control_unit.pub_sub.PatientDataPublisher;
 
+
+// now used to test pub/sub functionality.
 public class ControlUnitLauncher {
 
     public static void main(String[] args) {

@@ -4,17 +4,30 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import core.pub_sub.MqttTopicSubscriber;
+import core.pub_sub.TopicSubscriber;
 
 import java.io.IOException;
 
-public class PatientDataReceiver extends MqttTopicSubscriber {
+/**
+ * Simple message subscriber for pub/sub communication for patient data.
+ *
+ * @author manuBottax
+ */
+public class PatientDataReceiver extends TopicSubscriber {
 
+    /**
+     * Default constructor for the PatientDataReceiver class.
+     */
     public PatientDataReceiver() {
         super("patientData", "datacentre.receive.patientdata");
+        this.setConsumer();
     }
 
 
+    /**
+     * Define the custom behaviour when a message is received on the subscribed folder.
+     * The actual behaviour is defined in the private method 'handleAdvice()'
+     */
     @Override
     public void setConsumer() {
         Consumer consumer = new DefaultConsumer(channel) {

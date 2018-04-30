@@ -1,19 +1,22 @@
-package core.pub_sub;
+package core.pub_sub.example;
 
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
 
 /**
- *  A class used to test rabbitmq basic functionalities and as a template for it.
+ * A class used to test rabbitmq basic functionalities and as a template for it.
+ * Template for different subscriber's type
  *
  * @author manuBottax
  */
 public class TemplateSubscriber {
+
     // the name has to be changed every time you change the exchange type
     private static final String EXCHANGE_NAME = "topic_logs";
 
     public static void main(String[] argv) throws Exception {
+
         ///// initial configuration //////
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -49,6 +52,7 @@ public class TemplateSubscriber {
         //  channel.basicConsume(QUEUE_NAME, autoAck, consumer);
         //////////////////////////////////////////////////////////////////////////////////
 
+
         //// Simple Broadcast ////////////////////////////////////
         //  channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
         //  --  generate a temporary queue and return the (random) name -> every receiver has his own queue
@@ -70,35 +74,32 @@ public class TemplateSubscriber {
         //// Filter Routing ( Direct exchange ) /////////////////
         //   channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
         //   String queueName = channel.queueDeclare().getQueue();
-
-        /* console acquisition
-        if (argv.length < 1){
-            System.err.println("Usage: ReceiveLogsDirect [info] [warning] [error]");
-            System.exit(1);
-        }
-
-        for(String severity : argv){
-            channel.queueBind(queueName, EXCHANGE_NAME, severity);
-        }
-        */
-        /*
-        // it will receive both info and warning because the two different binds
-        channel.queueBind(queueName, EXCHANGE_NAME, "info");
-        channel.queueBind(queueName, EXCHANGE_NAME, "warning");
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-
-        Consumer consumer = new DefaultConsumer(channel) {
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope,
-                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
-                String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
-            }
-        };
-        channel.basicConsume(queueName, true, consumer);
-
-        */
-
+        //
+        //  //console acquisition
+        //  if (argv.length < 1){
+        //     System.err.println("Usage: ReceiveLogsDirect [info] [warning] [error]");
+        //     System.exit(1);
+        //  }
+        //
+        //  for(String severity : argv){
+        //    channel.queueBind(queueName, EXCHANGE_NAME, severity);
+        //  }
+        //
+        //  // it will receive both info and warning because the two different binds
+        //  channel.queueBind(queueName, EXCHANGE_NAME, "info");
+        //  channel.queueBind(queueName, EXCHANGE_NAME, "warning");
+        //  System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+        //
+        //  Consumer consumer = new DefaultConsumer(channel) {
+        //    @Override
+        //    public void handleDelivery(String consumerTag, Envelope envelope,
+        //                               AMQP.BasicProperties properties, byte[] body) throws IOException {
+        //        String message = new String(body, "UTF-8");
+        //        System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+        //    }
+        //  };
+        //  channel.basicConsume(queueName, true, consumer);
+        ////////////////////////////////////////////////////////////////////////////////////////
 
         ////  Topic Exchange //////////////////////////////
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
@@ -115,5 +116,7 @@ public class TemplateSubscriber {
             }
         };
         channel.basicConsume(queueName, true, consumer);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 }

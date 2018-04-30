@@ -1,4 +1,4 @@
-package core.pub_sub;
+package core.pub_sub.example;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -6,6 +6,7 @@ import com.rabbitmq.client.Channel;
 
 /**
  *  A class used to test rabbitmq basic functionalities and as a template for it.
+ *  Template for different publisher's type
  *
  * @author manuBottax
  */
@@ -75,7 +76,7 @@ public class TemplatePublisher {
         channel.close();
         connection.close();
 
-
+        //////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     //Utilities method for console message handling

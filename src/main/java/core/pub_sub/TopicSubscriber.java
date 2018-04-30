@@ -5,18 +5,32 @@ import com.rabbitmq.client.*;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class MqttTopicSubscriber {
+/**
+ * Base subscriber class for publish/subscribe communication.
+ * It handle the basic configuration for RabbitMQ client and define a default behaviour.
+ *
+ * The method setConsumer() has to be overridden in order to define a custom behaviour.
+ *
+ * @author manuBottax
+ */
+public class TopicSubscriber {
 
     private String exchangeName;
     protected String queueName;
     private String topicBindKey;
-
     private ConnectionFactory factory;
     private Connection connection;
     protected Channel channel;
 
-
-    public MqttTopicSubscriber(String exchangeName, String topicKey) {
+    /**
+     * Default constructor for class TopicSubscriber.
+     * It use localhost as host for the message broker server.
+     *
+     * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
+     *                     It has to be the same in both publisher and subscriber.
+     * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
+     */
+    public TopicSubscriber(String exchangeName, String topicKey) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.mqttSetup();
@@ -24,7 +38,15 @@ public class MqttTopicSubscriber {
         this.setConsumer();
     }
 
-    public MqttTopicSubscriber(String exchangeName, String topicKey, String hostIP) {
+    /**
+     * Default constructor for class TopicSubscriber.
+     *
+     * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
+     *                     It has to be the same in both publisher and subscriber.
+     * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
+     * @param hostIP - the IP String of the host of the message broker server.
+     */
+    public TopicSubscriber(String exchangeName, String topicKey, String hostIP) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.mqttSetup();
@@ -32,6 +54,11 @@ public class MqttTopicSubscriber {
         this.setConsumer();
     }
 
+    /**
+     * Define the behaviour of the subscriber when receive a message.
+     * By default it print the message received.
+     * This method has to be redefined in order to achieve a custom behaviour.
+     */
     public void setConsumer (){
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
@@ -49,6 +76,10 @@ public class MqttTopicSubscriber {
     }
 
 
+    /**
+     * method for closing the connection to the RabbitMQ server.
+     * After invoking this the class cannot receive more message from folder.
+     */
     public void close() {
 
         try {
@@ -69,7 +100,9 @@ public class MqttTopicSubscriber {
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
+            // define the number of message that can handle at the same time.
             channel.basicQos(1);
+            // define a persistent queue that is saved on disk in order to avoid loos even of the server restart.
             this.queueName = this.channel.queueDeclare(this.exchangeName + ".queue", true, false, false, null).getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
             this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
         } catch (IOException e) {

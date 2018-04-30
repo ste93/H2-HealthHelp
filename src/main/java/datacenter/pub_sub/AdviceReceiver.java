@@ -4,16 +4,34 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import core.pub_sub.MqttTopicSubscriber;
+import core.pub_sub.TopicSubscriber;
 
 import java.io.IOException;
 
-public class AdviceReceiver extends MqttTopicSubscriber {
+/**
+ * Simple message subscriber for pub/sub communication of doctor's advice.
+ *
+ * @author manuBottax
+ */
+public class AdviceReceiver extends TopicSubscriber {
 
+    private static final String EXCHANGE_NAME = "advice";
+    private static final String ROUTING_KEY = "datacentre.receive.advice";
+
+    /**
+     * Default constructor for the AdviceReceiver class.
+     */
     public AdviceReceiver() {
-        super("advice", "datacentre.receive.advice");
+        super(EXCHANGE_NAME, ROUTING_KEY);
+        this.setConsumer();
     }
 
+    /**
+     * Define the custom behaviour when a message is received on the subscribed folder.
+     * The actual behaviour is defined in the private method 'handleAdvice()'
+     */
+    //TODO: esiste un modo di definire solo il behaviour senza dover rifare ogni volta tutto che tanto è sempre uguale ?
+    // passaggio di una funzione praticamente  -> vedremo
 
     @Override
     public void setConsumer() {
@@ -25,9 +43,9 @@ public class AdviceReceiver extends MqttTopicSubscriber {
                 try {
                         handleAdvice();
                 }
+                //If the process die before completing the current message handling the message is send to another one.
                 finally {
                     System.out.println(" [x] Done");
-                    //If the worker die before complete the message handling the message is send to another one.
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 }
             }
