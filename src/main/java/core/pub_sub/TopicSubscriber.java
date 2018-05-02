@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author manuBottax
  */
-public class TopicSubscriber {
+public abstract class TopicSubscriber {
 
     private String exchangeName;
     protected String queueName;
@@ -22,7 +22,7 @@ public class TopicSubscriber {
     private Connection connection;
     protected Channel channel;
 
-    private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
+    //private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 
     /**
      * Default constructor for class TopicSubscriber.
@@ -37,7 +37,7 @@ public class TopicSubscriber {
         this.topicBindKey = topicKey;
         this.mqttSetup();
         this.factory.setHost("localhost");
-        this.setBehaviour(defaultBehaviour);
+        //this.setBehaviour(defaultBehaviour);
     }
 
     /**
@@ -53,7 +53,7 @@ public class TopicSubscriber {
         this.topicBindKey = topicKey;
         this.mqttSetup();
         this.factory.setHost(hostIP);
-        this.setBehaviour(defaultBehaviour);
+        //this.setBehaviour(defaultBehaviour);
     }
 
     /**
@@ -70,7 +70,6 @@ public class TopicSubscriber {
                     behaviour.handleMessage(message);
                 }
                 finally {
-                    //System.out.println(" [x] Done");
                     //If the worker die before complete the message handling the message is send to another one.
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 }
@@ -105,6 +104,23 @@ public class TopicSubscriber {
     }
 
     private void mqttSetup() {
+
+        this.factory = new ConnectionFactory();
+        try {
+            this.connection = factory.newConnection();
+            this.channel = connection.createChannel();
+            channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
+            channel.basicQos(1);
+            this.queueName = this.channel.queueDeclare().getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
+            this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
+        } catch (IOException e) {
+            System.err.println("Error during setup operation");
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            System.err.println("Error during setup operation");
+            e.printStackTrace();
+        }
+        /*
         this.factory = new ConnectionFactory();
         try {
             this.connection = factory.newConnection();
@@ -121,6 +137,6 @@ public class TopicSubscriber {
         } catch (TimeoutException e) {
             System.err.println("Error during setup operation");
             e.printStackTrace();
-        }
+        }*/
     }
 }
