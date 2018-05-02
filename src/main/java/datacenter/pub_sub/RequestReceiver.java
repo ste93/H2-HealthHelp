@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class RequestReceiver extends TopicSubscriber {
 
+    private static final String QUEUE_NAME = "historyRequest.queue";
     private static final String EXCHANGE_NAME = "historyRequest";
     private static final String ROUTING_KEY = "datacentre.request.history";
 
@@ -27,7 +28,7 @@ public class RequestReceiver extends TopicSubscriber {
      * Default constructor for the RequestReceiver class.
      */
     public RequestReceiver() {
-        super(EXCHANGE_NAME, ROUTING_KEY);
+        super(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
         this.setBehaviour(behaviour);
     }
 }

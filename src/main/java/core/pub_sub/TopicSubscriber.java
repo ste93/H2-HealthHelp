@@ -7,20 +7,18 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Base subscriber class for publish/subscribe communication.
- * It handle the basic configuration for RabbitMQ client and define a default behaviour.
- *
- * The method setBehaviour() has to be overridden in order to define a custom behaviour.
+ * It handle the basic configuration for RabbitMQ client and offer a method for specify behaviours when message is received.
  *
  * @author manuBottax
  */
 public abstract class TopicSubscriber {
 
     private String exchangeName;
-    protected String queueName;
+    private String queueName;
     private String topicBindKey;
     private ConnectionFactory factory;
     private Connection connection;
-    protected Channel channel;
+    private Channel channel;
 
     //private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 
@@ -32,34 +30,36 @@ public abstract class TopicSubscriber {
      *                     It has to be the same in both publisher and subscriber.
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      */
-    public TopicSubscriber(String exchangeName, String topicKey) {
+    public TopicSubscriber(String queueName, String exchangeName, String topicKey) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
+        this.queueName = queueName;
         this.mqttSetup();
         this.factory.setHost("localhost");
-        //this.setBehaviour(defaultBehaviour);
     }
 
     /**
      * Default constructor for class TopicSubscriber.
      *
+     * @param queueName - the name of the queue in which save data.
+     *                  N.B. it has to be unique for every instance of the publisher
      * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
-     *                     It has to be the same in both publisher and subscriber.
+     *                     N.B. It has to be the same in both publisher and subscriber.
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      * @param hostIP - the IP String of the host of the message broker server.
      */
-    public TopicSubscriber(String exchangeName, String topicKey, String hostIP) {
+    public TopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
+        this.queueName = queueName;
         this.mqttSetup();
         this.factory.setHost(hostIP);
-        //this.setBehaviour(defaultBehaviour);
     }
 
     /**
      * Define the behaviour of the subscriber when receive a message.
-     * By default it print the message received.
-     * This method has to be redefined in order to achieve a custom behaviour.
+     *
+     * @param behaviour - the behaviour of the subscriber when a message is received.
      */
     public void setBehaviour(SubscriberBehaviour behaviour){
         Consumer consumer = new DefaultConsumer(channel) {
@@ -86,7 +86,7 @@ public abstract class TopicSubscriber {
     }
 
     /**
-     * method for closing the connection to the RabbitMQ server.
+     * Method for closing the connection to the RabbitMQ server.
      * After invoking this the class cannot receive more message from folder.
      */
     public void close() {
@@ -111,7 +111,7 @@ public abstract class TopicSubscriber {
             this.channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
             channel.basicQos(1);
-            this.queueName = this.channel.queueDeclare().getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
+            this.channel.queueDeclare(this.queueName, true, false, false, null);
             this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
         } catch (IOException e) {
             System.err.println("Error during setup operation");
@@ -120,23 +120,5 @@ public abstract class TopicSubscriber {
             System.err.println("Error during setup operation");
             e.printStackTrace();
         }
-        /*
-        this.factory = new ConnectionFactory();
-        try {
-            this.connection = factory.newConnection();
-            this.channel = connection.createChannel();
-            channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
-            // define the number of message that can handle at the same time.
-            channel.basicQos(1);
-            // define a persistent queue that is saved on disk in order to avoid loos even of the server restart.
-            this.queueName = this.channel.queueDeclare(this.exchangeName + ".queue", true, false, false, null).getQueue(); // il nome si può specificare volendo, insieme alle caratteristiche, tipo se è persistente o no
-            this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
-        } catch (IOException e) {
-            System.err.println("Error during setup operation");
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            System.err.println("Error during setup operation");
-            e.printStackTrace();
-        }*/
     }
 }

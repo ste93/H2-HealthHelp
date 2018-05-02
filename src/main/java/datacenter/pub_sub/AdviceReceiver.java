@@ -10,6 +10,7 @@ import core.pub_sub.TopicSubscriber;
  */
 public class AdviceReceiver extends TopicSubscriber {
 
+    private static final String QUEUE_NAME = "advice.queue";
     private static final String EXCHANGE_NAME = "advice";
     private static final String ROUTING_KEY = "datacentre.receive.advice";
 
@@ -21,7 +22,7 @@ public class AdviceReceiver extends TopicSubscriber {
      * Default constructor for the AdviceReceiver class.
      */
     public AdviceReceiver() {
-        super(EXCHANGE_NAME, ROUTING_KEY);
+        super(QUEUE_NAME,EXCHANGE_NAME, ROUTING_KEY);
         this.setBehaviour(behaviour);
     }
 }

@@ -8,8 +8,8 @@ public class PubSubTest {
     // potrebbe diventare un test in JUnit ? boh...
     public static void main(String[] args) {
         TopicPublisher pub = new TopicPublisher("myTest");
-        TopicSubscriber sub1 = new LambdaTopicSubsciber("myTest", "*.warning");
-        TopicSubscriber sub2 = new ClassTopicSubscriber("myTest", "advice.#");
+        TopicSubscriber sub1 = new LambdaTopicSubsciber("myTest.queue.1","myTest", "*.warning");
+        TopicSubscriber sub2 = new ClassTopicSubscriber("myTest.queue.2", "myTest", "advice.#");
 
         pub.publishMessage("test1 (solo sub 2)", "advice.mypatient.abcd");
         pub.publishMessage("test2 (solo sub 1)", "mypatient.warning");

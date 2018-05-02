@@ -14,18 +14,18 @@ public class ClassTopicSubscriber extends TopicSubscriber {
         @Override
         public void handleMessage(String message) {
             System.out.print(testString);
-            c.doSomethingTerribleWithData(message);
+            c.doSomethingWithData(message);
         }
     }
 
 
-    public ClassTopicSubscriber(String exchangeName, String topicKey) {
-        super(exchangeName, topicKey);
+    public ClassTopicSubscriber(String queueName, String exchangeName, String topicKey) {
+        super(queueName, exchangeName, topicKey);
         this.setBehaviour(new myBehaviour());
     }
 
-    public ClassTopicSubscriber(String exchangeName, String topicKey, String hostIP) {
-        super(exchangeName, topicKey, hostIP);
+    public ClassTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP) {
+        super(queueName, exchangeName, topicKey, hostIP);
         this.setBehaviour(new myBehaviour());
     }
 }
