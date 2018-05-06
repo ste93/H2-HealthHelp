@@ -1,20 +1,14 @@
 package datacenter.pub_sub;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
 import core.pub_sub.SubscriberBehaviour;
-import core.pub_sub.TopicSubscriber;
-
-import java.io.IOException;
+import core.pub_sub.AbstractTopicSubscriber;
 
 /**
  * Simple message subscriber for pub/sub communication for history request.
  *
  * @author manuBottax
  */
-public class RequestReceiver extends TopicSubscriber {
+public class RequestReceiver extends AbstractTopicSubscriber {
 
     private static final String QUEUE_NAME = "historyRequest.queue";
     private static final String EXCHANGE_NAME = "historyRequest";

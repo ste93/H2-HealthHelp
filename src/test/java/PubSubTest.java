@@ -1,5 +1,5 @@
+import core.pub_sub.AbstractTopicSubscriber;
 import core.pub_sub.TopicPublisher;
-import core.pub_sub.TopicSubscriber;
 import core.pub_sub.example.ClassTopicSubscriber;
 import core.pub_sub.example.LambdaTopicSubsciber;
 import org.junit.*;
@@ -13,8 +13,8 @@ import static org.junit.Assert.assertTrue;
 public class PubSubTest {
 
     private static TopicPublisher publisher;
-    private static TopicSubscriber subscriber1;
-    private static TopicSubscriber subscriber2;
+    private static AbstractTopicSubscriber subscriber1;
+    private static AbstractTopicSubscriber subscriber2;
 
     @BeforeClass
     public static void init() {

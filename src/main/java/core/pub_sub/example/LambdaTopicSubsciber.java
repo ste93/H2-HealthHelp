@@ -1,9 +1,9 @@
 package core.pub_sub.example;
 
+import core.pub_sub.AbstractTopicSubscriber;
 import core.pub_sub.SubscriberBehaviour;
-import core.pub_sub.TopicSubscriber;
 
-public class LambdaTopicSubsciber extends TopicSubscriber {
+public class LambdaTopicSubsciber extends AbstractTopicSubscriber {
 
     private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 

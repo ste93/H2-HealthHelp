@@ -1,9 +1,9 @@
 package core.pub_sub.example;
 
+import core.pub_sub.AbstractTopicSubscriber;
 import core.pub_sub.SubscriberBehaviour;
-import core.pub_sub.TopicSubscriber;
 
-public class ClassTopicSubscriber extends TopicSubscriber {
+public class ClassTopicSubscriber extends AbstractTopicSubscriber {
 
     private AnotherClass c = new AnotherClass();
     private String testString = "[ myClass ] ";

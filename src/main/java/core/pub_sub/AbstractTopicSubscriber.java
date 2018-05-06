@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author manuBottax
  */
-public abstract class TopicSubscriber {
+public abstract class AbstractTopicSubscriber {
 
     private String exchangeName;
     private String queueName;
@@ -25,14 +25,14 @@ public abstract class TopicSubscriber {
     //private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 
     /**
-     * Default constructor for class TopicSubscriber.
+     * Default constructor for class AbstractTopicSubscriber.
      * It use localhost as host for the message broker server.
      *
      * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
      *                     It has to be the same in both publisher and subscriber.
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      */
-    public TopicSubscriber(String queueName, String exchangeName, String topicKey) {
+    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.queueName = queueName;
@@ -42,7 +42,7 @@ public abstract class TopicSubscriber {
     }
 
     /**
-     * Default constructor for class TopicSubscriber.
+     * Default constructor for class AbstractTopicSubscriber.
      *
      * @param queueName - the name of the queue in which save data.
      *                  N.B. it has to be unique for every instance of the publisher
@@ -51,7 +51,7 @@ public abstract class TopicSubscriber {
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      * @param hostIP - the IP String of the host of the message broker server.
      */
-    public TopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP) {
+    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.queueName = queueName;

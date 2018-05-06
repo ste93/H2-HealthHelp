@@ -1,15 +1,15 @@
 package core.pub_sub.example;
 
+import core.pub_sub.AbstractTopicSubscriber;
 import core.pub_sub.TopicPublisher;
-import core.pub_sub.TopicSubscriber;
 
 public class PubSubTest {
 
     // potrebbe diventare un test in JUnit ? boh...
     public static void main(String[] args) {
         TopicPublisher pub = new TopicPublisher("myTest");
-        TopicSubscriber sub1 = new LambdaTopicSubsciber("myTest.queue.1","myTest", "*.warning");
-        TopicSubscriber sub2 = new ClassTopicSubscriber("myTest.queue.2", "myTest", "advice.#");
+        AbstractTopicSubscriber sub1 = new LambdaTopicSubsciber("myTest.queue.1","myTest", "*.warning");
+        AbstractTopicSubscriber sub2 = new ClassTopicSubscriber("myTest.queue.2", "myTest", "advice.#");
 
         pub.publishMessage("test1 (solo sub 2)", "advice.mypatient.abcd");
         try {

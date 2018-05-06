@@ -1,14 +1,14 @@
 package datacenter.pub_sub;
 
+import core.pub_sub.AbstractTopicSubscriber;
 import core.pub_sub.SubscriberBehaviour;
-import core.pub_sub.TopicSubscriber;
 
 /**
  * Simple message subscriber for pub/sub communication of doctor's advice.
  *
  * @author manuBottax
  */
-public class AdviceReceiver extends TopicSubscriber {
+public class AdviceReceiver extends AbstractTopicSubscriber {
 
     private static final String QUEUE_NAME = "advice.queue";
     private static final String EXCHANGE_NAME = "advice";
