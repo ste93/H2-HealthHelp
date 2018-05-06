@@ -20,6 +20,8 @@ public abstract class TopicSubscriber {
     private Connection connection;
     private Channel channel;
 
+    private int receivedMessage;
+
     //private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
 
     /**
@@ -36,6 +38,7 @@ public abstract class TopicSubscriber {
         this.queueName = queueName;
         this.mqttSetup();
         this.factory.setHost("localhost");
+        this.receivedMessage = 0;
     }
 
     /**
@@ -54,6 +57,7 @@ public abstract class TopicSubscriber {
         this.queueName = queueName;
         this.mqttSetup();
         this.factory.setHost(hostIP);
+        this.receivedMessage = 0;
     }
 
     /**
@@ -67,6 +71,7 @@ public abstract class TopicSubscriber {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 try {
+                    receivedMessage ++;
                     behaviour.handleMessage(message);
                 }
                 finally {
@@ -103,6 +108,16 @@ public abstract class TopicSubscriber {
         }
     }
 
+    /**
+     * Method that return the total number of message received by this object.
+     * Useful for testing purpose.
+     *
+     * @return the number of received message.
+     */
+    public int getReceivedMessage (){
+        return this.receivedMessage;
+    }
+
     private void mqttSetup() {
 
         this.factory = new ConnectionFactory();
@@ -121,4 +136,6 @@ public abstract class TopicSubscriber {
             e.printStackTrace();
         }
     }
+
+
 }

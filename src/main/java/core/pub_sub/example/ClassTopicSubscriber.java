@@ -11,7 +11,6 @@ public class ClassTopicSubscriber extends TopicSubscriber {
 
     private class myBehaviour implements SubscriberBehaviour {
 
-        @Override
         public void handleMessage(String message) {
             System.out.print(testString);
             c.doSomethingWithData(message);
