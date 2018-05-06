@@ -1,20 +1,19 @@
 package control_unit.hardware;
 
 /**
- * A simple Led interface.
+ * Interface for a generic led for raspberryPI.
  * 
- * @author manuBottax
- * @version 1.0 - 02/03/18
+ * @author manuBottax.
  */
 public interface Led
 {
     /**
-     * Turn on the Led; If it is already on nothing happen.
+     * Turn on the led; If it is already on nothing happen.
      */
     void turnOn();
     
     /**
-     * Turn off the Led; If it is already off nothing happen.
+     * Turn off the led; If it is already off nothing happen.
      */
     void turnOff();
     

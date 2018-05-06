@@ -1,26 +1,26 @@
 package control_unit.hardware;
 
 /**
- * A generic sound output.
+ * Interface for a generic sound output for raspberryPI.
  * 
- * @author manuBottax 
- * @version 1.0 - 02/03/18
+ * @author manuBottax
  */
-public interface SoundOutput
-{
+public interface SoundOutput {
+
     /**
-     * Start a continuous beep. if already beeping does nothing.
+     * Start a continuous beep. If already beeping does nothing.
      */
     void beep();
     
     /**
-     * Start a continuous beep for a certain time. if already beeping does nothing.
+     * Start a continuous beep for a certain time. If already beeping does nothing.
+     *
      * @param msec - the duration of the sound.
      */
     void beep(int msec);
     
     /**
-     * stop the sound. if already stopped does nothing.
+     * Stop the sound. If already stopped does nothing.
      */
     void stop();
 }

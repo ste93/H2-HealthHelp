@@ -1,4 +1,4 @@
-package control_unit.hardware;;
+package control_unit.hardware;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
@@ -7,10 +7,9 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.PinState;
 
 /**
- * A Simple Led controller. it controll a physical led connected to the pin 11 (GPIO 00).
+ * A simple handler for an hardware led on raspberryPI.
  * 
- * @author manuBottax 
- * @version 1.0 - 02/03/18
+ * @author manuBottax
  */
 public class SimpleLed implements Led
 {
@@ -20,6 +19,8 @@ public class SimpleLed implements Led
 
     /**
      * Constructor for objects of class SimpleLed
+     *
+     * @param pin - the pin number in which the physical led is connected.
      */
     public SimpleLed(int pin)
     {

@@ -1,4 +1,4 @@
-package control_unit.hardware;;
+package control_unit.hardware;
 
 import java.util.concurrent.Callable;
 import com.pi4j.io.gpio.GpioController;
@@ -8,25 +8,26 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.trigger.GpioCallbackTrigger;
+
 /**
- * Class to handle emergency protocol.
+ * Class example of emergency protocol handling.
  * 
  * @author manubottax
- * @version 1.0 - 02/03/18
  */
+
 public class EmergencyManager
 {
     private SimpleLed emergencyLed;
     private SimpleLed callLed;
     private Buzzer buzz;
-    private myLcd lcd;
+    private SimpleLcd lcd;
     final GpioController gpio;
     final GpioPinDigitalInput button;
     
     private boolean emergency;
 
     /**
-     * Constructor for objects of class EmergencyManager
+     * Constructor for objects of class EmergencyManager.
      */
     public EmergencyManager()
     {
@@ -34,7 +35,7 @@ public class EmergencyManager
         emergencyLed = new SimpleLed(5);
         callLed = new SimpleLed(29);
         buzz = new Buzzer();
-        lcd = new myLcd();
+        lcd = new SimpleLcd("H2 - Health Help");
         gpio = GpioFactory.getInstance();
         button = gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_DOWN);
         button.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
@@ -65,7 +66,7 @@ public class EmergencyManager
         try{
             Thread.sleep(10000);
         }       
-        catch (Exception e ) { e.printStackTrace(); }
+        catch (InterruptedException ex ) { ex.printStackTrace(); }
         
         // if alarm is not stopped in this time call emergency rescuers;
         if(this.emergency){
@@ -76,7 +77,7 @@ public class EmergencyManager
             try{
                 Thread.sleep(1000);
             }       
-            catch (Exception e ) { e.printStackTrace(); }
+            catch (InterruptedException ex ) { ex.printStackTrace(); }
             lcd.reset();
         }
     }
@@ -91,7 +92,7 @@ public class EmergencyManager
         try{
                 Thread.sleep(5000);
             }       
-            catch (Exception e ) { e.printStackTrace(); }
+            catch (InterruptedException ex ) { ex.printStackTrace(); }
         reset();
     }     
 }

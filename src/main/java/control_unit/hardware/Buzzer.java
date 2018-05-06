@@ -7,20 +7,34 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.PinState;
 
 /**
- * Class to control a physical Buzzer connected to Pin 13 (GPIO 01).
+ * A simple handler for an hardware buzzer on raspberryPI.
  * 
  * @author manuBottax
- * @version 1.0 - 02/03/18
  */
 public class Buzzer implements SoundOutput
 {
     private final GpioController gpio;
     private final GpioPinDigitalOutput buzzPin;
 
+    /**
+     * Default constructor for a buzzer connected to pin 16 ( GPIO_04 ).
+     */
     public Buzzer()
     {
         gpio = GpioFactory.getInstance();
         buzzPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04);
+        buzzPin.setShutdownOptions(true, PinState.LOW);
+        System.out.println("[BUZZ] initialized");
+    }
+
+    /**
+     * Default constructor for a buzzer connected to the specified pin.
+     *
+     * @param pin - the pin number in which the physical buzzer is connected.
+     */
+    public Buzzer(int pin){
+        gpio = GpioFactory.getInstance();
+        buzzPin = gpio.provisionDigitalOutputPin(RaspiPin.getPinByAddress(pin));
         buzzPin.setShutdownOptions(true, PinState.LOW);
         System.out.println("[BUZZ] initialized");
     }
