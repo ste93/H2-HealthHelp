@@ -1,3 +1,12 @@
 language: java
 script:
   - ’./gradlew clean build’
+notifications:
+  email:
+    recipients:
+      - stefano.bernagozzi@studio.unibo.it
+      - giulia.lucchi7@studio.unibo.it
+      - manuel.bottazzi@studio.unibo.it
+      - margherita.pecorelli@studio.unibo.it
+    on_success: never
+    on_failure: always
