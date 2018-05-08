@@ -1,6 +1,6 @@
 language: java
 script:
-  - ’./gradlew clean build’
+  - ./gradlew clean build
 notifications:
   email:
     recipients:
