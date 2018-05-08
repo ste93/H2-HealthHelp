@@ -10,3 +10,5 @@ notifications:
       - margherita.pecorelli@studio.unibo.it
     on_success: never
     on_failure: always
+before_install:
+ - chmod +x gradlew
