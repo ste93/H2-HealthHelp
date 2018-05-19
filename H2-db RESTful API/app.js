@@ -2,7 +2,7 @@
 // più importanti sono modulo express e due file locali che contengono le rotte
 var createError = require('http-errors');
 var express = require('express');
-var session = require('express-session');
+//var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // dico all'app di servire tutto il contenuto della cartella 'public' come statico
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: 'login'}));
+//app.use(session({secret: 'login'}));
 
 // definisco i namespace base per due tipologie di rotte: routes e users sono 'router' di rotte
 app.use('/', indexRouter);

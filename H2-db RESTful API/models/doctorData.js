@@ -26,7 +26,7 @@ var doctorSchema = new mongoose.Schema({
         phone:{
             type: Array,
             items:{
-                type: Number
+                type: String
             },
             required: true
         },

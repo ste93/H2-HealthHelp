@@ -11,7 +11,7 @@ var drugSchema = Schema({
             required: true
         },
         timestamp: {
-            type: Data,
+            type: Date,
             required: true
         },
         drugName:{
