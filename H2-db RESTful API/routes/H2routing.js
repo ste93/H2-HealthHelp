@@ -7,14 +7,16 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var session;
 
+/** */
+var userAuthentication = require('./userAuthentication');
+var sensorDataOperation = require('./sensorDataOperations');
+
 /** Connect Mongo DB */
 require('../database');
 
 
 /* Model Scheme */
 var advices = require('../models/advice');
-var doctors = require('../models/doctorData');
-var patients = require('../models/patientData');
 var drugs = require('../models/prescribedDrug');
 var sensorData = require('../models/sensorData');
 
@@ -60,48 +62,78 @@ router.post('/registration', function(req, res, next){
         "mail": mail
     };
     
-    if(role == "doctor" || role == "patient"){
-       if(role == "doctor"){
-            var users = doctors;
-       }else{
-            var users = patients;
-       }
-       users.create(user, function(err, user){
-            if(err){
-               console.log('user registation error - %s', err);
-               return res.send(400);
-            }
-            res.send(200);
-       });
-    }else{
-        res.send(401);
-        console.log("Not Authorized to register in this software.");  
-    }
+    userAuthentication.registation(role, user, res);
+    
 });
 
 router.get('/login', function(req, res, next){
-    session = req.session;
+   // session = req.session;
     var idCode = req.param('idCode');
     var role = req.param('role');
     var password = req.param('password');
 
-    if(role == "doctor" || role == "patient"){
-        if(role == "doctor"){
-             var users = doctors;
-        }else{
-             var users = patients;
-        }
-        users.findOne({"idCode": idCode, "password": password},{"_id":0, "password":0, "phone":0, "mail":0, "cf":0}, function(err, user){
-             if(err){
-                console.log('user login error - %s', err);
-                return res.send(400);
-             }
-             res.json(user)
-        });
-     }else{
-         res.send(401);
-         console.log("Not Authorized to enter in this software.");  
-     }
+    userAuthentication.login(idCode, role, password, res);
 });
+
+/** Get all sensor types related to a specific patient
+ * 
+ * @response:  200 - OK
+ *             500 - Internal Server Error
+ * 
+ * 
+ * @param idCode - patient identifier 
+ * 
+ */
+router.get('/sensors', function(req,res, next){
+    var idCode = req.param('idCode');
+
+    sensorDataOperation.getSensorTypes(idCode,res);
+});
+
+/** Modify array of patient' sensor types 
+ *  and create a related collection for values.
+ * 
+ * @response:  200 - OK
+ *             500 - Internal Server Error
+ * 
+ * @param idCode - patient identifier
+ * @param type - sensor type to add
+ */
+router.put('/sensors', function(req, res, next){
+    var idCode = req.param('idCode');
+    var type = req.param('type');
+
+    sensorDataOperation.addSensorType(idCode, type, res);
+});   
+
+/** Add a value of a particular sensor
+ * @response:  200 - OK
+ *             500 - Internal Server Error
+ * 
+ * @param idCode - patient identifier
+ * @param type - sensor type to add
+ */
+router.post('/sensors', function(req, res, next){
+    var idCode = req.param('idCode');
+    var type = req.param('type');
+    var message = JSON.stringify(req.param('message'));
+
+    message =JSON.parse(message);
+   
+   /* var message = {
+      "patientId": "marghe.lucchi",
+     "value":234,
+     "unit":"m",
+     "timestamp":"24-10-2018 11:52",
+     "output":{
+          "level":0 , 
+          "description":"gfjsks"}
+    };*/
+
+    sensorDataOperation.addValue(idCode, type, JSON.stringify(message), res);
+});
+
+
+
 
 module.exports = router;

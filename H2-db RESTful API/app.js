@@ -2,6 +2,7 @@
 // più importanti sono modulo express e due file locali che contengono le rotte
 var createError = require('http-errors');
 var express = require('express');
+var bodyparser = require('body-parser');
 //var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -17,6 +18,8 @@ app.set('views', path.join(__dirname, 'views'));
 // e in che formato sono
 app.set('view engine', 'jade');
 
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended:true}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

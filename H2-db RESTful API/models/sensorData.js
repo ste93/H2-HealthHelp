@@ -6,10 +6,6 @@ var sensorDataSchema = Schema({
             type: String,
             required: true
         },
-        dataType: {
-            type: String,
-            required: true
-        },
         value: {
             type: Number,
             required: true
@@ -35,9 +31,8 @@ var sensorDataSchema = Schema({
     },
     {
         versionKey: false,
-        collection: 'sensorData'
     });
 
-var sensorData = mongoose.model('sensorData', sensorDataSchema);
+//var sensorData = mongoose.model('sensorData', sensorDataSchema);
 
-module.exports = sensorData;
+module.exports = sensorDataSchema;
