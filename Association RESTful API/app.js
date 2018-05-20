@@ -2,12 +2,13 @@
 // più importanti sono smodulo express e due file locali che contengono le rotte
 var createError = require('http-errors');
 var express = require('express');
+var bodyparser = require('body-parser');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var associationRouter = require('./routes/association');
+var associationRouter = require('./routes/associationRouting');
 
 var app = express();
 
@@ -15,6 +16,9 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 // e in che formato sono
 app.set('view engine', 'jade');
+
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended:true}));
 
 app.use(logger('dev'));
 app.use(express.json());
