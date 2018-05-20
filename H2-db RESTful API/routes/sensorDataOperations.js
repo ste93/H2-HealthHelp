@@ -37,8 +37,8 @@ function addSensorType(id, type, res){
 
 function addValue(id, type, message, res){
     var nameCollection= ""+id+"."+type;
-  
-    db.collection(nameCollection).insert(message, function(err, value){
+    var mess  = JSON.parse(message);
+    db.collection(nameCollection).insert(mess, function(err, value){
         if(err){
             console.log("ERRORE : "+err+" erore")
             res.send(500);

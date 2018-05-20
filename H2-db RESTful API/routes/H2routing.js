@@ -5,6 +5,9 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var app = require('../app.js');
+
+
 var session;
 
 /** */
@@ -116,21 +119,9 @@ router.put('/sensors', function(req, res, next){
 router.post('/sensors', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-    var message = JSON.stringify(req.param('message'));
+    var message = req.param('message');
 
-    message =JSON.parse(message);
-   
-   /* var message = {
-      "patientId": "marghe.lucchi",
-     "value":234,
-     "unit":"m",
-     "timestamp":"24-10-2018 11:52",
-     "output":{
-          "level":0 , 
-          "description":"gfjsks"}
-    };*/
-
-    sensorDataOperation.addValue(idCode, type, JSON.stringify(message), res);
+    sensorDataOperation.addValue(idCode, type, message , res);
 });
 
 
