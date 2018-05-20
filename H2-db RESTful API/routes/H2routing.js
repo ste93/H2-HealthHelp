@@ -2,28 +2,18 @@
  * @author Giulia Lucchi
  * @author Margherita Pecorelli
  */
+//var session = require('express-session');
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-var app = require('../app.js');
 
-
-var session;
-
-/** */
+/** files .js that include the callback of request*/
 var userAuthentication = require('./userAuthentication');
 var sensorDataOperation = require('./sensorDataOperations');
 
 /** Connect Mongo DB */
 require('../database');
 
-
-/* Model Scheme */
-var advices = require('../models/advice');
-var drugs = require('../models/prescribedDrug');
-var sensorData = require('../models/sensorData');
-
-/* GET home page. */
+/** GET home page. */
 router.get('/', function(req, res, next) {
 });
 
@@ -70,11 +60,10 @@ router.post('/registration', function(req, res, next){
 });
 
 router.get('/login', function(req, res, next){
-   // session = req.session;
     var idCode = req.param('idCode');
     var role = req.param('role');
     var password = req.param('password');
-
+    
     userAuthentication.login(idCode, role, password, res);
 });
 
@@ -123,8 +112,6 @@ router.post('/sensors', function(req, res, next){
 
     sensorDataOperation.addValue(idCode, type, message , res);
 });
-
-
 
 
 module.exports = router;
