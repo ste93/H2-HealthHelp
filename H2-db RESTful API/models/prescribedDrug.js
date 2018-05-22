@@ -16,10 +16,9 @@ var drugSchema = Schema({
         }
     },
     {
-        versionKey: false,
-        collection: 'drugs'
+        versionKey: false
     });
 
-var drugs = mongoose.model('drugs', drugSchema);
 
-module.exports = drugs;
+
+module.exports = drugSchema;

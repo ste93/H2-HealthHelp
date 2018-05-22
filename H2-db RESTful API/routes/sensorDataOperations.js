@@ -47,13 +47,10 @@ function addSensorType(idCode, type, res){
             patients.update({"idCode": idCode},{ $push: { "sensors": [type] }},function(err, sensor){
                 if(err){
                     res.send(500);
-                } else {
+                } 
                     var nameCollection= ""+idCode+"."+type;
-                    db.createCollection(nameCollection);                
-                    var schema = require('../models/sensorData');
-                    var collection =  mongoose.model(nameCollection, schema);                
+                    db.createCollection(nameCollection);              
                     res.send(200);
-                }
             });
         } else {
             console.log("already present");
@@ -74,9 +71,10 @@ function addSensorType(idCode, type, res){
  * @param {Response} res - response of RESTful request
  */
 function addValue(idCode, type, message, res){
-    var nameCollection= ""+idCode+"."+type;
+    var collection = _getCollection(idCode,type);
+
     var mess  = JSON.parse(message);
-    db.collection(nameCollection).insert(mess, function(err, value){
+    collection.create(mess, function(err, value){
         if(err){
             res.send(500);
         } else {
@@ -96,12 +94,13 @@ function addValue(idCode, type, message, res){
  * @param {Response} res - response of RESTful request
  */
 function deleteAllValues(idCode, type, res){
-    var nameCollection= ""+idCode+"."+type;
+    var collection = _getCollection(idCode,type);
+
     patients.findOne({"sensors": type}, function(err, response){
         if(response == null) {
             res.send(404);
         } else {
-            db.collection(nameCollection).remove({}, function(err, value){
+            collection.remove({}, function(err, value){
                 if(err){
                     res.send(500);
                 } else {
@@ -123,14 +122,27 @@ function deleteAllValues(idCode, type, res){
  * @param {Response} res - response of RESTful request
  */
 function getAllValuesOfSpecificSensor(idCode, type, res){
-    var nameCollection= ""+idCode+"."+type;
-    db.collection(nameCollection).find({}).toArray(function(err, value){
+    var collection = _getCollection(idCode,type);
+    collection.find({}).toArray(function(err, value){
         if(err){
             res.send(500);
         } else {
             res.json(value);
         }
     });
+}
+
+/** create o take a dynamic collection to save, delete o get the information of sensor data
+ * @private function used to take a right collection
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type 
+ */
+function _getCollection(idCode,type){
+    var nameCollection= ""+idCode+"."+type;
+    var Schema = require('../models/sensorData');
+    return mongoose.model( idCode, Schema, nameCollection );   
+    
 }
 
 module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, getAllValuesOfSpecificSensor}
