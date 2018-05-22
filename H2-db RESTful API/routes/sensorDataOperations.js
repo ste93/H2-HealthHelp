@@ -29,20 +29,26 @@ function getSensorTypes(id, res){
  */
 function addSensorType(id, type, res){
 
-    patients.update({"idCode": id},{ $push: { "sensors": [type] }},function(err, sensor){
-        if(err){
-            res.send(500);
+    patients.findOne({"sensors": type}, function(err, response){
+        if(response == null) {
+            console.log("sensor type created");
+            patients.update({"idCode": id},{ $push: { "sensors": [type] }},function(err, sensor){
+                if(err){
+                    res.send(500);
+                }
+        
+                var nameCollection= ""+id+"."+type;
+                db.createCollection(nameCollection);
+                
+                var schema = require('../models/sensorData');
+                var collection =  mongoose.model(nameCollection, schema);
+                
+                res.send(200);
+            });
+        } else {
+            console.log("already present");
+            res.send(200);
         }
-
-        var nameCollection= ""+id+"."+type;
-        db.createCollection(nameCollection);
-        
-        var schema = require('../models/sensorData');
-        var collection =  mongoose.model(nameCollection, schema);
-        
-
-
-        res.send(200);
     });
 
 }
@@ -59,12 +65,47 @@ function addValue(id, type, message, res){
     var mess  = JSON.parse(message);
     db.collection(nameCollection).insert(mess, function(err, value){
         if(err){
-            console.log("ERRORE : "+err+" erore")
             res.send(500);
         }
 
+        res.send(200);
+    });
+}
+
+/** Delete all values of a sensor type
+ * 
+ * @param {String} id 
+ * @param {String} type 
+ * @param {Response} res 
+ */
+function deleteAllValues(id, type, res){
+    var nameCollection= ""+id+"."+type;
+    
+    patients.findOne({"sensors": type}, function(err, response){
+        if(response == null) {
+            res.send(404);
+        } else {
+            db.collection(nameCollection).remove({}, function(err, value){
+                if(err){
+                    res.send(500);
+                }
+        
+                res.send(200);
+            });
+        }
+    });
+}
+
+function getAllValuesOfSpecificSensor(id, type, res){
+    var nameCollection= ""+id+"."+type;
+    
+    db.collection(nameCollection).find({}).toArray(function(err, value){
+        if(err){
+            res.send(500);
+        }
+        
         res.json(value);
     });
 }
 
-module.exports = {getSensorTypes, addSensorType, addValue}
+module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, getAllValuesOfSpecificSensor}

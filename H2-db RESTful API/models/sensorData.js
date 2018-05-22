@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var sensorDataSchema = Schema({
+var sensorDataSchema = new mongoose.Schema({
         patientId: {
             type: String,
             required: true

@@ -9,11 +9,11 @@ function registation(role, user, res){
              var users = patients;
         }
         users.create(user, function(err, user){
-             if(err){
+            if(err){
                 console.log('user registation error - %s', err);
                 return res.send(400);
-             }
-             res.send(200);
+            }
+            res.send(200);
         });
      }else{
          res.send(401);
