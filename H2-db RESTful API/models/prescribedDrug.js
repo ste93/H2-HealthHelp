@@ -2,10 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var drugSchema = Schema({
-        patientId: {
-            type: String,
-            required: true
-        },
         doctorId: {
             type: String,
             required: true

@@ -32,6 +32,12 @@ var patientSchema = new mongoose.Schema({
         },
         mail:{
             type:String
+        },
+        sensors:{
+            type: Array,
+            items:{
+                type: String
+            }
         }
     },
     {
