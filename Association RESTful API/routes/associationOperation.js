@@ -1,86 +1,117 @@
+/** RESTful API Associations
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
 /** Model Schema collection */
 var associations = require('../models/patientDoctor');
 
-/** insert new association in the database
+/** Inserts a new medical association of doctor and patient
+ *  
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing or wrong parameters)
  * 
  * @param  {String} idPatient - patient identifier
  * @param  {String} idDoctor - doctor identifier
- * @param  {Response} res - response of request
+ * @param {Response} res - response of RESTful request
+ * 
  */
 function insertAssociation(idPatient, idDoctor, res){
     var association = { 
         "idPatient" : idPatient,
         "idDoctor": idDoctor
     };
-    
     associations.create(association, function(err, doc) {
         if (err){
             res.send(400);
-        } 
-        res.send(200);
+        } else {
+            res.send(200);
+        }
     });
 }
 
-/** Search a particular association between one doctor and one patient
+/** Finds all patients associated to the doctor
  * 
- * @param  {String} idPatient - patient identifier
- * @param  {String} idDoctor - doctor identifier
- * @param  {Response} res - response of request- 
+ * @throws 400 - BAD REQUEST
+ * 
+ * @returns a JSON with all patients associated to the doctor
+ * 
+ * @param {String} idDoctor - doctor identifier
+ * @param {Response} res - response of RESTful request
+ * 
+ */
+function getPatients(idDoctor, res){
+    associations.find({"idDoctor": idDoctor},{"_id":0, "idPatient":1},function(err, patients) {
+        if (err){
+            res.send(400);
+        } else {
+            res.json(patients);
+        }
+    });
+}
+
+/** Finds all doctors associated to the patient
+ * 
+ * @throws 400 - BAD REQUEST
+ * 
+ * @returns a JSON with all doctors associated to the patient
+ * 
+ * @param {String} idPatient - patient identifier 
+ * @param {Response} res - response of RESTful request
+ * 
+ */
+function getDoctors(idPatient, res){{String}
+    associations.find({"idPatient": idPatient},{"_id":0, "idDoctor":1},function(err, doctors) {
+        if (err){
+            res.send(400);
+        } else {
+            res.json(doctors);
+        }
+    });
+}
+
+/** Finds the association between a specific doctor and patient
+ *  
+ * @throws 400 - BAD REQUEST
+ * 
+ * @returns a JSON with the association
+ * 
+ * @param {String} idPatient - patient identifier
+ * @param {String} idDoctor - doctor identifier
+ * @param {Response} res - response of RESTful request
+ * 
  */
 function getOneAssociation(idPatient, idDoctor, res){
     var association = { 
         "idPatient" : idPatient,
         "idDoctor": idDoctor
     };
-
-    associations.findOne(association,{"_id":0}, function(err, doc) {
+    associations.findOne(association,{"_id":0}, function(err, association) {
         if (err){
             res.send(400);
-        }  
-      res.json(doc);
+        } else {
+            res.json(association);
+        }
     });
 }
 
-/** Search all patients related to the doctor identifie by idDoctor
- * 
- * @param {String} idDoctor - doctor identifier
- * @param {Response} res - response of request
- */
-function getPatients(idDoctor, res){
-    associations.find({"idDoctor": idDoctor},{"_id":0, "idPatient":1},function(err, doc) {
-        if (err){
-            res.send(400);
-        }  
-      res.json(doc);       
-    });
-}
-
-/** Search all doctors related to the patient identifie by idPatient
- * 
- * @param {String} idPatient - patient identifier 
- * @param {Response} res -response of request
- */
-function getDoctors(idPatient, res){{String}
-    associations.find({"idPatient": idPatient},{"_id":0, "idDoctor":1},function(err, doc) {
-        if (err){
-            res.send(400);
-        }  
-        res.json(doc);
-    });
-}
-
-/**
+/** Removes an association between specific doctor and patient
+ *   
+ * @throws 200 - OK
+ *         400 - BAD REQUEST             
  * 
  * @param {String} idPatient - patient identifier
  * @param {String} idDoctor - doctor identifier
- * @param {Response} res - response of request
+ * @param {Response} res - response of RESTful request
+ * 
  */
 function removeAssociation(idPatient, idDoctor, res){
     associations.deleteOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, doc) {
         if (err){
             res.send(400);
-        } 
-        res.send(200);
+        } else {
+            res.send(200);
+        }
      });
 }
 

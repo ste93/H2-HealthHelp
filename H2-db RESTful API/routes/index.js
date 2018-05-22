@@ -1,3 +1,9 @@
+/** RESTful API H2db
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
+/** setting express */
 var express = require('express');
 var router = express.Router();
 

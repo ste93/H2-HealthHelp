@@ -1,3 +1,9 @@
+/** RESTful API Associations
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
+/** setting express */
 var express = require('express');
 var router = express.Router();
 
@@ -12,118 +18,107 @@ var asssociationOperation = require('./associationOperation');
 /** GET home page. */
 router.get('/', function(req, res, next) {});
 
-/** GET request to find the patient information by idPatient
+/** GET request to return patient's informations
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST
+ * @throws 400 - BAD REQUEST
  * 
- * @param id - patient id
- * @param res - response of request
+ * @returns a JSON with all patient's informations
+ * 
+ * @param {String} id - patient id
+ * 
  */
 router.get('/patients', function(req, res, next){
-  var id = req.param('_id');
-  
-  patientOperation.findPatient(id, res);
+    var id = req.param('_id');
+    patientOperation.findPatient(id, res);
 });
 
-/** POST request to insert a new patient in database
+/** POST request to insert a new patient
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
- *             
+ * @throws 200 - OK
+ *         400 - BAD REQUEST (missing or wrong parameters)   
  * 
- * @param id - patient identifier
- * @param name 
- * @param surname
- * @param cf
- * @param res - response of request
+ * @param {String} id - patient identifier
+ * @param {String} name - patient's name
+ * @param {String} surname - patient's surname
+ * @param {String} cf - patient's CF
+ * 
  */
 router.post('/patients', function(req,res,next){
     var id = req.param('_id');
     var name = req.param('name');
     var surname = req.param('surname');
     var cf = req.param('cf');
-   
-   patientOperation.insertPatient(id, name, surname, cf, res);
+    patientOperation.insertPatient(id, name, surname, cf, res);
 });
 
-/** DELETE request to remove a patient by id
- *  and remove also the associations with doctors
+/** DELETE request to remove a patient and all his associations with doctors
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
+ * @throws 200 - OK
+ *          400 - BAD REQUEST (missing or wrong parameters)
  *             
+ * @param {String} id - patient identifier
  * 
- * @param id - patient identifier
- * @param res - response of request
  */
 router.delete('/patients', function(req, res, next){
     var id = req.param('_id');
-    
     patientOperation.removePatient(id, res);
 })
 
-/** GET request to find the doctor information by idPatient
+/** GET request to return doctors's informations
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST
+ * @throws 400 - BAD REQUEST
  * 
- * @param id - doctor id
- * @param res - response of request
+ * @returns a JSON with all doctor's informations
+ * 
+ * @param {String} id - doctor identifier
+ * 
  */
 router.get('/doctors', function(req, res, next){
     var id = req.param('_id');
-    
-   doctorOperation.findDoctor(id, res);
+    doctorOperation.findDoctor(id, res);
 });
   
-/** POST request to insert a new doctor in database
+/** POST request to insert a new doctor
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
- *             
+ *  @throws 200 - OK
+ *         400 - BAD REQUEST (missing or wrong parameters)   
  * 
- * @param id - doctor identifier
- * @param name 
- * @param surname
- * @param cf
- * @param res - response of request
+ * @param {String} id - doctor identifier
+ * @param {String} name - doctor's name
+ * @param {String} surname - doctor's surname
+ * @param {String} cf - doctor's CF
+ * 
  */
 router.post('/doctors', function(req,res,next){
     var id = req.param('_id');
     var name = req.param('name');
     var surname = req.param('surname');
     var cf = req.param('cf');
-
     doctorOperation.insertDoctor(id, name, surname, cf, res);
 });
  
-/** DELETE request to remove a doctor by id
- *  and remove also the associations with patients
+/** DELETE request to remove a doctor and all his associations with patients
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
+ * @throws 200 - OK
+ *         400 - BAD REQUEST (missing or wrong parameters)
  *             
+ * @param {String} id - doctor identifier
  * 
- * @param id - doctor identifier
- * @param res - response of request
  */
 router.delete('/doctors', function(req, res, next){
     var id = req.param('_id');
-
     doctorOperation.removeDoctor(idPatient, idDoctor, res);
 });
 
 
-/** POST request to insert a new medical association of doctor with patient
+/** POST request to insert a new medical association of doctor and patient
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
- *             
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing or wrong parameters)
  * 
- * @param idPatient - patient identifier
- * @param idDoctor - doctor identifier
- * @param res - response of request
+ * @param {String} idPatient - patient identifier
+ * @param {String} idDoctor - doctor identifier
+ * 
  */
 router.post('/relationship', function(req, res, next){
     var idPatient = req.param('idPatient');
@@ -132,57 +127,42 @@ router.post('/relationship', function(req, res, next){
     asssociationOperation.insertAssociation(idPatient, idDoctor, res);
 });
 
-/** GET request to find the doctor information by doctor identifier
+/** GET request to find the association between specific doctor and patient
+ *  or to find all doctor's or patient's associations
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST
+ * @throws 400 - BAD REQUEST
  * 
- * @param id - doctor id
- * @param res - response of request
- */
-router.get('/doctors', function(req, res, next){
-    var id = req.param('_id');
-    
-   doctorOperation.findDoctor(id, res);
-});
-
-/** GET request to find the association between a specific doctor and patient
- *  or to find the doctor's or patient's association related to them
- *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST
+ * @returns a JSON with the association or with all doctors/patients associated to the patient/doctor
  * 
- * @param id - doctor id
- * @param res - response of request
+ * @param {String} idPatient - patient identifier
+ * @param {String} idDoctor - doctor identifier
+ * 
  */
 router.get('/relationship', function(req, res, next){
     var idPatient = req.param('idPatient');
     var idDoctor = req.param('idDoctor');
-
     if(idPatient == undefined){
         asssociationOperation.getPatients(idDoctor, res);
-    }else if(idDoctor == undefined){
+    } else if(idDoctor == undefined){
         asssociationOperation.getDoctors(idPatient, res);
-    }else{
+    } else {
        asssociationOperation.getOneAssociation(idPatient, idDoctor, res);
     }
 });
 
-/** DELETE request to remove a particular association
+/** DELETE request to remove an association between specific doctor and patient
  *   
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing or wrong parameters)
- *             
+ * @throws 200 - OK
+ *         400 - BAD REQUEST *             
  * 
- * @param idPatient - patient identifier
- * @param idDoctor - doctor identifier
- * @param res - response of request
+ * @param {String} idPatient - patient identifier
+ * @param {String} idDoctor - doctor identifier
+ * 
  */
 router.delete('/relationship', function(req, res, next){
     var idPatient = req.param('idPatient');
     var idDoctor = req.param('idDoctor');
-    
-   asssociationOperation.removeAssociation(idPatient, idDoctor, res);
+    asssociationOperation.removeAssociation(idPatient, idDoctor, res);
 });
 
 module.exports = router;

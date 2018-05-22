@@ -1,34 +1,44 @@
+/** RESTful API H2db
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
 /** Take the mongoDB connection */
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 
-/** Add an advice in the DB 
+/** Adds a drug prescibed to a specific patient
  * 
- * @param message - advice to insert in json format
- * @param res - response of RESTful request
+ * @throws 200 - OK
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} message - drug to insert in JSON format
+ * @param {Response} res - response of RESTful request
  */
 function addDrug(idCode, message, res){
     var mess  = JSON.parse(message);
-
     var nameCollection= ""+idCode+".drugs";
-    
     db.collection(nameCollection).insert(mess, function(err, value){
         if(err){
             res.send(500);
+        } else {
+            res.send(200);
         }
-
-        res.send(200);
     });
 }
 
-/** Returns all advices of a specific patient
+/** Returns all drugs prescribed to a specific patient
  * 
- * @param idCode - patient identifier
- * @param res - response of RESTful request
+ * @throws 500 - Internal Server Error
+ *         
+ * @returns an array of all drugs related to the patient
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {Response} res - response of RESTful request
  */
 function getDrugs(idCode, res){
     var nameCollection= ""+idCode+".drugs";
-    
     db.collection(nameCollection).find({}).toArray(function(err, value){
         if(err){
             res.send(500);

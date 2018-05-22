@@ -1,43 +1,80 @@
+/** RESTful API H2db
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
+/** Model scheme of collections */
 var doctors = require('../models/doctorData');
 var patients = require('../models/patientData');
 
+var users = null;
+
+/** Sings up a new user in H2 application.
+ *  
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing parameters or wrong idCode)
+ *         401 - UNAUTHORIZED (role is not valid)
+ * 
+ * @param {String} role - user's role: "doctor" or "patient" label
+ * @param {String} user - a description of the user containing all his informations in JSON format 
+ * @param {Response} res - response of RESTful request
+ */
 function registation(role, user, res){
-    if(role == "doctor" || role == "patient"){
-        if(role == "doctor"){
-             var users = doctors;
-        }else{
-             var users = patients;
-        }
+    setCollection(role);
+    if(users == null){
+        res.send(401);
+        console.log("Not Authorized to register in this software.");  
+    } else {
         users.create(user, function(err, user){
             if(err){
                 console.log('user registation error - %s', err);
                 return res.send(400);
+            } else {
+                res.send(200);
             }
-            res.send(200);
-        });
-     }else{
-         res.send(401);
-         console.log("Not Authorized to register in this software.");  
-     }
+       });
+       users = null;
+    }
 }
 
+/** Singns in a user already registered in H2 application
+ * 
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing or wrong parameters)
+ *         401 - UNAUTHORIZED (role is not valid)
+ *
+ * @param {String} role - user's role: "doctor" or "patient" label
+ * @param {String} idCode - user identifier
+ * @param {String} password - user's password
+ * @param {Response} res - response of RESTful request
+ */
 function login(idCode, role, password, res){
-    if(role == "doctor" || role == "patient"){
-        if(role == "doctor"){
-             var users = doctors;
-        }else{
-             var users = patients;
-        }
+    setCollection(role);
+    if(users == null){
+        res.send(401);
+        console.log("Not Authorized to enter in this software.");  
+    } else {
         users.findOne({"idCode": idCode, "password": password},{"_id":0, "password":0, "phone":0, "mail":0, "cf":0}, function(err, user){
-             if(err){
+            if(err){
                 console.log('user login error - %s', err);
                 return res.send(400);
-             }
-             res.json(user)
-        });
-     }else{
-         res.send(401);
-         console.log("Not Authorized to enter in this software.");  
+            } else {
+                res.json(user);
+            }
+       });
+       users = null;
+    }
+}
+
+/** Private function to set the right user's collection
+ * 
+ * @param {String} role - user's role: patient or doctor
+ */
+function setCollection(role){
+    if(role == "doctor"){
+        users = doctors;
+    } else if(role == "patient"){
+        users = patients;
     }
 }
 

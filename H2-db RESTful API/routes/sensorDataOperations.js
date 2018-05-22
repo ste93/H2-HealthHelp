@@ -1,3 +1,8 @@
+/** RESTful API H2db
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
+ */
+
 /** Take the mongoDB connection */
 var mongoose = require('mongoose');
 var db = mongoose.connection;
@@ -6,44 +11,49 @@ var db = mongoose.connection;
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');
 
-/** Search the sensor types
+/** Returns all sensor types related to a specific patient
  * 
- * @param id - patient identifier
- * @param res - result of RESTful request 
+ * @throws 500 - Internal Server Error
+ * 
+ * @returns a JSON with a list of sensors related to a specific patient
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {Response} res - response of RESTful request
  */
-function getSensorTypes(id, res){   
-    
-    patients.findOne({"idCode": id},{"_id":0,"sensors":1}, function(err, sensor){
+function getSensorTypes(idCode, res){   
+    patients.findOne({"idCode": idCode},{"_id":0,"sensors":1}, function(err, sensor){
         if (err){
             res.send(500);
+        } else {
+            res.json(sensor);
         }
-        res.json(sensor);
     });
 }
 
-/** Insert the new sensor type and create a collection related to it
+/** Adds a new sensor types related to a specific patient
+ *  and create a related collection to save all sensor's values
  * 
- * @param id - patient identifier
- * @param type - sensor type inserted
- * @param res - result of RESTful request 
+ * @throws 200 - OK
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type to add
+ * @param {Response} res - response of RESTful request
  */
-function addSensorType(id, type, res){
-
+function addSensorType(idCode, type, res){
     patients.findOne({"sensors": type}, function(err, response){
         if(response == null) {
             console.log("sensor type created");
-            patients.update({"idCode": id},{ $push: { "sensors": [type] }},function(err, sensor){
+            patients.update({"idCode": idCode},{ $push: { "sensors": [type] }},function(err, sensor){
                 if(err){
                     res.send(500);
+                } else {
+                    var nameCollection= ""+idCode+"."+type;
+                    db.createCollection(nameCollection);                
+                    var schema = require('../models/sensorData');
+                    var collection =  mongoose.model(nameCollection, schema);                
+                    res.send(200);
                 }
-        
-                var nameCollection= ""+id+"."+type;
-                db.createCollection(nameCollection);
-                
-                var schema = require('../models/sensorData');
-                var collection =  mongoose.model(nameCollection, schema);
-                
-                res.send(200);
             });
         } else {
             console.log("already present");
@@ -53,34 +63,40 @@ function addSensorType(id, type, res){
 
 }
 
-/** Add the particular sensor type's value 
+/** Adds a new value of a particular sensor related to a patient
  * 
- * @param id - patient identifier
- * @param type - sensor type related to value
- * @param message - value to insert in json format
- * @param res - response of RESTful request
+ * @throws 200 - OK
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - value's sensor type
+ * @param {String} message - message containing the value and other informations correlated to it
+ * @param {Response} res - response of RESTful request
  */
-function addValue(id, type, message, res){
-    var nameCollection= ""+id+"."+type;
+function addValue(idCode, type, message, res){
+    var nameCollection= ""+idCode+"."+type;
     var mess  = JSON.parse(message);
     db.collection(nameCollection).insert(mess, function(err, value){
         if(err){
             res.send(500);
+        } else {
+            res.send(200);
         }
-
-        res.send(200);
     });
 }
 
-/** Delete all values of a sensor type
+/** Deletes all values of a particular sensor
  * 
- * @param {String} id 
- * @param {String} type 
- * @param {Response} res 
+ * @throws 200 - OK
+ *         404 - sensor type not found
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type of values to cancel
+ * @param {Response} res - response of RESTful request
  */
-function deleteAllValues(id, type, res){
-    var nameCollection= ""+id+"."+type;
-    
+function deleteAllValues(idCode, type, res){
+    var nameCollection= ""+idCode+"."+type;
     patients.findOne({"sensors": type}, function(err, response){
         if(response == null) {
             res.send(404);
@@ -88,23 +104,32 @@ function deleteAllValues(id, type, res){
             db.collection(nameCollection).remove({}, function(err, value){
                 if(err){
                     res.send(500);
+                } else {
+                    res.send(200);
                 }
-        
-                res.send(200);
             });
         }
     });
 }
 
-function getAllValuesOfSpecificSensor(id, type, res){
-    var nameCollection= ""+id+"."+type;
-    
+/** Returns all values of a particular sensor type related to a patient
+ * 
+ * @throws 200 - OK
+ *         
+ * @returns an array of all sensor's values related to the patient
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type of values to return
+ * @param {Response} res - response of RESTful request
+ */
+function getAllValuesOfSpecificSensor(idCode, type, res){
+    var nameCollection= ""+idCode+"."+type;
     db.collection(nameCollection).find({}).toArray(function(err, value){
         if(err){
             res.send(500);
+        } else {
+            res.json(value);
         }
-        
-        res.json(value);
     });
 }
 

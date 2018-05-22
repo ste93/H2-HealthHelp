@@ -2,7 +2,8 @@
  * @author Giulia Lucchi
  * @author Margherita Pecorelli
  */
-//var session = require('express-session');
+
+/** setting express */
 var express = require('express');
 var router = express.Router();
 
@@ -16,23 +17,22 @@ var drugsOperations = require('./drugsOperations');
 require('../database');
 
 /** GET home page. */
-router.get('/', function(req, res, next) {
-});
+router.get('/', function(req, res, next) {});
 
-/** User registration in H2 application
+/** POST request to sign up a new user in H2 application.
  *  
- *  @response:  200 - OK
- *              400 - BAD REQUEST(missing parameters or wrong idCode)
- *              401 - UNAUTHORIZED (role is not valid)
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing parameters or wrong idCode)
+ *         401 - UNAUTHORIZED (role is not valid)
  * 
- * @param role - "doctor" or "patient" label
- * @param idCode - personal identifier of italian national service 
- * @param password 
- * @param name
- * @param surname
- * @param cf
- * @param phone - array of user phones
- * @param mail 
+ * @param {String} role - user's role: "doctor" or "patient" label
+ * @param {String} idCode - user identifier
+ * @param {String} password - user's password
+ * @param {String} name - user's name
+ * @param {String} surname - user's surname
+ * @param {String} cf - user's CF
+ * @param {Array(String)} phone - array of user's phone numbers
+ * @param {String} mail - user's mail
  * 
  */
 router.post('/registration', function(req, res, next){
@@ -44,9 +44,7 @@ router.post('/registration', function(req, res, next){
     var cf = req.param('cf');
     var phone = req.param('phone')
     var mail = req.param('mail')
-
     var phoneArray = phone.split(" ");
-
     var user = {
         "idCode": idCode,
         "password": password,
@@ -56,159 +54,153 @@ router.post('/registration', function(req, res, next){
         "phone": phoneArray,
         "mail": mail
     };
-    
     userAuthentication.registation(role, user, res);
     
 });
 
+/** GET request to sign in a user already registered in H2 application
+ * 
+ * @throws 200 - OK
+ *         400 - BAD REQUEST(missing or wrong parameters)
+ *         401 - UNAUTHORIZED (role is not valid)
+ *
+ * @param {String} role - user's role: "doctor" or "patient" label
+ * @param {String} idCode - user identifier
+ * @param {String} password - user's password
+ * 
+ */
 router.get('/login', function(req, res, next){
     var idCode = req.param('idCode');
     var role = req.param('role');
     var password = req.param('password');
-    
     userAuthentication.login(idCode, role, password, res);
 });
 
-/** Get all sensor types related to a specific patient
+/** GET request to return all sensor types related to a specific patient
  * 
- * @response:  200 - OK
- *             500 - Internal Server Error
+ * @throws 500 - Internal Server Error
  * 
+ * @returns a JSON with a list of sensors related to a specific patient
  * 
- * @param idCode - patient identifier 
+ * @param {String} idCode - patient identifier 
  * 
  */
 router.get('/sensors', function(req,res, next){
     var idCode = req.param('idCode');
-
     sensorDataOperation.getSensorTypes(idCode,res);
 });
 
-/** Modify array of patient' sensor types 
- *  and create a related collection for values.
+/** PUT request to add a new sensor types related to a specific patient
+ *  and create a related collection to save all sensor's values
  * 
- * @response:  200 - OK
- *             500 - Internal Server Error
+ * @throws 200 - OK
+ *         500 - Internal Server Error
  * 
- * @param idCode - patient identifier
- * @param type - sensor type to add
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type to add
  */
 router.put('/sensors', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-
     sensorDataOperation.addSensorType(idCode, type, res);
 });   
 
-/** ADD request to add a value of a particular sensor
- * @response:  200 - OK
- *             500 - Internal Server Error
+/** POST request to add a new value of a particular sensor related to a patient
  * 
- * @param idCode - patient identifier
- * @param type - sensor type to add
- * @param message - message containing the value and other informations correlated
+ * @throws 200 - OK
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - value's sensor type
+ * @param {String} message - message containing the value and other informations correlated to it
  */
 router.post('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
     var message = req.param('message');
-
     sensorDataOperation.addValue(idCode, type, message, res);
 });   
 
 /** DELETE request to cancel all values of a particular sensor
- * @response:  200 - OK
- *             500 - Internal Server Error
  * 
- * @param idCode - patient identifier
- * @param type - sensor type to add
+ * @throws 200 - OK
+ *         404 - sensor type not found
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type of values to cancel
  */
 router.delete('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-
     sensorDataOperation.deleteAllValues(idCode, type, res);
 });
 
-/** GET request to return all values of a particular sensor type
- * @response:  200 - OK
- *             500 - Internal Server Error
+/** GET request to return all values of a particular sensor type related to a patient
  * 
- * @param idCode - patient identifier
- * @param type - sensor type to add
+ * @throws 200 - OK
+ *         
+ * @returns an array of all sensor's values related to the patient
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type of values to return
  */
 router.get('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-
     sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
 });
 
-/** GET request to return all values of a particular sensor type
- * @response:  200 - OK
- *             500 - Internal Server Error
+/** POST request to add an advice related to a particular patient
  * 
- * @param idCode - patient identifier
- * @param type - sensor type to add
- */
-router.get('/sensors/values', function(req, res, next){
-    var idCode = req.param('idCode');
-    var type = req.param('type');
-
-    sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
-});
-
-/** POST request to post an advice in the DB
- * @response:  200 - OK
- *             500 - Internal Server Error
+ * @throws 200 - OK
+ *         500 - Internal Server Error
  * 
- * @param message - message containing the advice and other informations correlated
+ * @param {String} message - message containing the advice and other informations correlated to it
  */
 router.post('/advices', function(req, res, next){
     var message = req.param('message');
-
     adviceOperations.addAdvice(message, res);
 });
 
 /** GET request to return all advices of a specific patient
- * @response:  200 - OK
- *             500 - Internal Server Error
  * 
- * @param idCode - patient identifier
+ * @throws 500 - Internal Server Error
+ *         
+ * @returns a JSON with a list of all advices related to the patient
+ * 
+ * @param {String} idCode - patient identifier
  */
 router.get('/advices', function(req, res, next){
     var idCode = req.param('idCode');
-
     adviceOperations.getAdvices(idCode, res);
 });
 
-
-
-/** POST request to post a drug prescibed for a specific patient
- * @response:  200 - OK
- *             500 - Internal Server Error
+/** POST request to add a drug prescibed to a specific patient
  * 
- * @param idCode - patient identifier
- * @param message - message containing the advice and other informations correlated
+ * @throws 200 - OK
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} message - message containing the drug and other informations correlated to it
  */
 router.post('/drugs', function(req, res, next){
     var idCode = req.param('idCode');
     var message = req.param('message');
-
     drugsOperations.addDrug(idCode, message, res);
 });
 
 /** GET request to return all drugs prescribed to a specific patient
- * @response:  200 - OK
- *             500 - Internal Server Error
  * 
- * @param idCode - patient identifier
+ * @throws 500 - Internal Server Error
+ *         
+ * @returns an array of all drugs related to the patient
+ * 
+ * @param {String} idCode - patient identifier
  */
 router.get('/drugs', function(req, res, next){
     var idCode = req.param('idCode');
-
     drugsOperations.getDrugs(idCode, res);
 });
-
 
 module.exports = router;
