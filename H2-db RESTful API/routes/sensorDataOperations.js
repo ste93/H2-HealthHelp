@@ -123,7 +123,7 @@ function deleteAllValues(idCode, type, res){
  */
 function getAllValuesOfSpecificSensor(idCode, type, res){
     var collection = _getCollection(idCode,type);
-    collection.find({}).toArray(function(err, value){
+    collection.find({},{"_id":0, "patientId":0},function(err, value){
         if(err){
             res.send(500);
         } else {

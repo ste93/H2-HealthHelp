@@ -148,6 +148,7 @@ router.delete('/sensors/values', function(req, res, next){
 router.get('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
+    
     sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
 });
 
