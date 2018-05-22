@@ -1,5 +1,7 @@
 package unibo.pc.h2.h2_androidmonitor;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -93,7 +95,10 @@ public class TCPClient {
 
         while (run) {
             if (!dataQueue.isEmpty()) {
-                currentData = "sensorData(" + sensorID + "," + dataQueue.remove() + "," + Calendar.getInstance().getTimeInMillis() + ")";
+                if(sensorID != null)
+                    currentData = "sensorData(" + sensorID + "," + dataQueue.remove() + ")";
+                else
+                    currentData = "sensorData( null ," + dataQueue.remove() + ")";
                 Log.e("TCP Client", "C: Sending data to server ! ");
                 sendMessage(currentData);
             }

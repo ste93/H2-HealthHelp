@@ -3,9 +3,11 @@ package unibo.pc.h2.h2_androidmonitor;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +22,8 @@ import com.samsung.android.sdk.sensorextension.SsensorEventListener;
 import com.samsung.android.sdk.sensorextension.SsensorExtension;
 import com.samsung.android.sdk.sensorextension.SsensorManager;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,8 +39,9 @@ public class MainActivity extends Activity {
     public static final String TAG = "H2-HeartBeatMonitor";
 
     //todo: il sensor id dovrà essere gestito in modo univoco.
-    private static final String sensorID = "AHB-42";
+    //private static final String sensorID = "AHB-42";
 
+    private String sensorID = null;
     SsensorManager SSensorManager = null;
     SsensorExtension SsensorExtension = null;
     Ssensor IRSensor = null;
@@ -170,6 +175,8 @@ public class MainActivity extends Activity {
                     try {
                         if (connectionConfButton.isSelected()) {
 
+                            sensorID = getMacAddress();
+
                             tcpTask = new ConnectionTask(sensorID);
                             tcpTask.execute();
                         }
@@ -272,6 +279,41 @@ public class MainActivity extends Activity {
         }
     }
 
+    public static String getMacAddress() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
+    }
+
+    /*public String getMacAddress(Context context) {
+        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        String macAddress = wimanager.getConnectionInfo().getMacAddress();
+        if (macAddress == null) {
+            macAddress = "Device don't have mac address or wi-fi is disabled";
+        }
+        return macAddress;
+    }*(
+
     /**
      * Specify the behaviour of the listener of the value of Red Light sensor ( what to do with read data )
      */
@@ -284,10 +326,10 @@ public class MainActivity extends Activity {
 
         @Override
         public void OnSensorChanged(SsensorEvent event) {
-            complete = DataManager.getInstance().addRedData(event.values[0]);
-            if (complete){
+            /* complete = */DataManager.getInstance().addRedData(event.values[0]);
+            /*if (complete){
                 averageBeat();
-            }
+            }*/
         }
     }
 }
