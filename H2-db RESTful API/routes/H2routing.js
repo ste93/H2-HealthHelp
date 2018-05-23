@@ -133,7 +133,15 @@ router.post('/sensors/values', function(req, res, next){
 router.delete('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-    sensorDataOperation.deleteAllValues(idCode, type, res);
+    var start = req.param('start');
+    var end = req.param('end');
+    
+    if(start == undefined || end == undefined){
+        sensorDataOperation.deleteAllValues(idCode, type, res);
+    }else{
+        sensorDataOperation.deleteAllValuesOnRange(idCode, type, start, end, res);
+    }
+    
 });
 
 /** GET request to return all values of a particular sensor type related to a patient
@@ -148,8 +156,16 @@ router.delete('/sensors/values', function(req, res, next){
 router.get('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
+    var start = req.param('start');
+    var end = req.param('end');
     
-    sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
+    if(start == undefined || end == undefined){
+        sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
+    }else{
+        sensorDataOperation.getAllValuesOnRange(idCode, type, start, end, res);
+    }
+    
+   
 });
 
 /** POST request to add an advice related to a particular patient
