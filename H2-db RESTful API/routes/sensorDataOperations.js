@@ -3,10 +3,6 @@
  * @author Margherita Pecorelli
  */
 
-/** Take the mongoDB connection */
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-
 /** Model scheme of collections */
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');

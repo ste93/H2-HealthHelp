@@ -118,6 +118,7 @@ router.post('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
     var message = req.param('message');
+   
     sensorDataOperation.addValue(idCode, type, message, res);
 });   
 

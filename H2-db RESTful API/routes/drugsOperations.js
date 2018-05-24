@@ -3,10 +3,6 @@
  * @author Margherita Pecorelli
  */
 
-/** Take the mongoDB connection */
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-
 /** Adds a drug prescibed to a specific patient
  * 
  * @throws 200 - OK
@@ -55,9 +51,8 @@ function getDrugs(idCode, res){
  * @private function used to take a right collection
  * 
  * @param {String} idCode - patient identifier
- * @param {String} type - sensor type 
  */
-function _getCollection(idCode,type){
+function _getCollection(idCode){
     var nameCollection= idCode+".drugs";
     var Schema = require('../models/prescribedDrug');
     return mongoose.model( idCode, Schema, nameCollection );   
