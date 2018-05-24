@@ -9,25 +9,39 @@ var associations = require('../models/patientDoctor');
 /** Inserts a new medical association of doctor and patient
  *  
  * @throws 200 - OK
- *         400 - BAD REQUEST(missing or wrong parameters)
+ *         400 - BAD REQUEST (missing or wrong parameters)
+ *         404 - NOT FOUND (patient or doctor not found)
  * 
- * @param  {String} idPatient - patient identifier
- * @param  {String} idDoctor - doctor identifier
+ * @param {String} idPatient - patient identifier
+ * @param {String} idDoctor - doctor identifier
  * @param {Response} res - response of RESTful request
  * 
  */
 function insertAssociation(idPatient, idDoctor, res){
     var association = { 
-        "idPatient" : idPatient,
+        "idPatient": idPatient,
         "idDoctor": idDoctor
     };
-    associations.create(association, function(err, doc) {
-        if (err){
-            res.send(400);
+    patients.findOne({"_id": idPatient },function(err, pat) {
+        if(pat != null) {
+            doctors.findOne({"_id": idDoctor },function(err, doc) {
+                if(doc != null) {
+                    associations.create(association, function(err, doc) {
+                        if (err){
+                            res.send(400);
+                        } else {
+                            res.send(200);
+                        }
+                    });
+                } else {
+                    res.send(404);
+                }
+            });
         } else {
-            res.send(200);
+            res.send(404);
         }
     });
+    
 }
 
 /** Finds all patients associated to the doctor
