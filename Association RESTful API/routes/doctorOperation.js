@@ -11,6 +11,7 @@ var associations = require('../models/patientDoctor');
 /** Returns doctor's informations
  *  
  * @throws 400 - BAD REQUEST
+ *         404 - NOT FOUND
  * 
  * @returns a JSON with all doctor's informations
  * 
@@ -20,8 +21,10 @@ var associations = require('../models/patientDoctor');
  */
 function findDoctor(id, res){
     doctors.findOne({"_id": id },function(err, doc) {
-        if (err) {
-            console.error(400);
+        if(doc == null) {
+            res.send(404);
+        } else if (err) {
+            res.send(400);
         } else {
             res.json(doc); 
         }

@@ -11,6 +11,7 @@ var associations = require('../models/patientDoctor');
 /** Returns patient's informations
  * 
  * @throws 400 - BAD REQUEST
+ *         404 - NOT FOUND
  * 
  * @returns a JSON with all patient's informations
  * 
