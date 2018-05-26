@@ -44,7 +44,9 @@ router.post('/registration', function(req, res, next){
     var cf = req.param('cf');
     var phone = req.param('phone')
     var mail = req.param('mail')
+    
     var phoneArray = phone.split(" ");
+    
     var user = {
         "idCode": idCode,
         "password": password,

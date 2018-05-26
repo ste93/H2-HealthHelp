@@ -22,7 +22,7 @@ var users = null;
 function registation(role, user, res){
     setCollection(role);
     if(users == null){
-        res.send(401);
+        res.send(404);
         console.log("Not Authorized to register in this software.");  
     } else {
         users.create(user, function(err, user){

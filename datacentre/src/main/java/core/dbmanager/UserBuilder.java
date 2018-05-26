@@ -17,7 +17,7 @@ public class UserBuilder {
     public String cf;
     public String phones;
     public String mail;
-    public UserRole role;
+    public String role;
 
     /** Creates a user builder.
      *

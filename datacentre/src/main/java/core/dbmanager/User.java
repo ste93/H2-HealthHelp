@@ -15,7 +15,7 @@ public class User {
     public String cf;
     public String phones;
     public String mail;
-    public UserRole role;
+    public String role;
 
     /** User's constructor
      *
@@ -28,7 +28,7 @@ public class User {
      * @param mail patient or doctor's mail
      * @param role user's role, rapresented in Enum UserRole.
      */
-    public User(final String idCode, final String password, final String name, final String surname, final String cf, final String phones, final String mail, final UserRole role){
+    public User(final String idCode, final String password, final String name, final String surname, final String cf, final String phones, final String mail, final String role){
         this.idCode = idCode;
         this.password = password;
         this.name = name;

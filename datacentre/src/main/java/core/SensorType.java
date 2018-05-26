@@ -1,7 +1,8 @@
 package core;
 
-/**
- * Created by lucch on 26/05/2018.
+/**Includes
+ *
+ * @author Giulia Lucchi
  */
 public enum SensorType {
     TEMPERATURE("temperature"),

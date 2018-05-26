@@ -3,6 +3,7 @@
  * @author Margherita Pecorelli
  */
 
+
 /** Model scheme of collections */
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');
@@ -44,8 +45,8 @@ function addSensorType(idCode, type, res){
                 if(err){
                     res.send(500);
                 } 
-                    var nameCollection= ""+idCode+"."+type;
-                    db.createCollection(nameCollection);              
+                    //var nameCollection= ""+idCode+"."+type;
+                    //db.createCollection(nameCollection);              
                     res.send(200);
             });
         } else {
@@ -194,6 +195,7 @@ function getAllValuesOnRange(idCode, type, start, end, res){
  * @param {String} type - sensor type 
  */
 function _getCollection(idCode,type){
+    var mongoose = require('mongoose');
     var nameCollection= ""+idCode+"."+type;
     var Schema = require('../models/sensorData');
     return mongoose.model( idCode, Schema, nameCollection );   

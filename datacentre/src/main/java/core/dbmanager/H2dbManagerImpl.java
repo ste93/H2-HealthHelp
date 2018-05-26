@@ -2,10 +2,15 @@ package core.dbmanager;
 
 import core.SensorType;
 import core.UserRole;
+import org.glassfish.jersey.client.ClientResponse;
 
 import javax.json.Json;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
@@ -17,6 +22,7 @@ import java.util.Optional;
 public class H2dbManagerImpl implements H2dbManager {
 
     private final Client client = ClientBuilder.newClient();
+    private final WebTarget basicWebTarget = client.target(URIrequest.H2_ROUTE.getPath());
 
     /**
      * Manages user registration.
@@ -27,7 +33,19 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public boolean registration(final User user) {
-        return false;
+        Response response = basicWebTarget.path(URIrequest.H2_REGISTRATION.getPath())
+                                            .queryParam("idCode",user.idCode)
+                                            .queryParam("name", user.name)
+                                            .queryParam("surname", user.surname)
+                                            .queryParam("password", user.password)
+                                            .queryParam("cf", user.cf)
+                                            .queryParam("phone", user.phones)
+                                            .queryParam("mail", user.mail)
+                                            .queryParam("role", user.role)
+                                            .request()
+                                            .post(Entity.json(""));
+
+       return response.getStatus()==200 ?  true :  false;
     }
 
     @Override

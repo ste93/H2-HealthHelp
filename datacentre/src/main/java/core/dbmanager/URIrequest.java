@@ -5,11 +5,11 @@ package core.dbmanager;
  * @author Giulia Lucchi
  */
 public enum URIrequest {
-    PROTOCOL("http://"),
+    BASIC_ROUTE("http://localhost:3000/"),
 
-    H2_ROUTE("database/application/"),
+    H2_ROUTE(BASIC_ROUTE.getPath()+"database/application"),
 
-    H2_REGISTRATION("registration");
+    H2_REGISTRATION("/registration");
 
 
     private String path;

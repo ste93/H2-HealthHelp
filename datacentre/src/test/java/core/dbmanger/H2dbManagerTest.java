@@ -28,8 +28,8 @@ public class H2dbManagerTest {
                     userBuilder.cf = "LCCGLI45C64S579I";
                     userBuilder.password = "ciao";
                     userBuilder.mail="lucchigiulia@gmail.com";
-                    userBuilder.phones="[\"05476143\", \"3246543123\"]";
-                    userBuilder.role = UserRole.PATIENT;
+                    userBuilder.phones="05476143 3246543123";
+                    userBuilder.role = UserRole.PATIENT.getRole();
                 })
                 .createUser();
 

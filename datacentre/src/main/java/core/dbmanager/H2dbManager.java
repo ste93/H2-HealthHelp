@@ -8,12 +8,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-/**
- * Created by lucch on 26/05/2018.
+/** Manages the client access to RESTful API to access the H2 database.
+ *
+ * @author Giulia Lucchi
  */
 public interface H2dbManager {
 
-    boolean registration(final String idCode, final String password, final String name, final String surname, final String cf, final ArrayList<String> phones, final String mail, final UserRole role);//builder
+    /** Manages user registration.
+     *
+     * @param user user object that encapsulates the parameters required to save the user.
+     *
+     * @return boolean true if the request was successful
+     *                 false otherwise
+     */
+    boolean registration(final User user);
 
     boolean login(final String idCode, final String password, final UserRole role);
 
