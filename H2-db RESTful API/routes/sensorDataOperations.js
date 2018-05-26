@@ -3,10 +3,6 @@
  * @author Margherita Pecorelli
  */
 
-/** Take the mongoDB connection */
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-
 /** Model scheme of collections */
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');
@@ -47,13 +43,10 @@ function addSensorType(idCode, type, res){
             patients.update({"idCode": idCode},{ $push: { "sensors": [type] }},function(err, sensor){
                 if(err){
                     res.send(500);
-                } else {
+                } 
                     var nameCollection= ""+idCode+"."+type;
-                    db.createCollection(nameCollection);                
-                    var schema = require('../models/sensorData');
-                    var collection =  mongoose.model(nameCollection, schema);                
+                    db.createCollection(nameCollection);              
                     res.send(200);
-                }
             });
         } else {
             console.log("already present");
@@ -74,9 +67,10 @@ function addSensorType(idCode, type, res){
  * @param {Response} res - response of RESTful request
  */
 function addValue(idCode, type, message, res){
-    var nameCollection= ""+idCode+"."+type;
+    var collection = _getCollection(idCode,type);
+
     var mess  = JSON.parse(message);
-    db.collection(nameCollection).insert(mess, function(err, value){
+    collection.create(mess, function(err, value){
         if(err){
             res.send(500);
         } else {
@@ -96,12 +90,46 @@ function addValue(idCode, type, message, res){
  * @param {Response} res - response of RESTful request
  */
 function deleteAllValues(idCode, type, res){
-    var nameCollection= ""+idCode+"."+type;
+    var collection = _getCollection(idCode,type);
+
     patients.findOne({"sensors": type}, function(err, response){
         if(response == null) {
             res.send(404);
         } else {
-            db.collection(nameCollection).remove({}, function(err, value){
+            collection.remove({}, function(err, value){
+                if(err){
+                    res.send(500);
+                } else {
+                    res.send(200);
+                }
+            });
+        }
+    });
+}
+
+/** Deletes the values of a one sensor in a particular date's range
+ * 
+ * @throws 200 - OK
+ *         404 - sensor type not found
+ *         500 - Internal Server Error
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type of values to cancel
+ * @param {String} start - start date to get the values
+ * @param {String} end - start date to get the values
+ * @param {Response} res - response of RESTful request
+ */
+function deleteAllValuesOnRange(idCode, type, start, end, res){
+    var collection = _getCollection(idCode,type);
+
+    var startdate = new Date(start);
+    var enddate = new Date(end);
+    patients.findOne({"sensors": type}, function(err, response){
+        if(response == null) {
+            res.send(404);
+        } else {
+            
+            collection.remove({ "timestamp": { $gte: startdate, $lt: enddate}}, function(err, value){
                 if(err){
                     res.send(500);
                 } else {
@@ -123,8 +151,9 @@ function deleteAllValues(idCode, type, res){
  * @param {Response} res - response of RESTful request
  */
 function getAllValuesOfSpecificSensor(idCode, type, res){
-    var nameCollection= ""+idCode+"."+type;
-    db.collection(nameCollection).find({}).toArray(function(err, value){
+    var collection = _getCollection(idCode,type);
+    
+    collection.find({},{"_id":0, "patientId":0},function(err, value){
         if(err){
             res.send(500);
         } else {
@@ -133,4 +162,42 @@ function getAllValuesOfSpecificSensor(idCode, type, res){
     });
 }
 
-module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, getAllValuesOfSpecificSensor}
+/** 
+* @throws 200 - OK
+*         
+* @returns an array of all sensor's values related to the patient in a particular date's range
+* 
+* @param {String} idCode - patient identifier
+* @param {String} type - sensor type of values to return
+* @param {String} start - start date to get the values
+* @param {String} end - start date to get the values
+* @param {Response} res - response of RESTful request
+*/
+function getAllValuesOnRange(idCode, type, start, end, res){
+   var collection = _getCollection(idCode,type);
+   
+   var startdate = new Date(start);
+   var enddate = new Date(end);
+   collection.find({ "timestamp": { $gte: startdate, $lt: enddate}},{"_id":0, "patientId":0},function(err, value){
+       if(err){
+           res.send(500);
+       } else {
+           res.json(value);
+       }
+   });
+}
+
+/** create o take a dynamic collection to save, delete o get the information of sensor data
+ * @private function used to take a right collection
+ * 
+ * @param {String} idCode - patient identifier
+ * @param {String} type - sensor type 
+ */
+function _getCollection(idCode,type){
+    var nameCollection= ""+idCode+"."+type;
+    var Schema = require('../models/sensorData');
+    return mongoose.model( idCode, Schema, nameCollection );   
+    
+}
+
+module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}

@@ -3,10 +3,6 @@
  * @author Margherita Pecorelli
  */
 
-/** Take the mongoDB connection */
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-
 /** Adds a drug prescibed to a specific patient
  * 
  * @throws 200 - OK
@@ -17,10 +13,12 @@ var db = mongoose.connection;
  * @param {Response} res - response of RESTful request
  */
 function addDrug(idCode, message, res){
+    var collection = _getCollection(idCode);
+    
     var mess  = JSON.parse(message);
-    var nameCollection= ""+idCode+".drugs";
-    db.collection(nameCollection).insert(mess, function(err, value){
+   collection.create(mess, function(err, value){
         if(err){
+            console.log(err);
             res.send(500);
         } else {
             res.send(200);
@@ -38,14 +36,27 @@ function addDrug(idCode, message, res){
  * @param {Response} res - response of RESTful request
  */
 function getDrugs(idCode, res){
-    var nameCollection= ""+idCode+".drugs";
-    db.collection(nameCollection).find({}).toArray(function(err, value){
+    var collection = _getCollection(idCode);
+
+    collection.find({},{"_id":0}, function(err, value){
         if(err){
             res.send(500);
         } else {
             res.json(value);
         }
     });
+}
+
+/**
+ * @private function used to take a right collection
+ * 
+ * @param {String} idCode - patient identifier
+ */
+function _getCollection(idCode){
+    var nameCollection= idCode+".drugs";
+    var Schema = require('../models/prescribedDrug');
+    return mongoose.model( idCode, Schema, nameCollection );   
+    
 }
 
 module.exports = {addDrug, getDrugs}
