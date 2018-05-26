@@ -20,7 +20,9 @@ var associations = require('../models/patientDoctor');
  */
 function findPatient(id, res){
     patients.findOne({"_id": id },function(err, pat) {
-        if (err) {
+        if(pat == null) {
+            res.send(404);
+        } else if (err) {
             res.send(400);
         } else {
             res.json(pat); 

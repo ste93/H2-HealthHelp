@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // definisco i namespace base per due tipologie di rotte: routes e users sono 'router' di rotte
 app.use('/', indexRouter);
-app.use('/database/association', associationRouter);
+app.use('/database/associations', associationRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
