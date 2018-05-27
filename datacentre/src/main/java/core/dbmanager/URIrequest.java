@@ -1,6 +1,6 @@
 package core.dbmanager;
 
-/**Includes all path to do a request on dbs' RESTful API.
+/**Includes basic path to do a request on dbs' RESTful API.
  *
  * @author Giulia Lucchi
  */
@@ -8,9 +8,7 @@ public enum URIrequest {
     BASIC_ROUTE("http://localhost:3000/"),
 
     H2_ROUTE(BASIC_ROUTE.getPath()+"database/application"),
-
-    H2_REGISTRATION("/registration");
-
+    APPLICATION_ROUTE(BASIC_ROUTE.getPath()+"database/application");
 
     private String path;
 

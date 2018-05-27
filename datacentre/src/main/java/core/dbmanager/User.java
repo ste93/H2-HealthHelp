@@ -19,13 +19,13 @@ public class User {
 
     /** User's constructor
      *
-     * @param idCode patient or doctor's identifier
-     * @param password patient or doctor's password
-     * @param name patient or doctor's name
-     * @param surname patient or doctor's surnamle
-     * @param cf patient of doctor's cf
-     * @param phones patient or doctor's array of phone numbers
-     * @param mail patient or doctor's mail
+     * @param idCode patient or doctor identifier
+     * @param password patient or doctor password
+     * @param name patient or doctor name
+     * @param surname patient or doctor surnamle
+     * @param cf patient of doctor cf
+     * @param phones patient or doctor array of phone numbers
+     * @param mail patient or doctor mail
      * @param role user's role, rapresented in Enum UserRole.
      */
     public User(final String idCode, final String password, final String name, final String surname, final String cf, final String phones, final String mail, final String role){
