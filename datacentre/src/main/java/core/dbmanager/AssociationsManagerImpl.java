@@ -1,17 +1,20 @@
 package core.dbmanager;
 
+import core.UserRole;
 import org.json.*;
 
 import javax.ws.rs.client.*;
-import javax.ws.rs.core.MediaType;
+
+import static core.UserRole.PATIENT;
 
 public class AssociationsManagerImpl implements AssociationsManager {
 
     private static Client CLIENT =ClientBuilder.newClient();
-    private static WebTarget TARGET = CLIENT.target("http://localhost:3000/database/associations");
+    private static WebTarget TARGET = CLIENT.target(URIrequest.ASSOCIATIONS_ROUTE.getPath());
 
     private static WebTarget PATIENT_TARGET = TARGET.path("/patients");
     private static WebTarget DOCTOR_TARGET = TARGET.path("/doctors");
+    private static WebTarget RELATIONSHIP_TARGET = TARGET.path("/relationship");
 
     /**
      * Returns the data related to the specific patient.
@@ -52,16 +55,18 @@ public class AssociationsManagerImpl implements AssociationsManager {
      * @throws Exception
      */
     private JSONObject getUserData(final String id, final WebTarget target) throws Exception {
-        JSONObject json = new JSONObject();
+        JSONObject json;
 
-        Invocation.Builder builder = target.queryParam("_id", id).request(MediaType.APPLICATION_JSON);
+        Invocation.Builder builder = target
+                .queryParam("_id", id)
+                .request();
+
         int response = builder.get().getStatus();
 
         if (response == 200) {
             String userData = builder.get(String.class);
             json = new JSONObject(userData);
         } else {
-            json.put("error ", response);
             throw new Exception("" + response);
         }
 
@@ -110,14 +115,17 @@ public class AssociationsManagerImpl implements AssociationsManager {
      * @return true if the operation is successful, false otherwise
      */
     private boolean createUser(final String id, final String name, final String surname, final String cf, final WebTarget target) {
-        Invocation.Builder builder = target
+        int response = target
                 .queryParam("_id", id)
                 .queryParam("name", name)
                 .queryParam("surname", surname)
                 .queryParam("cf", cf)
-                .request(MediaType.APPLICATION_JSON);
+                .request()
+                .post(Entity.json(""))
+                .getStatus();
 
-        int response = builder.post(Entity.json("")).getStatus();
+        //int response = builder.post(Entity.json("")).getStatus();
+        //System.out.println(response);
         return response == 200;
     }
 
@@ -131,11 +139,11 @@ public class AssociationsManagerImpl implements AssociationsManager {
      */
     @Override
     public boolean deletePatient(final String id) {
-        return false;
+        return deleteUser(id, PATIENT_TARGET);
     }
 
     /**
-     * Deletes a specific patient. It returns true if the operation is successful, false otherwise.
+     * Deletes a specific doctor. It returns true if the operation is successful, false otherwise.
      *
      * @param id - doctor's univocal ID
      *
@@ -143,7 +151,26 @@ public class AssociationsManagerImpl implements AssociationsManager {
      */
     @Override
     public boolean deleteDoctor(final String id) {
-        return false;
+        return deleteUser(id, DOCTOR_TARGET);
+    }
+
+    /**
+     * Deletes a specific user. It returns true if the operation is successful, false otherwise.
+     *
+     * @param id - doctor's univocal ID
+     *
+     * @return true if the operation is successful, false otherwise.
+     */
+    private boolean deleteUser(final String id, final WebTarget target) {
+        int response = target
+                .queryParam("_id", id)
+                .request()
+                .delete()
+                .getStatus();
+
+        //int response = builder.post(Entity.json("")).getStatus();
+        //System.out.println(response);
+        return response == 200;
     }
 
     /**
@@ -156,7 +183,16 @@ public class AssociationsManagerImpl implements AssociationsManager {
      */
     @Override
     public boolean createNewAssociation(final String idPatient, final String idDoctor) {
-        return false;
+        int response = RELATIONSHIP_TARGET
+                .queryParam("idPatient", idPatient)
+                .queryParam("idDoctor", idDoctor)
+                .request()
+                .post(Entity.json(""))
+                .getStatus();
+
+        //int response = builder.post(Entity.json("")).getStatus();
+        //System.out.println(response);
+        return response == 200;
     }
 
     /**
@@ -168,8 +204,24 @@ public class AssociationsManagerImpl implements AssociationsManager {
      * @return the association between patient and doctor.
      */
     @Override
-    public JSONObject getAssociation(final String idPatient, final String idDoctor) {
-        return null;
+    public JSONObject getAssociation(final String idPatient, final String idDoctor) throws Exception {
+        JSONObject json;
+
+        Invocation.Builder builder = RELATIONSHIP_TARGET
+                .queryParam("idPatient", idPatient)
+                .queryParam("idDoctor", idDoctor)
+                .request();
+
+        int response = builder.get().getStatus();
+
+        if (response == 200) {
+            String userData = builder.get(String.class);
+            json = new JSONObject(userData);
+        } else {
+            throw new Exception("" + response);
+        }
+
+        return json;
     }
 
     /**
@@ -180,8 +232,8 @@ public class AssociationsManagerImpl implements AssociationsManager {
      * @return all patient's associations.
      */
     @Override
-    public JSONArray getPatientAssociations(final String idPatient) {
-        return null;
+    public JSONArray getPatientAssociations(final String idPatient) throws Exception {
+        return getUserAssociations(idPatient, UserRole.PATIENT);
     }
 
     /**
@@ -192,8 +244,35 @@ public class AssociationsManagerImpl implements AssociationsManager {
      * @return all doctor's associations.
      */
     @Override
-    public JSONArray getDoctorAssociations(final String idDoctor) {
-        return null;
+    public JSONArray getDoctorAssociations(final String idDoctor) throws Exception {
+        return getUserAssociations(idDoctor, UserRole.DOCTOR);
+    }
+
+    /**
+     * Returns all the associations related to the specific user.
+     *
+     * @param id - user's univocal ID
+     *
+     * @return all user's associations.
+     */
+    private JSONArray getUserAssociations(final String id, final UserRole role) throws Exception {
+        JSONArray json;
+        String idUser = role.equals(PATIENT) ? "idPatient" : "idDoctor";
+
+        Invocation.Builder builder = RELATIONSHIP_TARGET
+                .queryParam(idUser, id)
+                .request();
+
+        int response = builder.get().getStatus();
+
+        if (response == 200) {
+            String userData = builder.get(String.class);
+            json = new JSONArray(userData);
+        } else {
+            throw new Exception("" + response);
+        }
+
+        return json;
     }
 
     /**
@@ -206,6 +285,13 @@ public class AssociationsManagerImpl implements AssociationsManager {
      */
     @Override
     public boolean deleteAssociation(final String idPatient, final String idDoctor) {
-        return false;
+        int response = RELATIONSHIP_TARGET
+                .queryParam("idPatient", idPatient)
+                .queryParam("idDoctor", idDoctor)
+                .request()
+                .delete()
+                .getStatus();
+
+        return response == 200;
     }
 }

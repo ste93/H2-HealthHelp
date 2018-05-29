@@ -1,6 +1,5 @@
 package core.dbmanager;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -66,7 +65,7 @@ public interface AssociationsManager {
     boolean deletePatient(String id);
 
     /**
-     * Deletes a specific patient. It returns true if the operation is successful, false otherwise.
+     * Deletes a specific doctor. It returns true if the operation is successful, false otherwise.
      *
      * @param id - doctor's univocal ID
      *
@@ -92,7 +91,7 @@ public interface AssociationsManager {
      *
      * @return the association between patient and doctor.
      */
-    JSONObject getAssociation(String idPatient, String idDoctor);
+    JSONObject getAssociation(String idPatient, String idDoctor) throws Exception;
 
     /**
      * Returns all the associations related to the specific patient.
@@ -101,7 +100,7 @@ public interface AssociationsManager {
      *
      * @return all patient's associations.
      */
-    JSONArray getPatientAssociations(String idPatient);
+    JSONArray getPatientAssociations(String idPatient) throws Exception;
 
     /**
      * Returns all the associations related to the specific doctor.
@@ -110,7 +109,7 @@ public interface AssociationsManager {
      *
      * @return all doctor's associations.
      */
-    JSONArray getDoctorAssociations(String idDoctor);
+    JSONArray getDoctorAssociations(String idDoctor) throws Exception;
 
     /**
      * Deletes the specific association between patient and doctor. It returns true if the operation is successful, false otherwise.

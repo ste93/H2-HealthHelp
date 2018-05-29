@@ -50,13 +50,13 @@ function insertDoctor(id, name, surname, cf, res){
         "surname":surname,
         "cf" : cf
     }; 
-    doctors.create(doctor, function(err, pat) {
+    doctors.create(doctor, function(err, doc) {
         if (err){
             res.send(400);
         } else {
             res.send(200);
         }
-     });
+    });
 }
 
 /** Removes a doctor and all his associations with patients
@@ -69,14 +69,16 @@ function insertDoctor(id, name, surname, cf, res){
  * 
  */
 function removeDoctor(id, res){
-    doctors.remove({"_id": id}, function(err, ass){
-        if (err){
+    doctors.findByIdAndRemove({"_id": id}, function(err, doc){
+        if(doc == null) {
+            res.send(404);
+        } else if (err){
             res.send(400);
-        } else {
+        } else {        
             associations.remove({"idDoctor":id}, function(err, ass){
                 console.log('removed all the dependencies')
-            });
-            res.send(200);
+            });        
+            res.send(200)
         }
     });
 }

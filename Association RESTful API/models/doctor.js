@@ -15,7 +15,8 @@ var doctor = Schema({
             required: true
         },
         cf:{
-            type: String
+            type: String,
+            required: true
         }
     },
     {

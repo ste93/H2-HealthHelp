@@ -8,7 +8,7 @@ public enum URIrequest {
     BASIC_ROUTE("http://localhost:3000/"),
 
     H2_ROUTE(BASIC_ROUTE.getPath()+"database/application"),
-    APPLICATION_ROUTE(BASIC_ROUTE.getPath()+"database/application");
+    ASSOCIATIONS_ROUTE(BASIC_ROUTE.getPath()+"database/associations");
 
     private String path;
 

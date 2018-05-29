@@ -48,13 +48,14 @@ router.post('/patients', function(req,res,next){
     var name = req.param('name');
     var surname = req.param('surname');
     var cf = req.param('cf');
+    
     patientOperation.insertPatient(id, name, surname, cf, res);
 });
 
 /** DELETE request to remove a patient and all his associations with doctors
  *  
  * @throws 200 - OK
- *          400 - BAD REQUEST (missing or wrong parameters)
+ *         400 - BAD REQUEST (missing or wrong parameters)
  *             
  * @param {String} id - patient identifier
  * 
@@ -107,7 +108,7 @@ router.post('/doctors', function(req,res,next){
  */
 router.delete('/doctors', function(req, res, next){
     var id = req.param('_id');
-    doctorOperation.removeDoctor(idPatient, idDoctor, res);
+    doctorOperation.removeDoctor(id, res);
 });
 
 
@@ -141,6 +142,7 @@ router.post('/relationship', function(req, res, next){
 router.get('/relationship', function(req, res, next){
     var idPatient = req.param('idPatient');
     var idDoctor = req.param('idDoctor');
+
     if(idPatient == undefined){
         asssociationOperation.getPatients(idDoctor, res);
     } else if(idDoctor == undefined){

@@ -62,15 +62,17 @@ function insertPatient(id, name, surname, cf, res){
 /** Removes a patient and all his associations with doctors
  * 
  * @throws 200 - OK
- *          400 - BAD REQUEST (missing or wrong parameters)
+ *         400 - BAD REQUEST (missing or wrong parameters)
  *             
  * @param {String} id - patient identifier
  * @param {Response} res - response of RESTful request
  * 
  */
 function removePatient(id, res){
-    patients.remove({"_id": id}, function(err, pat){
-        if (err){
+    patients.findByIdAndRemove({"_id": id}, function(err, pat){
+        if(pat == null) {
+            res.send(404);
+        } else if (err){
             res.send(400);
         } else {        
             associations.remove({"idPatient":id}, function(err, ass){
