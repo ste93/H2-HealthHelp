@@ -122,9 +122,11 @@ function deleteAllValues(idCode, type, res){
  */
 function deleteAllValuesOnRange(idCode, type, start, end, res){
     var collection = _getCollection(idCode,type);
-
+    
+    var enddate;
     var startdate = new Date(start);
-    var enddate = new Date(end);
+    end == undefined ? enddate = new Date() : enddate = new Date(end);
+    
     patients.findOne({"sensors": type}, function(err, response){
         if(response == null) {
             res.send(404);
@@ -176,9 +178,11 @@ function getAllValuesOfSpecificSensor(idCode, type, res){
 */
 function getAllValuesOnRange(idCode, type, start, end, res){
    var collection = _getCollection(idCode,type);
-   
+
+   var enddate;
    var startdate = new Date(start);
-   var enddate = new Date(end);
+   end == undefined ? enddate = new Date() : enddate = new Date(end);
+
    collection.find({ "timestamp": { $gte: startdate, $lt: enddate}},{"_id":0, "patientId":0},function(err, value){
        if(err){
            res.send(500);

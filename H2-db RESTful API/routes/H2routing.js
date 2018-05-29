@@ -132,6 +132,8 @@ router.post('/sensors/values', function(req, res, next){
  * 
  * @param {String} idCode - patient identifier
  * @param {String} type - sensor type of values to cancel
+ * @param {String} start - the date from which delete patien's data of a specific sensor (it's optional)
+ * @param {String} end - the date up to which delete patien's data of a specific sensor (it's optional)
  */
 router.delete('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
@@ -139,7 +141,7 @@ router.delete('/sensors/values', function(req, res, next){
     var start = req.param('start');
     var end = req.param('end');
     
-    if(start == undefined || end == undefined){
+    if(start == undefined){
         sensorDataOperation.deleteAllValues(idCode, type, res);
     }else{
         sensorDataOperation.deleteAllValuesOnRange(idCode, type, start, end, res);
@@ -155,6 +157,8 @@ router.delete('/sensors/values', function(req, res, next){
  * 
  * @param {String} idCode - patient identifier
  * @param {String} type - sensor type of values to return
+ * @param {String} start - the date from which get patien's data of a specific sensor (it's optional)
+ * @param {String} end - the date up to which get patien's data of a specific sensor (it's optional)
  */
 router.get('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
@@ -162,7 +166,7 @@ router.get('/sensors/values', function(req, res, next){
     var start = req.param('start');
     var end = req.param('end');
     
-    if(start == undefined || end == undefined){
+    if(start == undefined){
         sensorDataOperation.getAllValuesOfSpecificSensor(idCode, type, res);
     }else{
         sensorDataOperation.getAllValuesOnRange(idCode, type, start, end, res);
@@ -190,10 +194,19 @@ router.post('/advices', function(req, res, next){
  * @returns a JSON with a list of all advices related to the patient
  * 
  * @param {String} idCode - patient identifier
+ * @param {String} start - the date from which get patien's advices (it's optional)
+ * @param {String} end - the date up to which get patien's advices (it's optional)
  */
 router.get('/advices', function(req, res, next){
     var idCode = req.param('idCode');
-    adviceOperations.getAdvices(idCode, res);
+    var start = req.param('start');
+    var end = req.param('end');
+    
+    if(start == undefined){
+        adviceOperations.getAdvices(idCode, res);
+    }else{
+        adviceOperations.getAdvicesOnRange(idCode, start, end, res);
+    }
 });
 
 /** POST request to add a drug prescibed to a specific patient
@@ -217,10 +230,19 @@ router.post('/drugs', function(req, res, next){
  * @returns an array of all drugs related to the patient
  * 
  * @param {String} idCode - patient identifier
+ * @param {String} start - the date from which get patien's drugs (it's optional)
+ * @param {String} end - the date up to which get patien's drugs (it's optional)
  */
 router.get('/drugs', function(req, res, next){
     var idCode = req.param('idCode');
-    drugsOperations.getDrugs(idCode, res);
+    var start = req.param('start');
+    var end = req.param('end');
+    
+    if(start == undefined){
+        drugsOperations.getDrugs(idCode, res);
+    }else{
+        drugsOperations.getDrugsOnRange(idCode, start, end, res);
+    }
 });
 
 module.exports = router;
