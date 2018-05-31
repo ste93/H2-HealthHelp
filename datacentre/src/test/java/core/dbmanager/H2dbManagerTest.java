@@ -2,14 +2,21 @@ package core.dbmanager;
 
 import core.SensorType;
 import core.UserRole;
-import core.dbmanager.H2dbManager;
-import core.dbmanager.H2dbManagerImpl;
-import core.dbmanager.User;
-import core.dbmanager.UserBuilder;
+import org.glassfish.jersey.uri.UriComponent;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAccessor;
+import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +48,7 @@ public class H2dbManagerTest {
 
         User doctorUser = new UserBuilder()
                 .with(userBuilder -> {
-                    userBuilder.idCode = "Federico.Fedeli";
+                    userBuilder.idCode = "federico.Fedeli";
                     userBuilder.name = "Federico";
                     userBuilder.surname = "Fedeli";
                     userBuilder.cf = "LCCGLI45C64S579I";
@@ -78,6 +85,51 @@ public class H2dbManagerTest {
         assertTrue(H2manager.addNewSensorType("giulia.lucchi", SensorType.PRESSURE));
         /* Check the adding of new sensor type*/
         assertEquals(array.get(2) ,H2manager.getSensorsType("giulia.lucchi").get(2));
+    }
+
+    @Test
+    public void SensorTypeValueTest() throws JSONException {
+       /*  JSONObject output = new JSONObject().put("level", 0)
+                                                .put("description", "not hight temperature");
+
+
+
+        JSONObject message = new JSONObject().put("patientId", "giulia.lucchi" )
+                                                .put("value", 2)
+                                                .put("unit", "gradi")
+                                                .put("timestamp", "2000-01-01 11:34")
+                                                .put("output", output);
+
+        System.out.println(message);*/
+
+        /* Check an adding of a values related to a particular sensor type and patient */
+        //assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, message));
+        //assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, message));
+        //assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, message));
+
+        /* Check a removing of values related to a particular sensor type and patient */
+        /* delete on dates' range */
+       // assertTrue(H2manager.deleteValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1998-01-01 09:00"), Optional.of("2000-01-01 11:00")));
+       // assertTrue(H2manager.deleteValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("2004-01-01 11:00"), Optional.empty()));
+        /* delete all values of sensor type  */
+       // assertTrue(H2manager.deleteValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.empty(), Optional.empty()));
+        /* Check the error code to values' get. The JSONArray for response code 200 si already test with Postman tool */
+        try {
+            H2manager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("34789"), Optional.empty());
+        } catch (Exception e) {
+            assertEquals("500",e.getMessage());
+        }
+    }
+
+    @Test
+    public void AdvicesTest() throws JSONException, ParseException {
+        String message = new JSONObject().put("patientId","giulia.lucchi")
+                                        .put("doctorId", "mario.rossi")
+                                        .put("advice", "laaaa")
+                                        .put("timestamp", new Date().toInstant().toString()).toString();
+
+        assertTrue(H2manager.addAdvice( message));
+
 
     }
 }

@@ -73,6 +73,7 @@ function addValue(idCode, type, message, res){
     var mess  = JSON.parse(message);
     collection.create(mess, function(err, value){
         if(err){
+            console.log(err);
             res.send(500);
         } else {
             res.send(200);

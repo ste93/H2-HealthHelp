@@ -3,8 +3,11 @@ package core.dbmanager;
 import core.SensorType;
 import core.UserRole;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.json.Json;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
@@ -49,7 +52,7 @@ public interface H2dbManager {
     JSONArray getSensorsType(final String idPatient) throws Exception;
 
     /**
-     * Add a sensor type related to a particular patient.
+     * Adds a sensor type related to a particular patient.
      *
      * @param idPatient patient's identifier
      * @param sensorType sensor type added
@@ -59,18 +62,80 @@ public interface H2dbManager {
      */
     boolean addNewSensorType(final String idPatient, final SensorType sensorType);
 
-    boolean addSensorValue(final String idPatient, final SensorType sensorType, final Json message);
+    /**
+     * Adds a value of a particular sensor type.
+     *
+     * @param idPatient patient's identifier
+     * @param sensorType sensor type related to a value
+     * @param message sensor type's value to add
+     *
+     * @return boolean true if the request was successful
+     *                 false otherwise
+     */
+    boolean addSensorValue(final String idPatient, final SensorType sensorType, final JSONObject message);
 
-    boolean deleteValues(final String idPatient, final SensorType sensorType, final Optional<Date> start, final Optional<Date> end);
+    /**
+     * Delete a particular value or a values' set on a particular range of date.
+     *
+     * @param idPatient patient's identifier
+     * @param sensorType sensor type related to a value or values' set
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
+     *
+     * @return boolean true if the request was successful
+     *                 false otherwise
+     */
+    boolean deleteValues(final String idPatient, final SensorType sensorType, final Optional<String> start, final Optional<String> end);
 
-    boolean getValues(final String idPatient, final SensorType sensorType, final Optional<Date> start, final Optional<Date> end);
+    /**
+     * Returns a particular value or a values' set on a particular range of date.
+     *
+     * @param idPatient patient's identifier
+     * @param sensorType sensor type related to a value or values' set
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
+     *
+     * @return JSONArray of a value or an values' set, represented by JSONObject
+     */
+    JSONArray getValues(final String idPatient, final SensorType sensorType, final Optional<String> start, final Optional<String> end) throws JSONException, Exception;
 
+    /**
+     * Returns all advices related to a unique patient.
+     *
+     * @param idPatient patient's identifier
+     *
+     * @return JSONArray of advices' set, represented by JSONObject
+     */
+    JSONArray getAdvices(final String idPatient) throws Exception; // oggetto con classe advice da creare
 
-    ArrayList<Json> getAdvices(final String idPatient); // oggetto con classe advice da creare
-    boolean addAdvice(final Json message);
+    /**
+     * Adds an advice related to a particular patient.
+     *
+     * @param message a JSONObject containing advice, patient and doctor id
+     *
+     * @return boolean true if the request was successful
+     *                 false otherwise
+     */
+    boolean addAdvice(final String message);
 
+    /**
+     * Returns all described drugs related to a unique patient.
+     *
+     * @param idPatient patient's identifier
+     *
+     * @return JSONArray of drugs' set, represented by JSONObject
+     */
+    JSONArray getDrugs(final String idPatient, final Optional<String> start, final Optional<String> end) throws JSONException, Exception; //oggetto con classe drug da creare
 
-    ArrayList<Json> getDrugs(final String idPatient); //oggetto con classe drug da creare
+    /**
+     * Adds a drug related to a particular patient.
+     *
+     * @param idPatient patient's identifier
+     * @param message JSONObject containing a drug's name and doctor's id
+     *
+     * @return boolean true if the request was successful
+     *                 false otherwise
+     */
     boolean addDrug(final String idPatient, final Json message);
 
 
