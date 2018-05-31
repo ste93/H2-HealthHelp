@@ -1,20 +1,13 @@
 package core.dbmanager;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import core.SensorType;
 import core.UserRole;
-import org.glassfish.jersey.client.ClientResponse;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.json.Json;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import java.security.URIParameter;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Optional;
 
 /** Implements H2dbManager interface
@@ -129,19 +122,19 @@ public class H2dbManagerImpl implements H2dbManager {
      *
      * @param idPatient  patient's identifier
      * @param sensorType sensor type related to a value
-     * @param message    sensor type's value to add
+     * @param message    sensor type's value to add (format: "KEY":"VALUE" without initial and final brackets)
      * @return boolean true if the request was successful
      * false otherwise
      */
     @Override
-    public boolean addSensorValue(String idPatient, SensorType sensorType, JSONObject message) {
+    public boolean addSensorValue(String idPatient, SensorType sensorType, String message) {
         Response response = SENSOR_VALUES.queryParam("idCode", idPatient)
                                             .queryParam("type", sensorType.getType())
-                                            .queryParam("message", message.toString())
+                                            .queryParam("message", message)
                                             .request()
-                                            .post(Entity.json(null));
+                                            .post(null);
 
-        return response.getStatus()==200;
+        return response.getStatus() == 200;
     }
 
     /**
@@ -252,17 +245,17 @@ public class H2dbManagerImpl implements H2dbManager {
     /**
      * Adds an advice related to a particular patient.
      *
-     * @param message a JSONObject containing advice, patient and doctor id
+     * @param message containing advice, patient and doctor id (format: "KEY":"VALUE" without initial and final brackets)
      * @return boolean true if the request was successful
      * false otherwise
      */
     @Override
     public boolean addAdvice(String message) {
-       // System.out.println(new JSONObject("{patientId:giulia.lucchi,doctorId:mario.rossi,advice:giulia,timestamp:2018-02-22 09:10, }"));
 
         Response response = H2_ADVICE
                 .queryParam("message", message)
-                .request().buildPost(null).invoke();
+                .request()
+                .post(null);
 
         return response.getStatus()==200;
     }
@@ -309,13 +302,19 @@ public class H2dbManagerImpl implements H2dbManager {
      * Adds a drug related to a particular patient.
      *
      * @param idPatient patient's identifier
-     * @param message   JSONObject containing a drug's name and doctor's id
+     * @param message   containing a drug's name and doctor's id (format: "KEY":"VALUE" without initial and final brackets)
      * @return boolean true if the request was successful
      * false otherwise
      */
     @Override
-    public boolean addDrug(String idPatient, Json message) {
-        return false;
+    public boolean addDrug(String idPatient, String message) {
+        Response response = H2_DRUGS
+                .queryParam("idCode", idPatient)
+                .queryParam("message", message)
+                .request()
+                .post(null);
+
+        return response.getStatus()==200;
     }
 
 

@@ -45,9 +45,8 @@ function addSensorType(idCode, type, res){
                 if(err){
                     res.send(500);
                 } 
-                    //var nameCollection= ""+idCode+"."+type;
-                    //db.createCollection(nameCollection);              
-                    res.send(200);
+                
+                res.send(200);
             });
         } else {
             console.log("already present");
@@ -70,15 +69,23 @@ function addSensorType(idCode, type, res){
 function addValue(idCode, type, message, res){
     var collection = _getCollection(idCode,type);
 
-    var mess  = JSON.parse(message);
-    collection.create(mess, function(err, value){
-        if(err){
-            console.log(err);
-            res.send(500);
+    var entireMessage = _sensorValueJsonFormat(message)
+    var message = JSON.parse("{"+entireMessage+"}");
+    
+    patients.findOne({"idCode": idCode}, function(err, response){
+        if(response == null) {
+            res.send(404);
         } else {
-            res.send(200);
-        }
-    });
+        collection.create(message, function(err, value){
+
+            if(err){
+                console.log(err);
+                res.send(500);
+            } else {
+                res.send(200);
+            }
+        });
+    }});
 }
 
 /** Deletes all values of a particular sensor
@@ -193,7 +200,7 @@ function getAllValuesOnRange(idCode, type, start, end, res){
    });
 }
 
-/** create o take a dynamic collection to save, delete o get the information of sensor data
+/** creates or takes a dynamic collection to save, delete o get the information of sensor data
  * @private function used to take a right collection
  * 
  * @param {String} idCode - patient identifier
@@ -205,6 +212,19 @@ function _getCollection(idCode,type){
     var Schema = require('../models/sensorData');
     return mongoose.model( idCode, Schema, nameCollection );   
     
+}
+
+/**Returns the sensor's value message in format to covert in JSON object after.
+ * 
+ * @private function used to generate a message in right format
+ * 
+ * @param {String} message 
+ */
+function _sensorValueJsonFormat(message){
+    var mess  = message.split("\"output\":");
+    var entireMessage  = mess[0].concat("\"output\": {").concat(mess[1]).concat("}");
+    
+    return entireMessage
 }
 
 module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}

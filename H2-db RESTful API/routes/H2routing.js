@@ -119,7 +119,8 @@ router.put('/sensors', function(req, res, next){
 router.post('/sensors/values', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
-    var message = req.params.message;
+    var message = req.param('message');
+
     console.log(message);
    
     sensorDataOperation.addValue(idCode, type, message, res);
@@ -222,6 +223,7 @@ router.get('/advices', function(req, res, next){
 router.post('/drugs', function(req, res, next){
     var idCode = req.param('idCode');
     var message = req.param('message');
+    
     drugsOperations.addDrug(idCode, message, res);
 });
 

@@ -7,9 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.json.Json;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 /** Manages the client access to RESTful API to access the H2 database.
@@ -72,7 +69,7 @@ public interface H2dbManager {
      * @return boolean true if the request was successful
      *                 false otherwise
      */
-    boolean addSensorValue(final String idPatient, final SensorType sensorType, final JSONObject message);
+    boolean addSensorValue(final String idPatient, final SensorType sensorType, final String message);
 
     /**
      * Delete a particular value or a values' set on a particular range of date.
@@ -131,12 +128,12 @@ public interface H2dbManager {
      * Adds a drug related to a particular patient.
      *
      * @param idPatient patient's identifier
-     * @param message JSONObject containing a drug's name and doctor's id
+     * @param message  containing a drug's name and doctor's id
      *
      * @return boolean true if the request was successful
      *                 false otherwise
      */
-    boolean addDrug(final String idPatient, final Json message);
+    boolean addDrug(final String idPatient, final String message);
 
 
 }

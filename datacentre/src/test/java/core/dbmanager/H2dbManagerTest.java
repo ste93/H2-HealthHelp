@@ -2,20 +2,12 @@ package core.dbmanager;
 
 import core.SensorType;
 import core.UserRole;
-import org.glassfish.jersey.uri.UriComponent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalAccessor;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -89,23 +81,21 @@ public class H2dbManagerTest {
 
     @Test
     public void SensorTypeValueTest() throws JSONException {
-       /*  JSONObject output = new JSONObject().put("level", 0)
-                                                .put("description", "not hight temperature");
 
 
-
-        JSONObject message = new JSONObject().put("patientId", "giulia.lucchi" )
-                                                .put("value", 2)
-                                                .put("unit", "gradi")
-                                                .put("timestamp", "2000-01-01 11:34")
-                                                .put("output", output);
-
-        System.out.println(message);*/
+        String message = "\"patientId\": \"chiara.lucchi\",\n" +
+                "   \"value\": 37,\n" +
+                "   \"unit\": \"gradi\",\n" +
+                "   \"timestamp\": \"2018-01-01 09:00\",\n" +
+                "   \"output\": \n" +
+                "       \"level\": 1,\n" +
+                "       \"description\": \"temperatura più alta del solito\"";
 
         /* Check an adding of a values related to a particular sensor type and patient */
-        //assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, message));
-        //assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, message));
-        //assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, message));
+        assertTrue(H2manager.addSensorValue("chiara.lucchi", SensorType.TEMPERATURE, message));
+        assertTrue(H2manager.addSensorValue("chiara.lucchi", SensorType.TEMPERATURE, message));
+        assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, message));
+        assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, message));
 
         /* Check a removing of values related to a particular sensor type and patient */
         /* delete on dates' range */
@@ -123,13 +113,31 @@ public class H2dbManagerTest {
 
     @Test
     public void AdvicesTest() throws JSONException, ParseException {
-        String message = new JSONObject().put("patientId","giulia.lucchi")
+     /*   String message = new JSONObject().put("patientId","giulia.lucchi")
                                         .put("doctorId", "mario.rossi")
                                         .put("advice", "laaaa")
-                                        .put("timestamp", new Date().toInstant().toString()).toString();
+                                        .put("timestamp", new Date().toInstant().toString()).toString();*/
 
-        assertTrue(H2manager.addAdvice( message));
+       /* String message =  new StringBuffer("\"patientId\":").append("\"cicciobello.lucchi\", ")
+              .append("\"doctorId\":").append("\"mario.rossi\", ")
+                .append("\"advice\":").append("\"laaaa\", ").append("\"timestamp\":")
+                .append("\"2018-01-01 11:30\"").toString();*/
 
+      String message = "\"patientId\":\"giulia.lucchi\", \"doctorId\":\"mario.lucchi\", \"advice\":\"cnncdeij\", \"timestamp\":\"2018-11-01 11:00\"";
+
+
+        // = "{\"patientId\":\"giulia.lucchi\", \"doctorId\":\"mario.rossi\", \"advice\":\"laaaa\", \"timestamp\":"+new Date().toInstant().toString()+"}" ;
+
+        assertTrue(H2manager.addAdvice(message));
+
+
+    }
+
+    @Test
+    public void drugsTest(){
+
+        String message = "\"doctorId\":\"mario.lucchi\", \"drugName\":\"okii\", \"timestamp\":\"2018-11-01 11:00\"" ;
+        assertTrue(H2manager.addDrug("giulia.lucchi",message));
 
     }
 }
