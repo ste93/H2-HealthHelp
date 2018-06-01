@@ -1,7 +1,9 @@
 package core;
 
 /**
- * Created by lucch on 26/05/2018.
+ * Includes the unique role of H2 application.
+ *
+ * @author Giulia Lucchi
  */
 public enum UserRole {
     PATIENT("patient"),

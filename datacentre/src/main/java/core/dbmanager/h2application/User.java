@@ -1,4 +1,4 @@
-package core.dbmanager;
+package core.dbmanager.h2application;
 
 import core.UserRole;
 import java.util.ArrayList;
@@ -8,14 +8,14 @@ import java.util.ArrayList;
  * @author Giulia Lucchi
  */
 public class User {
-    public String idCode;
-    public String password;
-    public String name;
-    public String surname;
-    public String cf;
-    public String phones;
-    public String mail;
-    public String role;
+    private String idCode;
+    private String password;
+    private String name;
+    private String surname;
+    private String cf;
+    private String phones;
+    private String mail;
+    private String role;
 
     /** User's constructor
      *
@@ -37,5 +37,37 @@ public class User {
         this.phones = phones;
         this.mail = mail;
         this.role = role;
+    }
+
+    public String getIdCode() {
+        return idCode;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getCf() {
+        return cf;
+    }
+
+    public String getPhones() {
+        return phones;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

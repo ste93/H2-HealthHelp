@@ -1,6 +1,7 @@
 package core;
 
-/**Includes
+/**
+ * Includes all the sensors' type.
  *
  * @author Giulia Lucchi
  */

@@ -1,12 +1,10 @@
-package core.dbmanager;
+package core.dbmanager.h2application;
 
 import core.SensorType;
 import core.UserRole;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import javax.json.Json;
 import java.util.Optional;
 
 /** Manages the client access to RESTful API to access the H2 database.

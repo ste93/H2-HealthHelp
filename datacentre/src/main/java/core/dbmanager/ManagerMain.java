@@ -1,6 +1,7 @@
 package core.dbmanager;
 
-import core.SensorType;
+import core.dbmanager.h2application.H2dbManager;
+import core.dbmanager.h2application.H2dbManagerImpl;
 
 import java.util.Optional;
 

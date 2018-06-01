@@ -1,16 +1,16 @@
-package core.dbmanager;
+package core.dbmanager.h2application;
 
 import core.SensorType;
 import core.UserRole;
+import core.dbmanager.URIrequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.json.Json;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 
-/** Implements H2dbManager interface
+/** Implements H2dbManager interface.
  *
  * @author Giulia Lucchi
  */
@@ -35,16 +35,16 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public boolean registration(final User user) {
-        Response response = H2_REGISTRATION.queryParam("idCode",user.idCode)
-                                            .queryParam("name", user.name)
-                                            .queryParam("surname", user.surname)
-                                            .queryParam("password", user.password)
-                                            .queryParam("cf", user.cf)
-                                            .queryParam("phone", user.phones)
-                                            .queryParam("mail", user.mail)
-                                            .queryParam("role", user.role)
+        Response response = H2_REGISTRATION.queryParam("idCode",user.getIdCode())
+                                            .queryParam("name", user.getName())
+                                            .queryParam("surname", user.getSurname())
+                                            .queryParam("password", user.getPassword())
+                                            .queryParam("cf", user.getCf())
+                                            .queryParam("phone", user.getPhones())
+                                            .queryParam("mail", user.getMail())
+                                            .queryParam("role", user.getRole())
                                             .request()
-                                            .post(Entity.json(""));
+                                            .post(null);
 
        return response.getStatus()==200;
     }
@@ -83,9 +83,9 @@ public class H2dbManagerImpl implements H2dbManager {
         JSONObject json;
 
         Invocation.Builder request = SENSOR_TYPE.queryParam("idCode", idPatient)
-                                        .request();
-        Integer  responseCode = request.get().getStatus();
+                                                 .request();
 
+        Integer  responseCode = request.get().getStatus();
         if (responseCode== 200) {
             json = new JSONObject(request.get(String.class));
         } else {
@@ -111,8 +111,7 @@ public class H2dbManagerImpl implements H2dbManager {
         Response response = SENSOR_TYPE.queryParam("idCode", idPatient)
                                         .queryParam("type", sensorType.getType() )
                                         .request()
-                                        .put(Entity.json(""));
-
+                                        .put(null);
 
         return  response.getStatus()==200;
     }
@@ -149,29 +148,9 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public boolean deleteValues(String idPatient, SensorType sensorType, Optional<String> start, Optional<String> end) {
-        Response response;
-        if(start.isPresent() && end.isPresent()){
-            response = SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .queryParam("start", start.get())
-                    .queryParam("end", end.get())
-                    .request()
-                    .delete();
 
-        }else if(start.isPresent() && !(end.isPresent())){
-            response =  SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .queryParam("start", start.get())
-                    .request()
-                    .delete();
-        }else{
-            response =  SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .request()
-                    .delete();
-        }
-
-        return response.getStatus()==200;
+       Response response = this.sensorValueOnRange(idPatient,start,end,sensorType).delete();
+       return response.getStatus()==200;
     }
 
     /**
@@ -185,37 +164,10 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public JSONArray getValues(String idPatient, SensorType sensorType, Optional<String> start, Optional<String> end) throws Exception {
-        Invocation.Builder request;
-        if(start.isPresent() && end.isPresent()){
-            request = SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .queryParam("start", start.get())
-                    .queryParam("end", end.get())
-                    .request();
-
-        }else if(start.isPresent() && !(end.isPresent())){
-            request =  SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .queryParam("start", start.get())
-                    .request();
-        }else{
-            request =  SENSOR_VALUES.queryParam("idCode", idPatient)
-                    .queryParam("type", sensorType.getType())
-                    .request();
-        }
+        Invocation.Builder request = this.sensorValueOnRange(idPatient,start,end,sensorType);
 
         Integer  responseCode = request.get().getStatus();
-
-        JSONArray json;
-        if (responseCode== 200) {
-            json = new JSONArray(request.get(String.class));
-        } else {
-            json = new JSONArray();
-            json.put(responseCode);
-            throw new Exception("" + responseCode);
-        }
-
-        return json;
+        return responseToJSONArray(responseCode, request);
     }
 
     /**
@@ -228,18 +180,9 @@ public class H2dbManagerImpl implements H2dbManager {
     public JSONArray getAdvices(String idPatient) throws Exception {
         Invocation.Builder request = H2_ADVICE.queryParam("idCode", idPatient)
                                                 .request();
+
         Integer  responseCode = request.get().getStatus();
-
-        JSONArray json;
-        if (responseCode== 200) {
-            json = new JSONArray(request.get(String.class));
-        } else {
-            json = new JSONArray();
-            json.put(responseCode);
-            throw new Exception("" + responseCode);
-        }
-
-        return json;
+        return responseToJSONArray(responseCode, request);
     }
 
     /**
@@ -268,34 +211,10 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public JSONArray getDrugs(final String idPatient, final Optional<String> start, final Optional<String> end) throws Exception {
-        Invocation.Builder request;
-        if(start.isPresent() && end.isPresent()){
-            request = H2_DRUGS.queryParam("idCode", idPatient)
-                    .queryParam("start", start.get())
-                    .queryParam("end", end.get())
-                    .request();
-
-        }else if(start.isPresent() && !(end.isPresent())){
-            request = H2_DRUGS.queryParam("idCode", idPatient)
-                    .queryParam("start", start.get())
-                    .request();
-        }else{
-            request = H2_DRUGS.queryParam("idCode", idPatient)
-                    .request();
-      }
+        Invocation.Builder request = this.drugsOnRange(idPatient, start,end);
 
         Integer  responseCode = request.get().getStatus();
-
-        JSONArray json;
-        if (responseCode== 200) {
-            json = new JSONArray(request.get(String.class));
-        } else {
-            json = new JSONArray();
-            json.put(responseCode);
-            throw new Exception("" + responseCode);
-        }
-
-        return json;
+        return responseToJSONArray(responseCode, request);
     }
 
     /**
@@ -317,5 +236,78 @@ public class H2dbManagerImpl implements H2dbManager {
         return response.getStatus()==200;
     }
 
+    /**
+     * A private class to manage get or delete of sensor's values.
+     *
+     * @param idPatient  patient's identifier
+     * @param sensorType sensor type related to a value or values' set
+     * @param start      an optional start date to search on the range of date
+     * @param end        an optional end date to search on the range of date
+     *
+     * @return Invocation.Builder request to a RESTful API
+     */
+    private Invocation.Builder sensorValueOnRange(String idPatient, Optional<String> start, Optional<String> end, SensorType sensorType){
+        Invocation.Builder request;
+
+        if(start.isPresent() && end.isPresent()){
+            request = SENSOR_VALUES.queryParam("idCode", idPatient)
+                    .queryParam("type", sensorType.getType())
+                    .queryParam("start", start.get())
+                    .queryParam("end", end.get())
+                    .request();
+
+        }else if(start.isPresent() && !(end.isPresent())){
+            request =  SENSOR_VALUES.queryParam("idCode", idPatient)
+                    .queryParam("type", sensorType.getType())
+                    .queryParam("start", start.get())
+                    .request();
+        }else{
+            request =  SENSOR_VALUES.queryParam("idCode", idPatient)
+                    .queryParam("type", sensorType.getType())
+                    .request();
+        }
+        return request;
+    }
+
+    /**
+     * A private class to manage the delete od drugs on the range.
+     *
+     * @param idPatient patient's identifier
+     * @param start      an optional start date to search on the range of date
+     * @param end        an optional end date to search on the range of date
+     *
+     * @return Invocation.Builder request to a RESTful API
+     */
+    private Invocation.Builder drugsOnRange(String idPatient, Optional<String> start, Optional<String> end){
+        Invocation.Builder request;
+
+        if(start.isPresent() && end.isPresent()){
+            request = H2_DRUGS.queryParam("idCode", idPatient)
+                    .queryParam("start", start.get())
+                    .queryParam("end", end.get())
+                    .request();
+
+        }else if(start.isPresent() && !(end.isPresent())){
+            request = H2_DRUGS.queryParam("idCode", idPatient)
+                    .queryParam("start", start.get())
+                    .request();
+        }else{
+            request = H2_DRUGS.queryParam("idCode", idPatient)
+                    .request();
+        }
+        return request;
+    }
+
+    private JSONArray responseToJSONArray(Integer responseCode, Invocation.Builder request) throws Exception {
+        JSONArray json;
+        if (responseCode== 200) {
+            json = new JSONArray(request.get(String.class));
+        } else {
+            json = new JSONArray();
+            json.put(responseCode);
+            throw new Exception("" + responseCode);
+        }
+        return  json;
+    }
 
 }

@@ -1,8 +1,5 @@
-package core.dbmanager;
+package core.dbmanager.h2application;
 
-import core.UserRole;
-
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 /** Manage the pattern Builder
