@@ -7,7 +7,7 @@ import javax.ws.rs.client.*;
 
 import static core.UserRole.PATIENT;
 
-public class AssociationsManagerImpl implements AssociationsManager {
+public class AssociationsManagerImpl implements AssManager {
 
     private static Client CLIENT =ClientBuilder.newClient();
     private static WebTarget TARGET = CLIENT.target(URIrequest.ASSOCIATIONS_ROUTE.getPath());

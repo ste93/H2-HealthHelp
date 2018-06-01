@@ -17,6 +17,5 @@ public class H2dbManagerTest {
      */
     @Test
     public void authenticationTest(){
-
     }
 }

@@ -9,9 +9,9 @@ import org.junit.*;
 
 import java.lang.Exception;
 
-public class AssociationsManagerTest {
+public class AssManagerTest {
 
-    private AssociationsManager associationsManager = new AssociationsManagerImpl();
+    private AssManager associationsManager = new AssociationsManagerImpl();
 
     @Test
     public void test() throws JSONException {
@@ -265,9 +265,10 @@ public class AssociationsManagerTest {
         //deleting all patients and doctors created for testing
         associationsManager.deletePatient("prova.pat");
         associationsManager.deletePatient("prova.pat2");
+        associationsManager.deletePatient("prova.pat3");
         associationsManager.deleteDoctor("prova.doc");
         associationsManager.deleteDoctor("prova.doc2");
-
+        associationsManager.deleteDoctor("prova.doc3");
     }
 
 }

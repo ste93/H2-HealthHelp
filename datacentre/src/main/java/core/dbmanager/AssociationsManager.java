@@ -1,77 +1,42 @@
 package core.dbmanager;
 
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
-/**
- * Created by margherita on 26/05/2018.
- */
 public interface AssociationsManager {
 
     /**
+     * Creates a new user with all related information. It returns true if the operation is successful, false otherwise.
      *
-     * Returns the data related to the specific patient.
-     *
-     * @param id - patient's univocal ID
-     *
-     * @return a JSON object describing the patient
-     *
-     * @throws Exception
-     */
-    JSONObject getPatientData(String id) throws Exception;
-
-    /**
-     * Returns the data related to the specific doctor.
-     *
-     * @param id - doctor's univocal ID
-     *
-     * @return a JSON object describing the doctor
-     *
-     * @throws Exception
-     */
-    JSONObject getDoctorData(String id) throws Exception;
-
-    /**
-     * Creates a new patient with all related information. It returns true if the operation is successful, false otherwise.
-     *
-     * @param id - patient's univocal ID
-     * @param name - patient's name
-     * @param surname - patient's surname
-     * @param cf - patient's CF
+     * @param id - user's univocal ID
+     * @param name - user's name
+     * @param surname - user's surname
+     * @param cf - user's CF
      *
      * @return true if the operation is successful, false otherwise
      */
-    boolean createNewPatient(String id, String name, String surname, String cf);
+    boolean createNewUser(String id, String name, String surname, String cf);
 
     /**
-     * Creates a new doctor with all related information. It returns true if the operation is successful, false otherwise.
      *
-     * @param id - doctor's univocal ID
-     * @param name - doctor's name
-     * @param surname - doctor's surname
-     * @param cf - doctor's CF
+     * Returns the data related to the specific user.
      *
-     * @return true if the operation is successful, false otherwise
+     * @param id - user's univocal ID
+     *
+     * @return a JSON object describing the user
+     *
+     * @throws Exception
      */
-    boolean createNewDoctor(String id, String name, String surname, String cf);
+    JSONObject getUserData(String id) throws Exception;
 
     /**
-     * Deletes a specific patient. It returns true if the operation is successful, false otherwise.
+     * Deletes a specific user. It returns true if the operation is successful, false otherwise.
      *
-     * @param id - doctor's univocal ID
+     * @param id - user's univocal ID
      *
      * @return true if the operation is successful, false otherwise.
      */
-    boolean deletePatient(String id);
-
-    /**
-     * Deletes a specific doctor. It returns true if the operation is successful, false otherwise.
-     *
-     * @param id - doctor's univocal ID
-     *
-     * @return true if the operation is successful, false otherwise.
-     */
-    boolean deleteDoctor(String id);
+    boolean deleteUser(String id);
 
     /**
      * Creates a new association between a specific patient and a specific doctor. It returns true if the operation is successful, false otherwise.
@@ -94,22 +59,13 @@ public interface AssociationsManager {
     JSONObject getAssociation(String idPatient, String idDoctor) throws Exception;
 
     /**
-     * Returns all the associations related to the specific patient.
+     * Returns all the associations related to the specific user.
      *
-     * @param idPatient - patient's univocal ID
+     * @param userId - user's univocal ID
      *
-     * @return all patient's associations.
+     * @return all user's associations.
      */
-    JSONArray getPatientAssociations(String idPatient) throws Exception;
-
-    /**
-     * Returns all the associations related to the specific doctor.
-     *
-     * @param idDoctor - doctor's univocal ID
-     *
-     * @return all doctor's associations.
-     */
-    JSONArray getDoctorAssociations(String idDoctor) throws Exception;
+    JSONArray getUserAssociations(String userId) throws Exception;
 
     /**
      * Deletes the specific association between patient and doctor. It returns true if the operation is successful, false otherwise.
@@ -120,4 +76,5 @@ public interface AssociationsManager {
      * @return true if the operation is successful, false otherwise.
      */
     boolean deleteAssociation(String idPatient, String idDoctor);
+
 }

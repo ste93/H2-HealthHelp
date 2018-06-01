@@ -53,12 +53,16 @@ public abstract class AbstractTopicSubscriber {
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      * @param hostIP - the IP String of the host of the message broker server.
      */
-    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP) {
+    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP, int port) {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.queueName = queueName;
         this.mqttSetup();
+        System.out.println("COSTRUTTORE " + channel);
         this.factory.setHost(hostIP);
+        this.factory.setPort(port);
+        this.factory.setUsername("admin");
+        this.factory.setPassword("exchange");
         this.receivedMessage = 0;
     }
 
@@ -83,6 +87,9 @@ public abstract class AbstractTopicSubscriber {
             }
         };
         try {
+            System.out.println(channel);
+            System.out.println(queueName);
+            System.out.println(consumer);
             channel.basicConsume(queueName, false, consumer);
 
         } catch (IOException e) {
@@ -120,10 +127,14 @@ public abstract class AbstractTopicSubscriber {
     }
 
     private void mqttSetup() {
+        System.out.println("SONO ENTRATO");
         this.factory = new ConnectionFactory();
         try {
+            System.out.println("1");
             this.connection = factory.newConnection();
+            System.out.println("2");
             this.channel = connection.createChannel();
+            System.out.println("LO CREO " + channel);
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
             channel.basicQos(1);
             this.channel.queueDeclare(this.queueName, true, false, false, null);

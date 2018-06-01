@@ -13,8 +13,8 @@ public class Publisher {
     public static void main(String[] argv) throws Exception {
         ///// initial configuration //////
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
+        factory.setHost("213.209.230.94");
+        factory.setPort(8088);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 

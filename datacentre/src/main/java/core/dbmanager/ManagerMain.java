@@ -21,7 +21,7 @@ public class ManagerMain {
            // System.out.println(dbManager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1995-01-01 13:00"), Optional.of("2003-01-01 12:00")));
 
            //marghe
-            // AssociationsManager associationsManager = new AssociationsManagerImpl();
+            // AssManager associationsManager = new AssociationsManagerImpl();
             //associationsManager.getPatientData("kksksksk.lucchi");
             //associationsManager.getDoctorData("mario.rossi");
             //System.out.println(associationsManager.createNewDoctor("kdkdkdk.pecos", "marghe", "pecos", "kjdjdjd"));
