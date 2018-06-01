@@ -38,8 +38,9 @@ public abstract class AbstractTopicSubscriber {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.queueName = queueName;
-        this.mqttSetup();
+        this.factory = new ConnectionFactory();
         this.factory.setHost("localhost");
+        this.mqttSetup();
         this.receivedMessage = 0;
     }
 
@@ -57,12 +58,12 @@ public abstract class AbstractTopicSubscriber {
         this.exchangeName = exchangeName;
         this.topicBindKey = topicKey;
         this.queueName = queueName;
-        this.mqttSetup();
-        System.out.println("COSTRUTTORE " + channel);
+        this.factory = new ConnectionFactory();
         this.factory.setHost(hostIP);
         this.factory.setPort(port);
         this.factory.setUsername("admin");
         this.factory.setPassword("exchange");
+        this.mqttSetup();
         this.receivedMessage = 0;
     }
 
@@ -87,9 +88,6 @@ public abstract class AbstractTopicSubscriber {
             }
         };
         try {
-            System.out.println(channel);
-            System.out.println(queueName);
-            System.out.println(consumer);
             channel.basicConsume(queueName, false, consumer);
 
         } catch (IOException e) {
@@ -127,14 +125,9 @@ public abstract class AbstractTopicSubscriber {
     }
 
     private void mqttSetup() {
-        System.out.println("SONO ENTRATO");
-        this.factory = new ConnectionFactory();
         try {
-            System.out.println("1");
             this.connection = factory.newConnection();
-            System.out.println("2");
             this.channel = connection.createChannel();
-            System.out.println("LO CREO " + channel);
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
             channel.basicQos(1);
             this.channel.queueDeclare(this.queueName, true, false, false, null);

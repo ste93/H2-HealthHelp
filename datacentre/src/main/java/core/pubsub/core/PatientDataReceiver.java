@@ -1,11 +1,13 @@
 package core.pubsub.core;
 
+import akka.actor.AbstractActor;
+
 /**
  * Simple message subscriber for pub/sub communication for patient data.
  *
  * @author manuBottax
  */
-public class PatientDataReceiver extends AbstractTopicSubscriber {
+public class PatientDataReceiver extends AbstractTopicSubscriber{
 
     private static final String QUEUE_NAME = "patientData.queue";
     private static final String EXCHANGE_NAME = "patientData";
@@ -25,4 +27,5 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
         super(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY, HOST_IP, PORT);
         this.setBehaviour(behaviour);
     }
+
 }
