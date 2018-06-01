@@ -18,9 +18,7 @@ function addAdvice(message, res){
     var mess  = JSON.parse("{"+message+"}");
     
     advice.create(mess, function(err, value){
-        console.log("prima if");
         if(err){
-            console.log("if %s",err);
             res.send(500);
         }else {
             res.send(200);

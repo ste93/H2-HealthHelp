@@ -89,6 +89,7 @@ router.get('/login', function(req, res, next){
  */
 router.get('/sensors', function(req,res, next){
     var idCode = req.param('idCode');
+    
     sensorDataOperation.getSensorTypes(idCode,res);
 });
 
@@ -104,8 +105,9 @@ router.get('/sensors', function(req,res, next){
 router.put('/sensors', function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
+
     sensorDataOperation.addSensorType(idCode, type, res);
-});   
+});
 
 /** POST request to add a new value of a particular sensor related to a patient
  * 
@@ -223,7 +225,7 @@ router.get('/advices', function(req, res, next){
 router.post('/drugs', function(req, res, next){
     var idCode = req.param('idCode');
     var message = req.param('message');
-    
+
     drugsOperations.addDrug(idCode, message, res);
 });
 

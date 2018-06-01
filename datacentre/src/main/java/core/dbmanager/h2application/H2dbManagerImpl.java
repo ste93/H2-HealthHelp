@@ -4,6 +4,7 @@ import core.SensorType;
 import core.UserRole;
 import core.dbmanager.URIrequest;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.client.*;
@@ -89,8 +90,6 @@ public class H2dbManagerImpl implements H2dbManager {
         if (responseCode== 200) {
             json = new JSONObject(request.get(String.class));
         } else {
-            json = new JSONObject();
-            json.put("error ", responseCode);
             throw new Exception("" + responseCode);
         }
 
@@ -111,7 +110,7 @@ public class H2dbManagerImpl implements H2dbManager {
         Response response = SENSOR_TYPE.queryParam("idCode", idPatient)
                                         .queryParam("type", sensorType.getType() )
                                         .request()
-                                        .put(null);
+                                        .put(Entity.json(""));
 
         return  response.getStatus()==200;
     }
@@ -174,14 +173,16 @@ public class H2dbManagerImpl implements H2dbManager {
      * Returns all advices related to a unique patient.
      *
      * @param idPatient patient's identifier
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
+     *
      * @return JSONArray of advices' set, represented by JSONObject
      */
     @Override
-    public JSONArray getAdvices(String idPatient) throws Exception {
-        Invocation.Builder request = H2_ADVICE.queryParam("idCode", idPatient)
-                                                .request();
+    public JSONArray getAdvices(String idPatient, Optional<String> start, Optional<String> end) throws Exception {
+        Invocation.Builder request = this.drugsOrAdviceOnRange(H2_ADVICE, idPatient, start, end);
 
-        Integer  responseCode = request.get().getStatus();
+        Integer responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
     }
 
@@ -189,6 +190,7 @@ public class H2dbManagerImpl implements H2dbManager {
      * Adds an advice related to a particular patient.
      *
      * @param message containing advice, patient and doctor id (format: "KEY":"VALUE" without initial and final brackets)
+     *
      * @return boolean true if the request was successful
      * false otherwise
      */
@@ -207,11 +209,14 @@ public class H2dbManagerImpl implements H2dbManager {
      * Returns all described drugs related to a unique patient.
      *
      * @param idPatient patient's identifier
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
+     *
      * @return JSONArray of drugs' set, represented by JSONObject
      */
     @Override
     public JSONArray getDrugs(final String idPatient, final Optional<String> start, final Optional<String> end) throws Exception {
-        Invocation.Builder request = this.drugsOnRange(idPatient, start,end);
+        Invocation.Builder request = this.drugsOrAdviceOnRange(H2_DRUGS,idPatient, start,end);
 
         Integer  responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
@@ -278,21 +283,21 @@ public class H2dbManagerImpl implements H2dbManager {
      *
      * @return Invocation.Builder request to a RESTful API
      */
-    private Invocation.Builder drugsOnRange(String idPatient, Optional<String> start, Optional<String> end){
+    private Invocation.Builder drugsOrAdviceOnRange(WebTarget webTarget, String idPatient, Optional<String> start, Optional<String> end){
         Invocation.Builder request;
 
         if(start.isPresent() && end.isPresent()){
-            request = H2_DRUGS.queryParam("idCode", idPatient)
+            request = webTarget.queryParam("idCode", idPatient)
                     .queryParam("start", start.get())
                     .queryParam("end", end.get())
                     .request();
 
         }else if(start.isPresent() && !(end.isPresent())){
-            request = H2_DRUGS.queryParam("idCode", idPatient)
+            request = webTarget.queryParam("idCode", idPatient)
                     .queryParam("start", start.get())
                     .request();
         }else{
-            request = H2_DRUGS.queryParam("idCode", idPatient)
+            request = webTarget.queryParam("idCode", idPatient)
                     .request();
         }
         return request;

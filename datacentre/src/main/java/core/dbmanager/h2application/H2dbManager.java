@@ -67,7 +67,7 @@ public interface H2dbManager {
      * @return boolean true if the request was successful
      *                 false otherwise
      */
-    boolean addSensorValue(final String idPatient, final SensorType sensorType, final String message);
+    boolean addSensorValue(final String idPatient, final SensorType sensorType, final String message) ;
 
     /**
      * Delete a particular value or a values' set on a particular range of date.
@@ -98,10 +98,12 @@ public interface H2dbManager {
      * Returns all advices related to a unique patient.
      *
      * @param idPatient patient's identifier
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
      *
      * @return JSONArray of advices' set, represented by JSONObject
      */
-    JSONArray getAdvices(final String idPatient) throws Exception; // oggetto con classe advice da creare
+    JSONArray getAdvices(String idPatient, Optional<String> start, Optional<String> end) throws Exception;
 
     /**
      * Adds an advice related to a particular patient.
@@ -117,6 +119,8 @@ public interface H2dbManager {
      * Returns all described drugs related to a unique patient.
      *
      * @param idPatient patient's identifier
+     * @param start an optional start date to search on the range of date
+     * @param end an optional end date to search on the range of date
      *
      * @return JSONArray of drugs' set, represented by JSONObject
      */
