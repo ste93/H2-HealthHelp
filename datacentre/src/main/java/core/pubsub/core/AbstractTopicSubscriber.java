@@ -20,10 +20,6 @@ public abstract class AbstractTopicSubscriber {
     private Connection connection;
     private Channel channel;
 
-    private int receivedMessage;
-
-    //private SubscriberBehaviour defaultBehaviour = x -> System.out.println(" [x] Received -> ' " + x  + " '");
-
     /**
      * Default constructor for class AbstractTopicSubscriber.
      * It use localhost as host for the message broker server.
@@ -41,7 +37,6 @@ public abstract class AbstractTopicSubscriber {
         this.factory = new ConnectionFactory();
         this.factory.setHost("localhost");
         this.mqttSetup();
-        this.receivedMessage = 0;
     }
 
     /**
@@ -64,7 +59,6 @@ public abstract class AbstractTopicSubscriber {
         this.factory.setUsername("admin");
         this.factory.setPassword("exchange");
         this.mqttSetup();
-        this.receivedMessage = 0;
     }
 
     /**
@@ -78,7 +72,7 @@ public abstract class AbstractTopicSubscriber {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 try {
-                    receivedMessage ++;
+                    //receivedMessage ++;
                     behaviour.handleMessage(message);
                 }
                 finally {
@@ -120,9 +114,9 @@ public abstract class AbstractTopicSubscriber {
      *
      * @return the number of received message.
      */
-    public int getReceivedMessage (){
+   /* public int getReceivedMessage (){
         return this.receivedMessage;
-    }
+    }*/
 
     private void mqttSetup() {
         try {

@@ -1,6 +1,8 @@
 package core.pubsub.core;
 
 import akka.actor.AbstractActor;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Simple message subscriber for pub/sub communication for patient data.
@@ -17,7 +19,33 @@ public class PatientDataReceiver extends AbstractTopicSubscriber{
     private static final int PORT = 8088;
 
     private SubscriberBehaviour behaviour = x -> {
-        System.out.println("[PatientDataReceiver] " + x + " .");
+        JSONObject json = null;
+        System.out.println("[x] " + x);
+        try {
+            json = new JSONObject(x);
+            System.out.println("[ciao] " + json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            JSONObject temp = (JSONObject) json.get("temperature");
+            System.out.println("[PatientDataReceiver] " + temp.get("output"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /*{
+            patientID: String,
+            value: Double,
+            unit: String,
+            timestamp: Timestamp,
+            output: {
+                level: Integer,
+                description: String
+            }
+          }*/
+
+
     };
 
     /**
