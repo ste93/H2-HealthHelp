@@ -1,0 +1,26 @@
+extends layout
+
+block content
+
+  .row.page-header
+    .col-lg-12
+      h1 #{value.name}
+  .row
+    .col-xs-12.col-md-9
+  .row
+    .col-xs-12.col-sm-6
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Sensor Information
+        .panel-body
+          p Sensor ID : #{sensorId}
+          p Sensor Name : #{value.name}
+          p Patient ID : #{value.patient}
+          p data Type : #{value.dataType}
+          p Unit : #{value.unit}
+    .col-xs-12.col-sm-6.location-map
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Actions
+        .panel-body
+          a.btn.btn-default.pull-left(href='/sensors/#{sensorId}/delete') Delete

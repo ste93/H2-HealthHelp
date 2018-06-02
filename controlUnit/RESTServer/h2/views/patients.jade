@@ -1,0 +1,30 @@
+extends layout
+
+block content
+
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+
+  .row
+    .col-xs-8.col-sm-8
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title This Unit Users
+        .panel-body
+          row.list-group
+            each patient in patientList
+              .col-xs-6.list-group-item
+                h4
+                  a(href="/patients/#{patient.id}/details") #{patient.name}
+                  - //a.btn.btn-default.pull-right(onclick='#{action}') something
+                  a.btn.btn-default.pull-right(href="/patients/#{patient.id}/details") Details
+                  - //a.btn.btn-default.pull-right(href='/patients/#{sensor.id}/delete') Delete
+    p.lead
+    | Sensor manager help you to connect and manage your sensors through
+    | the H2 framework to monitor your vital parameter with no effort.
+
+  .row
+    .col-xs-8.col-sm-8
+      a.btn.btn-default.pull-right(href="/patients/addNew") Add a new one !
