@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-require('./h2_api/models/db');
 
 var indexRouter = require('./h2/routes/index');
 //var usersRouter = require('./h2/routes/users');
@@ -29,6 +28,7 @@ app.use('/', indexRouter);
 app.use('/api', routesApi);
 
 // catch 404 and forward to error handler
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
