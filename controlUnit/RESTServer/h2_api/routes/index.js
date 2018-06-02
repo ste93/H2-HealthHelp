@@ -7,9 +7,9 @@ var patientsController = require('../controllers/patients');
 
 router.get('/sensors', sensorsController.getSensorsList);
 router.post('/sensors', sensorsController.createSensors);
-router.get('/sensors/:sensorsID', sensorsController.getSensorDetail);
+router.get('/sensors/:sensorsID', sensorsController.getSensorDetails);
 
-router.put('/sensors/:sensorsID', sensorsController.updateSensor);
+//router.put('/sensors/:sensorsID', sensorsController.updateSensor);
 router.delete('/sensors/:sensorID', sensorsController.deleteSensor);
 
 router.post('/sensors/:sensorID/data', sensorsController.addData);

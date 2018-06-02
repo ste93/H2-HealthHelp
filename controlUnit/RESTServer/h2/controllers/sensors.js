@@ -42,7 +42,7 @@ module.exports.sensorsHome = function(req, res){
 ////////////// Detail Page //////////////////////////
 var renderSensorDetailPage = function(req, res, responseBody){
   var body = JSON.parse(responseBody);
-  res.render('sensors-details', body[0] );
+  res.render('sensors-details', body );
 };
 
 /* GET detail page */
@@ -50,6 +50,7 @@ module.exports.sensorDetail = function(req, res){
   request.get('http://localhost:3000/api/sensors/' + req.params.sensorID, function (error, response, body) {
     console.log('error:', error); // Print the error if one occurred
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    console.log('body : ' + body );
     renderSensorDetailPage(req,res, body);
   });
 };
@@ -131,8 +132,8 @@ module.exports.addNewSensors = function(req, res){
   json: postData
   }, function(error, response, body){
     if (response.statusCode === 201) {
-      //res.redirect('/sensors/' +  req.params.sensorID);
-      res.redirect('/sensors/');
+      res.redirect('/sensors/' +  req.params.sensorID);
+      //res.redirect('/sensors/');
     } else {
       res.render('error', error);
     }
