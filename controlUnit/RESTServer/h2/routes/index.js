@@ -21,7 +21,9 @@ router.post("/sensors/:sensorID/connectNew", sensorsController.addNewSensors);
 router.get("/sensors/:sensorID/delete", sensorsController.delete);
 
 router.get("/patients", patientsController.patientsHome);
-router.post("/patients/:patientID/addNew", patientsController.addNew);
+router.get("/patients/new", patientsController.newPatientForm);
+router.post("/patients/new", patientsController.addNew);
+router.get("/patients/:patientID/", patientsController.details);
 router.get("/patients/:patientID/details", patientsController.details);
 router.get("/patients/:patientID/delete", patientsController.delete);
 

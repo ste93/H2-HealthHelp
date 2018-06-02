@@ -1,7 +1,3 @@
-
-var mongoose = require('mongoose');
-var sens = mongoose.model('Sensor');
-
 var jsonUtilities = require('../jsonUtilities');
 var sensorFileManager = require('../../control_unit_app/data_manager/saved_sensor_manager');
 
@@ -33,9 +29,9 @@ module.exports.createSensors = function (req, res) {
 
 module.exports.getSensorDetails = function (req, res) {
 
-  console.log("Get sensor " + req.params.sensorsID + "details");
+  console.log("Get sensor " + req.params.sensorID + "details");
 
-  sensorFileManager.getSensor(req.params.sensorsID, function(error, jsonObj) {
+  sensorFileManager.getSensor(req.params.sensorID, function(error, jsonObj) {
     if (error) {
       jsonUtilities.sendJsonResponse(res, 400, error);
     } else {
@@ -47,7 +43,7 @@ module.exports.getSensorDetails = function (req, res) {
 
 module.exports.deleteSensor = function (req, res) {
 
-  console.log("Deleting " + req.params.sensorsID + " sensor");
+  console.log("Deleting " + req.params.sensorID + " sensor");
 
   sensorFileManager.deleteSensor(req.params.sensorID);
 
