@@ -86,7 +86,7 @@ public class H2dbManagerImpl implements H2dbManager {
         Invocation.Builder request = SENSOR_TYPE.queryParam("idCode", idPatient)
                                                  .request();
 
-        Integer  responseCode = request.get().getStatus();
+        int  responseCode = request.get().getStatus();
         if (responseCode== 200) {
             json = new JSONObject(request.get(String.class));
         } else {
@@ -165,7 +165,7 @@ public class H2dbManagerImpl implements H2dbManager {
     public JSONArray getValues(String idPatient, SensorType sensorType, Optional<String> start, Optional<String> end) throws Exception {
         Invocation.Builder request = this.sensorValueOnRange(idPatient,start,end,sensorType);
 
-        Integer  responseCode = request.get().getStatus();
+        int responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
     }
 
@@ -182,7 +182,7 @@ public class H2dbManagerImpl implements H2dbManager {
     public JSONArray getAdvices(String idPatient, Optional<String> start, Optional<String> end) throws Exception {
         Invocation.Builder request = this.drugsOrAdviceOnRange(H2_ADVICE, idPatient, start, end);
 
-        Integer responseCode = request.get().getStatus();
+        int responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
     }
 
@@ -218,7 +218,7 @@ public class H2dbManagerImpl implements H2dbManager {
     public JSONArray getDrugs(final String idPatient, final Optional<String> start, final Optional<String> end) throws Exception {
         Invocation.Builder request = this.drugsOrAdviceOnRange(H2_DRUGS,idPatient, start,end);
 
-        Integer  responseCode = request.get().getStatus();
+        int  responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
     }
 
@@ -303,7 +303,7 @@ public class H2dbManagerImpl implements H2dbManager {
         return request;
     }
 
-    private JSONArray responseToJSONArray(Integer responseCode, Invocation.Builder request) throws Exception {
+    private JSONArray responseToJSONArray(int responseCode, Invocation.Builder request) throws Exception {
         JSONArray json;
         if (responseCode== 200) {
             json = new JSONArray(request.get(String.class));

@@ -1,7 +1,10 @@
 package core.dbmanager;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
+import core.pubsub.core.EmergencyMessage;
 
 import java.util.Optional;
 
@@ -12,8 +15,10 @@ public class ManagerMain {
 
 
         public static void main(String[] args) throws Exception {
-            H2dbManager dbManager = new H2dbManagerImpl();
-         System.out.println(dbManager.getDrugs("giulia.lucchi", Optional.empty(), Optional.empty()));
+            ActorSystem.apply("datacentre").actorSelection( "akka.tcp://datacentre@127.0.0.1:2552/user/messageReceiver").tell(new EmergencyMessage(1), ActorRef.noSender());;
+
+            //     H2dbManager dbManager = new H2dbManagerImpl();
+      //   System.out.println(dbManager.getDrugs("giulia.lucchi", Optional.empty(), Optional.empty()));
             //  System.out.println(dbManager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.empty(), Optional.empty()));
 
             //System.out.println(dbManager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1999-01-01 01:00"), Optional.empty()));

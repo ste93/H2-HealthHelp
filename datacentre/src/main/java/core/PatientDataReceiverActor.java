@@ -1,13 +1,15 @@
 package core;
 
-import akka.actor.AbstractActor;
+import akka.actor.*;
+import core.pubsub.core.EmergencyMessage;
 import core.pubsub.core.PatientDataReceiver;
 
 /**
- * Created by lucch on 01/06/2018.
+ * Manages the communication between control unit and data centre.
+ *
+ * @author Giulia Lucchi
  */
 public class PatientDataReceiverActor extends AbstractActor {
-
     @Override
     public void preStart() throws Exception {
         super.preStart();

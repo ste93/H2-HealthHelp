@@ -3,6 +3,8 @@ package core.pubsub.core;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -10,12 +12,14 @@ import java.util.concurrent.TimeoutException;
  * It handle the basic configuration for RabbitMQ client and offer a method for specify behaviours when message is received.
  *
  * @author manuBottax
+ *         modify by Giulia Lucchi
  */
 public abstract class AbstractTopicSubscriber {
 
     private String exchangeName;
     private String queueName;
     private String topicBindKey;
+    private Optional<String> topicBindKey2;
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
@@ -32,8 +36,9 @@ public abstract class AbstractTopicSubscriber {
      */
     public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey) {
         this.exchangeName = exchangeName;
-        this.topicBindKey = topicKey;
         this.queueName = queueName;
+        this.topicBindKey2 = Optional.empty();
+        this.topicBindKey = topicKey;
         this.factory = new ConnectionFactory();
         this.factory.setHost("localhost");
         this.mqttSetup();
@@ -51,8 +56,32 @@ public abstract class AbstractTopicSubscriber {
      */
     public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP, int port) {
         this.exchangeName = exchangeName;
-        this.topicBindKey = topicKey;
         this.queueName = queueName;
+        this.topicBindKey = topicKey;
+        this.topicBindKey2 = Optional.empty();
+        this.factory = new ConnectionFactory();
+        this.factory.setHost(hostIP);
+        this.factory.setPort(port);
+        this.factory.setUsername("admin");
+        this.factory.setPassword("exchange");
+        this.mqttSetup();
+    }
+
+    /**
+     * Default constructor for class AbstractTopicSubscriber.
+     *
+     * @param queueName - the name of the queue in which save data.
+     *                  N.B. it has to be unique for every instance of the publisher
+     * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
+     *                     N.B. It has to be the same in both publisher and subscriber.
+     * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
+     * @param hostIP - the IP String of the host of the message broker server.
+     */
+    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String topicKey2, String hostIP, int port) {
+        this.exchangeName = exchangeName;
+        this.queueName = queueName;
+        this.topicBindKey = topicKey;
+        this.topicBindKey2 = Optional.of(topicKey2);
         this.factory = new ConnectionFactory();
         this.factory.setHost(hostIP);
         this.factory.setPort(port);
@@ -73,6 +102,9 @@ public abstract class AbstractTopicSubscriber {
                 String message = new String(body, "UTF-8");
                 try {
                     //receivedMessage ++;
+                    if(topicBindKey2.isPresent()){
+                        behaviour.handleMessage(envelope.getRoutingKey()+ message);
+                    }
                     behaviour.handleMessage(message);
                 }
                 finally {
@@ -126,6 +158,10 @@ public abstract class AbstractTopicSubscriber {
             channel.basicQos(1);
             this.channel.queueDeclare(this.queueName, true, false, false, null);
             this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
+            if(this.topicBindKey2.isPresent()){
+                this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey2.get());
+            }
+
         } catch (IOException e) {
             System.err.println("Error during setup operation");
             e.printStackTrace();
