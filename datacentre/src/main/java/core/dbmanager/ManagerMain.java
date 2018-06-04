@@ -2,11 +2,7 @@ package core.dbmanager;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import core.dbmanager.h2application.H2dbManager;
-import core.dbmanager.h2application.H2dbManagerImpl;
-import core.pubsub.core.EmergencyMessage;
-
-import java.util.Optional;
+import core.pubsub.EmergencyMessage;
 
 /**
  * Created by lucch on 27/05/2018.

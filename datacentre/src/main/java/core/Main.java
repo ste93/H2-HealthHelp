@@ -1,5 +1,7 @@
 package core;
 
+import core.pubsub.MainActor;
+
 /**
  * It's Main class to start che main actor to start the data centre application.
  *

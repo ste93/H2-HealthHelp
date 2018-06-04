@@ -4,6 +4,7 @@ import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
@@ -18,8 +19,7 @@ public abstract class AbstractTopicSubscriber {
 
     private String exchangeName;
     private String queueName;
-    private String topicBindKey;
-    private Optional<String> topicBindKey2;
+    private List<String> topicBindKey;
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
@@ -34,10 +34,9 @@ public abstract class AbstractTopicSubscriber {
      *                     It has to be the same in both publisher and subscriber.
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      */
-    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey) {
+    public AbstractTopicSubscriber(String queueName, String exchangeName, List<String> topicKey) {
         this.exchangeName = exchangeName;
         this.queueName = queueName;
-        this.topicBindKey2 = Optional.empty();
         this.topicBindKey = topicKey;
         this.factory = new ConnectionFactory();
         this.factory.setHost("localhost");
@@ -46,42 +45,17 @@ public abstract class AbstractTopicSubscriber {
 
     /**
      * Default constructor for class AbstractTopicSubscriber.
-     *
-     * @param queueName - the name of the queue in which save data.
+     *  @param queueName - the name of the queue in which save data.
      *                  N.B. it has to be unique for every instance of the publisher
      * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
      *                     N.B. It has to be the same in both publisher and subscriber.
      * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
      * @param hostIP - the IP String of the host of the message broker server.
      */
-    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String hostIP, int port) {
+    public AbstractTopicSubscriber(String queueName, String exchangeName, List<String> topicKey, String hostIP, int port) {
         this.exchangeName = exchangeName;
         this.queueName = queueName;
         this.topicBindKey = topicKey;
-        this.topicBindKey2 = Optional.empty();
-        this.factory = new ConnectionFactory();
-        this.factory.setHost(hostIP);
-        this.factory.setPort(port);
-        this.factory.setUsername("admin");
-        this.factory.setPassword("exchange");
-        this.mqttSetup();
-    }
-
-    /**
-     * Default constructor for class AbstractTopicSubscriber.
-     *
-     * @param queueName - the name of the queue in which save data.
-     *                  N.B. it has to be unique for every instance of the publisher
-     * @param exchangeName - the name of the folder to subscribe (e.g. "advice").
-     *                     N.B. It has to be the same in both publisher and subscriber.
-     * @param topicKey - the specific topic (filter rule) for the message to be received ( e.g. "advice.*"). "#" allow to receive every message.
-     * @param hostIP - the IP String of the host of the message broker server.
-     */
-    public AbstractTopicSubscriber(String queueName, String exchangeName, String topicKey, String topicKey2, String hostIP, int port) {
-        this.exchangeName = exchangeName;
-        this.queueName = queueName;
-        this.topicBindKey = topicKey;
-        this.topicBindKey2 = Optional.of(topicKey2);
         this.factory = new ConnectionFactory();
         this.factory.setHost(hostIP);
         this.factory.setPort(port);
@@ -102,10 +76,8 @@ public abstract class AbstractTopicSubscriber {
                 String message = new String(body, "UTF-8");
                 try {
                     //receivedMessage ++;
-                    if(topicBindKey2.isPresent()){
-                        behaviour.handleMessage(envelope.getRoutingKey()+ message);
-                    }
-                    behaviour.handleMessage(message);
+                    behaviour.handleMessage(envelope.getRoutingKey()+ message);
+
                 }
                 finally {
                     //If the worker die before complete the message handling the message is send to another one.
@@ -157,11 +129,13 @@ public abstract class AbstractTopicSubscriber {
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
             channel.basicQos(1);
             this.channel.queueDeclare(this.queueName, true, false, false, null);
-            this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey);
-            if(this.topicBindKey2.isPresent()){
-                this.channel.queueBind(this.queueName, this.exchangeName, this.topicBindKey2.get());
-            }
-
+            this.topicBindKey.forEach(bindKey ->{
+                try {
+                    this.channel.queueBind(this.queueName, this.exchangeName, bindKey);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (IOException e) {
             System.err.println("Error during setup operation");
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package core.pubsub.core;
+package core.pubsub;
 
 import org.json.JSONObject;
 

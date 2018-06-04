@@ -1,8 +1,7 @@
-package core;
+package core.pubsub;
 
 import akka.actor.*;
-import core.pubsub.core.EmergencyMessage;
-import core.pubsub.core.PatientDataReceiver;
+import core.pubsub.subscriber.PatientDataReceiver;
 
 /**
  * Manages the communication between control unit and data centre.

@@ -1,7 +1,7 @@
-package core;
+package core.pubsub;
 
 import akka.actor.AbstractActor;
-import core.pubsub.core.EmergencyMessage;
+import core.pubsub.EmergencyMessage;
 
 /**
  * Actor that manages the emergency, derived from sensor data values.

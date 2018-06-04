@@ -1,11 +1,6 @@
-package core;
+package core.pubsub;
 
 import akka.actor.*;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import core.pubsub.core.EmergencyMessage;
-
-import java.net.URI;
 
 /**
  * Starts all the actors that communicate in the data centre.
