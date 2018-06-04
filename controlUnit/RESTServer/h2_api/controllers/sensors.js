@@ -54,11 +54,13 @@ module.exports.deleteSensor = function (req, res) {
 
 module.exports.addData = function (req,res) {
   var sensorID = req.params.sensorID;
-  if (sensorID) {
-    console.log("received data");
-    console.log("BODY: " + req.body);
-    console.log("BODY: " + JSON.stringify(req.body, null, 2))
-    //sendJsonResponse(res, 200, null);
+  console.log("received data from " , sensorID);
+  if(req.body){
+    console.log("BODY: " , req.body);
   }
+
+
+  //console.log("BODY: " + JSON.stringify(req.body, null, 2))
+  jsonUtilities.sendJsonResponse(res, 200, null);
 
 };
