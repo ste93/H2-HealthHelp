@@ -37,7 +37,7 @@ module.exports.sensorsHome = function(req, res){
   });
 
 };
-///////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////
 
 ////////////// Detail Page //////////////////////////
 var renderSensorDetailPage = function(req, res, responseBody){
@@ -56,39 +56,6 @@ module.exports.sensorDetail = function(req, res){
 };
 /////////////////////////////////////////////////////
 
-
-/*
-///////////////// manage and update a sensor ////////
-module.exports.sensorManage = function(req, res){
-  res.render('sensors-manager',  {
-    title: 'H2 Sensor Manage page',
-    id: req.params.sensorID
-  });
-};
-
-
-module.exports.updateSensor = function(req, res){
-
-  var putData = {
-    id : req.params.sensorID,
-    name : req.body.name,
-    patient : req.body.patient,
-    system : req.body.system,
-    value: req.body.value,
-    unit: req.body.unit
-  }
-
-  request.put({url: 'http://localhost:3000/api/sensors/' + req.params.sensorID, formData : putData}, function(error, response, body){
-    console.log("error : " + error);
-    console.log("response : " + response);
-    console.log("body : " + body);
-    if (response.statusCode === 200) {
-      res.redirect('/sensors/' +  req.params.sensorID);
-      //res.redirect('/');
-    }
-  });
-};*/
-
 //////////////////////////////////////////////////////////////
 
 ////////////////// use a sensor //////////////////////////////
@@ -105,15 +72,21 @@ module.exports.sensorConnect = function(req, res){
 /////////////////////////////////////////////////////////////////
 
 ////////////// connect new sensor Page //////////////////////////
-var renderConnectForm = function( req, res) {
+var renderConnectForm = function( req, res, list) {
   res.render('sensors-connect',  {
-    title: 'H2 Sensor Connect page',
-    id: req.params.sensorID
+    id: req.params.sensorID,
+    patientList : JSON.parse(list)
   });
 }
 
 module.exports.sensorConnectNew = function(req, res){
-  renderConnectForm(req,res);
+  request.get('http://localhost:3000/api/patients', function (error, response, body) {
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    if (body)
+      renderConnectForm(req,res, body);
+  });
+
 };
 
 module.exports.addNewSensors = function(req, res){
