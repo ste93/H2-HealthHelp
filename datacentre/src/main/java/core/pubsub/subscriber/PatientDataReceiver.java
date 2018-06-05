@@ -4,9 +4,9 @@ import akka.actor.*;
 import core.SensorType;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
-import core.pubsub.EmergencyActor;
-import core.pubsub.EmergencyMessage;
-import core.pubsub.MessagesUtils;
+import core.pubsub.publisher.LevelPublisherActor;
+import core.pubsub.message.ValueMessage;
+import core.pubsub.message.MessagesUtils;
 import core.pubsub.core.AbstractTopicSubscriber;
 import core.pubsub.core.SubscriberBehaviour;
 import org.json.JSONException;
@@ -34,7 +34,7 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
 
     private final H2dbManager H2manager = new H2dbManagerImpl();
     private final MessagesUtils utils = new MessagesUtils();
-    private final ActorRef emergencyActor = ActorSystem.apply("datacentre").actorOf(Props.create(EmergencyActor.class), "emergencyActor");
+    private final ActorRef emergencyActor = ActorSystem.apply("datacentre").actorOf(Props.create(LevelPublisherActor.class), "emergencyActor");
 
     /**
      * Default constructor for the PatientDataReceiver class.
@@ -57,12 +57,15 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
                 JSONObject value = (JSONObject) json.get("message");
 
                 JSONObject output = (JSONObject) value.get("output");
-                int level = output.getInt("level");
-                if(level == 2 || level == 3){
-                    emergencyActor.tell(new EmergencyMessage(1), emergencyActor);
-                }
 
                 String idPatient = (String)value.get("patientId");
+
+                int level = output.getInt("level");
+                if(level == 2 || level == 3){
+
+                    emergencyActor.tell(new ValueMessage(level,json, idPatient), emergencyActor);
+                }
+
                 String messageToInsert = convertToFormatApi(value.toString());
 
                 H2manager.addSensorValue(idPatient, SensorType.valueOf(type),messageToInsert);

@@ -25,8 +25,9 @@ public class TopicPublisher {
      */
     public TopicPublisher(String exchangeName) {
         this.exchangeName = exchangeName;
-        mqttSetup();
+        this.factory = new ConnectionFactory();
         this.factory.setHost("localhost");
+        mqttSetup();
     }
 
     /**
@@ -36,10 +37,14 @@ public class TopicPublisher {
      *                     It has to be the same in both publisher and subscriber.
      * @param hostIP - the IP String of the host of the message broker server.
      */
-    public TopicPublisher(String exchangeName, String hostIP) {
+    public TopicPublisher(String exchangeName, String hostIP, int port) {
         this.exchangeName = exchangeName;
-        mqttSetup();
+        this.factory = new ConnectionFactory();
         this.factory.setHost(hostIP);
+        this.factory.setPort(port);
+        this.factory.setUsername("admin");
+        this.factory.setPassword("exchange");
+        mqttSetup();
     }
 
     /**
@@ -74,7 +79,6 @@ public class TopicPublisher {
     }
 
     private void mqttSetup() {
-        this.factory = new ConnectionFactory();
         try {
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();

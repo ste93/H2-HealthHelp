@@ -1,4 +1,4 @@
-package core.pubsub;
+package core.pubsub.message;
 
 /**
  * Includes the operation over messages.
