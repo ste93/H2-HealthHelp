@@ -13,18 +13,12 @@ import java.io.Serializable;
  */
 public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Serializable {
 
-    private TCPClient socket;
+    private HttpPoster socket;
     private String sensorId;
 
-    public ConnectionTask(String sensorId) {
-        this.sensorId = sensorId;
-        this.socket = new TCPClient(sensorId, new TCPClient.OnMessageReceived() {
-            @Override
-            public void messageReceived(String message) {
-                Log.d("TCP Task", message);
-            }
-        });
-
+    public ConnectionTask(String hostIp, String hostPort, String sensorID) {
+        this.sensorId = sensorID;
+        this.socket = new HttpPoster(hostIp, hostPort, sensorId);
     }
 
     /**
@@ -44,7 +38,6 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Seria
 
    @Override
    protected Void doInBackground(Void... params) {
-       this.socket.connect();
        this.socket.run();
        Log.d("TCP TASK", "doInBackground: Connected to the Internet");
        while(true){}

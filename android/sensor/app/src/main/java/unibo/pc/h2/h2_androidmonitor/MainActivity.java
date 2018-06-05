@@ -4,13 +4,18 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -60,6 +65,9 @@ public class MainActivity extends Activity {
     private ConnectionTask tcpTask;
 
     boolean emergency;
+
+    String hostIp;
+    String hostPort;
 
     @TargetApi(23) @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,10 +183,44 @@ public class MainActivity extends Activity {
                     try {
                         if (connectionConfButton.isSelected()) {
 
-                            sensorID = getMacAddress();
+                            ////////////////////////////////////////
 
-                            tcpTask = new ConnectionTask(sensorID);
-                            tcpTask.execute();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setTitle("Connect to .. ");
+
+                            // Set up the input
+                            final EditText input = new EditText(mContext);
+                            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                            builder.setView(input);
+
+                            // Set up the buttons
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String connectionString = input.getText().toString();
+                                    hostIp = connectionString.split(":")[0];
+                                    hostPort = connectionString.split(":")[1];
+                                    if (hostIp != null && hostPort != null) {
+                                        sensorID = getMacAddress();
+                                        Log.d("HTTP", "HTTP : connect to " + hostIp);
+                                        Log.d("HTTP", "HTTP : connect to " + hostPort);
+                                        tcpTask = new ConnectionTask(hostIp, hostPort, sensorID);
+                                        tcpTask.execute();
+                                    }
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
+
+                            //////////////////////////////////
+
                         }
 
                         else
