@@ -1,4 +1,4 @@
-package core.pubsub;
+package core.pubsub.subscriber;
 
 import akka.actor.*;
 import core.pubsub.subscriber.PatientDataReceiver;
@@ -13,6 +13,7 @@ public class PatientDataReceiverActor extends AbstractActor {
     public void preStart() throws Exception {
         super.preStart();
         PatientDataReceiver subscriber = new PatientDataReceiver();
+        System.out.println(" ----->PatientDataReceiver STARTED.");
     }
 
     @Override
