@@ -56,6 +56,7 @@ router.post('/registration', function(req, res, next){
         "phone": phoneArray,
         "mail": mail
     };
+
     userAuthentication.registation(role, user, res);
     
 });
@@ -75,6 +76,7 @@ router.get('/login', function(req, res, next){
     var idCode = req.param('idCode');
     var role = req.param('role');
     var password = req.param('password');
+
     userAuthentication.login(idCode, role, password, res);
 });
 
@@ -249,6 +251,30 @@ router.get('/drugs', function(req, res, next){
     }else{
         drugsOperations.getDrugsOnRange(idCode, start, end, res);
     }
+});
+
+router.get('/patients', function(req, res, next){
+    var idCode = req.param('idCode');
+
+    userAuthentication.findPatient(idCode, res);
+});
+
+router.get('/doctors', function(req, res, next){
+    var idCode = req.param('idCode');
+
+    userAuthentication.findDoctor(idCode, res);
+});
+
+router.delete('/patients', function(req,res,next){
+    var idCode = req.param('idCode');
+    
+    userAuthentication.deletePatient(idCode, res);
+});
+    
+router.delete('/doctors', function(req, res, next){
+    var idCode = req.param('idCode');
+    
+    userAuthentication.deleteDoctor(idCode, res);
 });
 
 module.exports = router;

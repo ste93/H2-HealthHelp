@@ -45,7 +45,6 @@ function addSensorType(idCode, type, res){
                 if(err){
                     res.send(500);
                 } 
-                
                 res.send(200);
             });
         } else {
@@ -53,7 +52,6 @@ function addSensorType(idCode, type, res){
             res.send(200);
         }
     });
-
 }
 
 /** Adds a new value of a particular sensor related to a patient
@@ -228,4 +226,4 @@ function _sensorValueJsonFormat(message){
     return entireMessage
 }
 
-module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}
+module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange, deleteSensorType}

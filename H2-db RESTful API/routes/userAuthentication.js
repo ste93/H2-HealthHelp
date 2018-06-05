@@ -66,6 +66,54 @@ function login(idCode, role, password, res){
     }
 }
 
+function findPatient(idCode, res){
+    patients.findOne({"idCode": idCode}, function(err, pat) {
+        if(pat == null) {
+            res.send(404);
+        } else if (err) {
+            res.send(400);
+        } else {
+            res.json(pat); 
+        }
+    });
+}
+
+function findDoctor(idCode, res){
+    doctors.findOne({"idCode": idCode}, function(err, doc) {
+        if(doc == null) {
+            res.send(404);
+        } else if (err) {
+            res.send(400);
+        } else {
+            res.json(doc); 
+        }
+    });
+}
+
+function deletePatient(idCode, res){
+    patients.findOneAndRemove({"idCode": idCode}, function(err, pat){
+        if(pat == null) {
+            res.send(404);
+        } else if (err) {
+            res.send(400);
+        } else {
+            res.send(200);
+        }
+    });
+}
+
+function deleteDoctor(idCode, res){
+    doctors.findOneAndRemove({"idCode": idCode}, function(err, doc) {
+        if(doc == null) {
+            res.send(404);
+        } else if (err) {
+            res.send(400);
+        } else {
+            res.send(200);
+        }
+    });
+}
+
 /** Private function to set the right user's collection
  * 
  * @param {String} role - user's role: patient or doctor
@@ -78,4 +126,4 @@ function setCollection(role){
     }
 }
 
-module.exports = {registation, login}
+module.exports = {registation, login, findPatient, findDoctor, deletePatient, deleteDoctor}
