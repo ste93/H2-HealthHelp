@@ -28,13 +28,15 @@ block content
         .panel-heading
           h2.panel-title Patient Login
         .panel-body
-          form.form-signin(action="", method="post")
+          form.form-signin(action="", method="post", name="patient")
             div.input
                 span.label Userame
                 textarea(type="text", name="username", cols="100", rows="1", placeholder= "i.e. giulia.lucchi4")
             div.input
                 span.label Password
                 textarea(type="text", name="password", cols="100", rows="1", placeholder= "password")
+            div.input
+                input(type="text", name="role", value="patient" style="display:none;")
             div.actions
                 button.btn.btn-large.btn-primary(type="submit") Sign in
          
