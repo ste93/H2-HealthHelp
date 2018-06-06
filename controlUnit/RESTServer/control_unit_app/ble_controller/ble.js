@@ -6,9 +6,9 @@ var moment = require('moment');
 //for saving sensor permanently if raspberry turns off
 var request = require('request');
 
-var seen={}; // devices seen and when
+// devices seen and when
+var seen={}; 
 //retrieved each time the application starts and crashes
-//saved each time a new sensor is added
 var addresses_saved_ble = [];
 
 /**
