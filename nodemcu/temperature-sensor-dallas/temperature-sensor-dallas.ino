@@ -11,6 +11,7 @@ int counter;
 bool isValid;
 bool isAlreadyRetrieved;
 float lastTemperatureValue;
+char temperatureValuetext[4] = "";
 
 void setup()
 {
@@ -25,19 +26,17 @@ void setup()
 }
 
 void sendDataToProcessing(float data ){
-  char text[3] = "";
   if (abs(lastTemperatureValue - data) < 0.5) {    
-    dtostrf(data, 3, 1, text);
+    dtostrf(data, 3, 1, temperatureValuetext);
     Serial.println("retrieving");
-    Serial.println(text);
+    Serial.println(temperatureValuetext);
     counter ++;
     isValid = true;
     if (counter > 10) {
-      drawTextCentered (text);
-      sendDataOverBLE(text);  
+      drawTextCentered (temperatureValuetext);
+      sendDataOverBLE(temperatureValuetext);  
       delay(1000);
       drawTextCentered ("STOP");
-      counter = 0;
       isAlreadyRetrieved = true;
     }
   }
@@ -64,6 +63,8 @@ float readTemperature() {
 void loop(){
   if (!isAlreadyRetrieved) {
     sendDataToProcessing(readTemperature());
-    delay(1000);
-  } 
+  } else {
+    sendDataOverBLE(temperatureValuetext); 
+  }
+  delay(1000);
 }
