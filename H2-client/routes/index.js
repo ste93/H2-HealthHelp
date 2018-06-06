@@ -6,8 +6,6 @@ var session= require('client-sessions');
 var Client = require('node-rest-client').Client;
  
 var client = new Client();
- var userId;
-
 
 //var prova = require('../web_server/prova');
 //router.get('/', prova.connectToTopic);
@@ -28,7 +26,6 @@ router.post('/', function (req, res) {
     function (data, response) {
         if(response.statusCode == 200){
             session.user = req.body.username;
-            userId = req.body.username;
             console.log( "     "+session.user);
             res.redirect("/"+req.body.role+"");
         }else{
@@ -39,23 +36,23 @@ router.post('/', function (req, res) {
        
 });
 
-router.get("/patient/"+userId+"/");
-router.get("/patient/"+userId+"/history");
-router.get("/patient/"+userId+"/advice");
-router.get("/patient/"+userId+"/drug");
-router.get("/patient/"+userId+"/info");
+router.get("/patient");
+router.get("/patient/history");
+router.get("/patient/advice");
+router.get("/patient/drug");
+router.get("/patient/info");
 
 router.get("/doctor", function(req, res){
     var homeParameter = {
-        title: "Welcome " + (session.user).replace(".", " ")+ "."
+        title: "WELCOME " + (session.user).replace(".", " ")+ "."
       }
     
     res.render("doctorHome", homeParameter);
 } );
-router.get("/doctor/"+userId+"/history");
-router.get("/doctor/"+userId+"/advice/edit");
-router.get("/doctor/"+userId+"/drug/edit");
-router.get("/doctor/"+userId+"/info");
+router.get("/doctor/history");
+router.get("/doctor/advice/edit");
+router.get("/doctor/drug/edit");
+router.get("/doctor/info");
 
 
 
