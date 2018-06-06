@@ -3,12 +3,14 @@
 var noble = require('noble');
 //moment module for getting timestamp
 var moment = require('moment');
+//for saving sensor permanently if raspberry turns off
+var request = require('request');
 
 var seen={}; // devices seen and when
 var peripheral_name_address_association = {};
 //retrieved each time the application starts and crashes
 //saved each time a new sensor is added
-var addresses_saved_ble = ['c8df842a45bc'];
+var addresses_saved_ble = [];
 var nearList = []
 
 //start scanning nearby ble devices
@@ -16,6 +18,18 @@ noble.on('stateChange', function(state) {
 	//retrieve all sensors connected
   if (state === 'poweredOn') {
     // allow duplicates
+	  addresses_saved_ble =   request.get('http://localhost:3000/api/sensors/', function (error, response, sensorList) {
+		console.log('error:', error); // Print the error if one occurred
+		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+		console.log('body : ' + sensorInfo );
+		if (sensorList === {}) {
+			addresses_saved_ble = [];
+		} else {
+			for (var index in sensorList) {
+				addresses_saved_ble.push(sensorList[index].sensorId);
+			}
+		}
+	  });
     noble.startScanning([],true);
   }
 });
@@ -24,13 +38,11 @@ noble.on('discover', function(peripheral) {
     dev=peripheral.uuid;
     var new_one=(typeof seen[dev] === 'undefined' || seen[dev] < (moment() - 5000));
     if (new_one && addresses_saved_ble.includes(dev)) {
-		console.log(dev);
 		addCallbacksToDeviceConnections(dev);
-	    	console.log(seen);
-		//getNearListLocal();
 	}
-	console.log("found" + dev);
     seen[dev]=moment();
+	//peripheral_name_addresses_association[peripheral.advertisement.localName] = dev
+	getNearListLocal();
 });
 
 
@@ -53,15 +65,17 @@ function getNearListLocal() {
 
 //---------------------------------------------------------------------
 module.exports.doSomethingWith = function(id) {
+	
   console.log("doing something with " + id + " sensors !");
   pub_sub.connectToTopic();
   //pub_sub.publishMessage("Test pub sub message");
   //save the sensor
 }
 
+
+
 function addCallbacksToDeviceConnections(deviceAddress) {
 	peripheral = noble._peripherals[deviceAddress];
-
 
 	//discover the services available when connects to the peripheral
 	peripheral.on('connect', function() {
