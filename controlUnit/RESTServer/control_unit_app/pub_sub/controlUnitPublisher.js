@@ -12,6 +12,7 @@ function connect() {
 }
 
 module.exports.publishMessage = function (data) {
+  console.log("Connected ? " , connected);
   if (connected){
     //TODO: Non servirebbe un valore di ritorno per sapere se è andato bene o no ?
     rabbitMQ.publishToServer(exchangeName, exchangeType, routingKey, isDurable, data);

@@ -7,7 +7,7 @@ var serverURL = "amqp://admin:exchange@213.209.230.94:8088";
 var dataSavedLocally = null;
 
 
-module.exports.connectToServer = function() {//start() {
+module.exports.connectToServer = function start() {
   amqp.connect(serverURL, function(error, connection) {
     console.log('amqp trying to connect');
     if (error) {
@@ -32,6 +32,7 @@ module.exports.connectToServer = function() {//start() {
 }
 
 module.exports.publishToServer = function(exchangeName, exchangeType, routingKey, isDurable, message) {
+  console.log("connection : ", amqpConnection);
   if(amqpConnection) {
     amqpConnection.createChannel(function(error, channel) {
       if(error) {
@@ -40,7 +41,9 @@ module.exports.publishToServer = function(exchangeName, exchangeType, routingKey
         //here how many times I try the createchannel??
         //TODO save data locally
       } else {
+        console.log(" [AMQP] Channel created")
         channel.assertExchange(exchangeName, exchangeType, {durable: isDurable});
+        console.log(" [AMQP] exchange created : ", typeof exchangeName )
         // Note: on Node 6 Buffer.from(msg) should be used
         channel.publish(exchangeName, routingKey, new Buffer(message));
         console.log(" [x] Sent " + message);
@@ -49,6 +52,6 @@ module.exports.publishToServer = function(exchangeName, exchangeType, routingKey
   }
   else {
     //TODO save data locally
-    connectToServer()
+    //connectToServer()
   }
 }

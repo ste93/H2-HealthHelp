@@ -14,7 +14,8 @@ function sendToDataCenter(data) {
   console.log("------- level : ", data.message.output.level);
   console.log("------- description : ", data.message.output.description);
 
-  publisher.publishMessage(data)
+  var test = "testString"
+  publisher.publishMessage(test)
 }
 
 module.exports.analyseData = function (data) {
@@ -28,7 +29,7 @@ module.exports.analyseData = function (data) {
     console.log('error:', error); // Print the error if one occurred
     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
     console.log('body : ' + sensorInfo );
-    if (sensorInfo === '{}'){
+    if (sensorInfo === ''){
       // the sensor is not connected to the system
       analyseDefault(sensorData);
     } else {
