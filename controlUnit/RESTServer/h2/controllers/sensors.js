@@ -41,7 +41,9 @@ module.exports.sensorsHome = function(req, res){
 
 ////////////// Detail Page //////////////////////////
 var renderSensorDetailPage = function(req, res, responseBody){
+  console.log("REsponse : " , responseBody)
   var body = JSON.parse(responseBody);
+  console.log("joson : " , body)
   res.render('sensors-details', body );
 };
 

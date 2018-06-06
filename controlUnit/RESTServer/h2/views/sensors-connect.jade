@@ -25,13 +25,11 @@ block content
             input#name.form-control(name="unit")
 
         .form-group
-          p #{patientList.id}
-          p #{patientList.name}
           label.col-xs-10.col-sm-2.control-label(for="patient") Patient
           .col-xs-12.col-sm-4
             select#rating.form-control.input-sm(name="patient")
                 each pat in patientList
-                  option #{pat.name}
+                  option #{pat.id}
 
         button.btn.btn-default.pull-right Save sensor configuration
   .col-xs-12.col-md-4

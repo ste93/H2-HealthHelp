@@ -1,6 +1,8 @@
 var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
 
+var sensorsList = new Array();
+
 function sendToDataCenter(data) {
 
   console.log("Received data to publish : ");
@@ -14,8 +16,9 @@ function sendToDataCenter(data) {
   console.log("------- level : ", data.message.output.level);
   console.log("------- description : ", data.message.output.description);
 
-  var test = "testString"
-  publisher.publishMessage(test)
+  //var testString = "test";
+  //publisher.publishMessage(testString);
+  publisher.publishMessage(JSON.stringify(data));
 }
 
 module.exports.analyseData = function (data) {
@@ -33,7 +36,8 @@ module.exports.analyseData = function (data) {
       // the sensor is not connected to the system
       analyseDefault(sensorData);
     } else {
-      analyse(sensorData, sensorInfo);
+      sensorsList.push(sensorData)
+      analyse(sensorData, JSON.parse(sensorInfo));
     }
   });
 }
@@ -46,12 +50,13 @@ function analyseDefault(sensorData) {
 function analyse(sensorData, sensorInfo) {
 
   console.log("Analysis started ! ");
+  console.log("Analysing ", sensorInfo.value.dataType);
 
   var value = sensorData.data;
   var level;
   var description;
 
-  switch(sensorInfo.dataType) {
+  switch(sensorInfo.value.dataType) {
     case 'heartbeat':
         if (value <= 20 || value >= 250 ){
           level = 3;
@@ -90,11 +95,11 @@ function analyse(sensorData, sensorInfo) {
     console.log("Analysis completed ! ");
 
   var sensorMeasure = {
-     type : sensorInfo.dataType,
+     type : sensorInfo.value.dataType,
      message: {
-		   patientId: sensorInfo.patient,
+		   patientId: sensorInfo.value.patientID,
 		   value: sensorData.data,
-		   unit: sensorInfo.unit,
+		   unit: sensorInfo.value.unit,
   		 timestamp: "31/02/1492-00:00:00", //TODO
   		 output: {
 			   level: level,

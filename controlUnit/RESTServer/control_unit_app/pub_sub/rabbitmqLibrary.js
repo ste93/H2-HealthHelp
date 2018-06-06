@@ -32,7 +32,7 @@ module.exports.connectToServer = function start() {
 }
 
 module.exports.publishToServer = function(exchangeName, exchangeType, routingKey, isDurable, message) {
-  console.log("connection : ", amqpConnection);
+  //console.log("connection : ", amqpConnection);
   if(amqpConnection) {
     amqpConnection.createChannel(function(error, channel) {
       if(error) {
