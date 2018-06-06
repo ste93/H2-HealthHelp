@@ -1,7 +1,36 @@
 var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
 
-var sensorsList = new Array();
+var sensorsList = [];
+
+function getSensorInfo(id, callback) {
+  var found = false;
+  var sensorInfo = "{}";
+  // check if it's already loaded locally :
+  sensorsList.forEach(function(element) {
+    json = JSON.parse(element)
+    //console.log(" -- Saved Sensors : " , json);
+    //console.log(" -- Saved Sensors ID : " , json.sensorId);
+    if (json.sensorId === id){
+      console.log("Found sensor info locally");
+      found = true;
+      callback(JSON.stringify(json));
+    }
+  });
+
+  if (! found){
+  // retrieve sensor informations from data storage
+    request.get('http://localhost:3000/api/sensors/' + id, function (error, response, info) {
+      console.log('error:', error); // Print the error if one occurred
+      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+      //console.log('body : ' + info );
+      sensorsList.push(info);
+      console.log("Found sensor info remotelly");
+      //console.log(info);
+      callback(info);
+    });
+  }
+}
 
 function sendToDataCenter(data) {
 
@@ -16,8 +45,6 @@ function sendToDataCenter(data) {
   console.log("------- level : ", data.message.output.level);
   console.log("------- description : ", data.message.output.description);
 
-  //var testString = "test";
-  //publisher.publishMessage(testString);
   publisher.publishMessage(JSON.stringify(data));
 }
 
@@ -26,20 +53,19 @@ module.exports.analyseData = function (data) {
   //var sensorData = JSON.parse(data);
   var sensorData = data;
 
-  // retrieve sensor informations
   var sensorID = sensorData.sensorID;
-  request.get('http://localhost:3000/api/sensors/' + sensorID, function (error, response, sensorInfo) {
-    console.log('error:', error); // Print the error if one occurred
-    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    console.log('body : ' + sensorInfo );
-    if (sensorInfo === ''){
+  sensorInfo = getSensorInfo(sensorID, function (sensorInfo) {
+    //console.log("Sensor info : " , sensorInfo);
+    if (sensorInfo === '{}'){
       // the sensor is not connected to the system
       analyseDefault(sensorData);
     } else {
-      sensorsList.push(sensorData)
+      //sensorsList.push(sensorData)
       analyse(sensorData, JSON.parse(sensorInfo));
     }
   });
+
+
 }
 
 
@@ -108,6 +134,5 @@ function analyse(sensorData, sensorInfo) {
     }
   }
 
-  //TODO
   sendToDataCenter(sensorMeasure);
 }
