@@ -12,10 +12,15 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -27,6 +32,10 @@ import com.samsung.android.sdk.sensorextension.SsensorEventListener;
 import com.samsung.android.sdk.sensorextension.SsensorExtension;
 import com.samsung.android.sdk.sensorextension.SsensorManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +68,8 @@ public class MainActivity extends Activity {
     ToggleButton senseButton = null;
     ToggleButton emergencyButton = null;
     ToggleButton connectionConfButton = null;
+    Button configButton = null;
+
     private TextView beatLabel = null;
     private RealtimeUpdatesFragment chartFragment = null;
 
@@ -83,6 +94,7 @@ public class MainActivity extends Activity {
         senseButton = (ToggleButton) findViewById(R.id.sense_button);
         emergencyButton = (ToggleButton) findViewById(R.id.emergency_button);
         connectionConfButton = (ToggleButton) findViewById(R.id.connection_button);
+        configButton = (Button) findViewById(R.id.config_button);
         beatLabel = (TextView) findViewById(R.id.beatLabel);
 
         chartFragment =  (RealtimeUpdatesFragment) getFragmentManager().findFragmentById(R.id.chart_fragment);
@@ -205,7 +217,7 @@ public class MainActivity extends Activity {
                                         sensorID = getMacAddress();
                                         Log.d("HTTP", "HTTP : connect to " + hostIp);
                                         Log.d("HTTP", "HTTP : connect to " + hostPort);
-                                        tcpTask = new ConnectionTask(hostIp, hostPort, sensorID);
+                                        tcpTask = new ConnectionTask(mContext, hostIp, hostPort, sensorID);
                                         tcpTask.execute();
                                     }
                                 }
@@ -235,6 +247,76 @@ public class MainActivity extends Activity {
                     }
                 }
             });
+        }
+
+
+        //// Behaviour of the Connection Button //////
+        if (configButton != null) {
+            configButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ////////////////////////////////////////
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Sensor Configuration");
+
+                    View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.config_dialog, (ViewGroup) findViewById(android.R.id.content), false);
+                    // Set up the input
+                    final EditText patientInput = (EditText) viewInflated.findViewById(R.id.config_patient);
+                    final EditText nameInput = (EditText) viewInflated.findViewById(R.id.config_name);
+                    final EditText dataTypeInput = (EditText) viewInflated.findViewById(R.id.config_datatype);
+                    final EditText unitInput = (EditText) viewInflated.findViewById(R.id.config_unit);
+                    builder.setView(viewInflated);
+
+
+                    sensorID = getMacAddress();
+
+                    if (patientInput != null)
+                        patientInput.setText("TEsttttt");
+                    else
+                        Log.e("d3", "FUCK !");
+
+
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String filename = "h2Sensor.config";
+                            JSONObject jsonData = new JSONObject();
+                            try {
+                                jsonData.put("id", sensorID);
+                                jsonData.put("name", nameInput.getText().toString());
+                                jsonData.put("patient", patientInput.getText().toString());
+                                jsonData.put("dataType", dataTypeInput.getText().toString());
+                                jsonData.put("unit", unitInput.getText().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String fileContents = jsonData.toString();
+                            Log.d("CONFIG : ", fileContents);
+                            FileOutputStream outputStream;
+
+                            try {
+                                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                                outputStream.write(fileContents.getBytes());
+                                outputStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
+                }
+            });
+
         }
     }
 

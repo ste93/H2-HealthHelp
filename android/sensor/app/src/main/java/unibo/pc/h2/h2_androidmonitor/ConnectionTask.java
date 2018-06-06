@@ -1,5 +1,6 @@
 package unibo.pc.h2.h2_androidmonitor;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,10 +16,15 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Seria
 
     private HttpPoster socket;
     private String sensorId;
+    private boolean initialized = false;
 
-    public ConnectionTask(String hostIp, String hostPort, String sensorID) {
+    public ConnectionTask(Context context, String hostIp, String hostPort, String sensorID) {
         this.sensorId = sensorID;
-        this.socket = new HttpPoster(hostIp, hostPort, sensorId);
+        this.socket = new HttpPoster(context, hostIp, hostPort, sensorId);
+    }
+
+    public void sendConfigMessage() {
+        this.socket.sendConfigurationMessage();
     }
 
     /**
@@ -38,6 +44,10 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Seria
 
    @Override
    protected Void doInBackground(Void... params) {
+        if (!initialized){
+            this.socket.sendConfigurationMessage();
+            initialized = true;
+        }
        this.socket.run();
        Log.d("TCP TASK", "doInBackground: Connected to the Internet");
        while(true){}
