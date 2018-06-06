@@ -28,11 +28,7 @@ router.post('/', function (req, res) {
     function (data, response) {
         if(response.statusCode == 200){
             session.user = req.body.username;
-<<<<<<< HEAD
             console.log( "     "+session.user);
-=======
-            userId = req.body.username;
->>>>>>> a8305bfa30492c3836a69d055f7c02ca0ad486c2
             res.redirect("/"+req.body.role+"");
         }else{
             res.redirect("/"); // pagie per erroe
@@ -41,14 +37,6 @@ router.post('/', function (req, res) {
     });
        
 });
-
-<<<<<<< HEAD
-router.get("/patient");
-router.get("/patient/history");
-router.get("/patient/advice");
-router.get("/patient/drug");
-router.get("/patient/info");
-=======
 
 router.get("/patient", function(req, res) {
     res.render('patientHome', {title: 'Home'});
@@ -73,9 +61,6 @@ router.get("/patient/advice");
 router.get("/patient/drug");
 router.get("/patient/info");
 
-
-
->>>>>>> a8305bfa30492c3836a69d055f7c02ca0ad486c2
 
 router.get("/doctor", function(req, res){
     var homeParameter = {
