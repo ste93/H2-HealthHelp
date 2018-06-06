@@ -73,7 +73,7 @@ function analyse(sensorData, sensorInfo) {
         break;
 
     case 'temperature':
-      if (value >= 33 || value < 37 ){
+      if (value >= 33 && value < 37 ){
         level = 1;
         description = 'everything ok';
       } else if ( value <= 41) {
