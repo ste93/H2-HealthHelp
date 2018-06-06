@@ -58,8 +58,10 @@ function login(idCode, role, password, res){
             if(err){
                 console.log('user login error - %s', err);
                 return res.send(400);
-            } else {
-                res.json(user);
+            } else if(user == null) {
+                res.send(404);
+            }else{
+                res.send(200);
             }
        });
        users = null;

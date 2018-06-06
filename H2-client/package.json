@@ -1,5 +1,5 @@
 {
-  "name": "H2-ControlUnit",
+  "name": "H2-Client",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "mongodb": "^3.1.0-beta4",
     "mongoose": "^5.1.2",
     "morgan": "~1.9.0",
+    "node-rest-client": "^3.1.0",
     "onoff": "^3.1.0",
     "prettyjson": "^1.2.1",
     "request": "^2.87.0"
