@@ -7,18 +7,52 @@ var moment = require('moment');
 var request = require('request');
 
 var seen={}; // devices seen and when
-var peripheral_name_address_association = {};
 //retrieved each time the application starts and crashes
 //saved each time a new sensor is added
 var addresses_saved_ble = [];
-var nearList = []
 
-//start scanning nearby ble devices
+/**
+ * Function called each time the state of the bluetooth adapter changes.
+ * @param state is the current state of the bluetooth adapter.
+ */
 noble.on('stateChange', function(state) {
 	//retrieve all sensors connected
   if (state === 'poweredOn') {
-    // allow duplicates
-	  addresses_saved_ble =   request.get('http://localhost:3000/api/sensors/', function (error, response, sensorList) {
+	// allow duplicates
+	retrieveSavedSensorList();
+    noble.startScanning([],true);
+  }
+});
+
+/**
+ * Function called each time a peripheral is detached by the program.
+ * @param peripheral is a structure containing all the info about the peripheral.
+ */
+noble.on('discover', function(peripheral) {
+    dev=peripheral.uuid;
+    var new_one=(typeof seen[dev] === 'undefined' || seen[dev] < (moment() - 5000));
+    if (new_one && addresses_saved_ble.includes(dev)) {
+		addCallbacksToDeviceConnections(dev);
+	}
+    seen[dev]=moment();
+	//getNearListLocal();
+});
+
+/**
+ * Function that adds the passed sensor id to the list of known peripherals
+ * @param {string} sensorId the mac address of the sensor
+ */
+module.exports.addPairedPeripheral = function(sensorId) {
+	addresses_saved_ble.push(sensorId);
+}
+
+/**
+ * Function that retrieves the saved sensors from the data manager. 
+ * It is called before discovering nearby devices
+ */
+function retrieveSavedSensorList() {
+	addresses_saved_ble = [];
+	request.get('http://localhost:3000/api/sensors/', function (error, response, sensorList) {
 		console.log('error:', error); // Print the error if one occurred
 		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 		console.log('body : ' + sensorInfo );
@@ -29,31 +63,13 @@ noble.on('stateChange', function(state) {
 				addresses_saved_ble.push(sensorList[index].sensorId);
 			}
 		}
-	  });
-    noble.startScanning([],true);
-  }
-});
+	});
+}
 
-noble.on('discover', function(peripheral) {
-    dev=peripheral.uuid;
-    var new_one=(typeof seen[dev] === 'undefined' || seen[dev] < (moment() - 5000));
-    if (new_one && addresses_saved_ble.includes(dev)) {
-		addCallbacksToDeviceConnections(dev);
-	}
-    seen[dev]=moment();
-	//peripheral_name_addresses_association[peripheral.advertisement.localName] = dev
-	getNearListLocal();
-});
-
-
-
-//--------------------------------------------------------------------
+/**
+ * Function that return a list of nearby devices seen in the last 5 seconds
+ */
 module.exports.getNearList = function() {
-	var nearList = getNearListLocal();
-	return nearList;
-};
-	
-function getNearListLocal() {
 	var nearList = [];
 	for (var address in seen){
 		if (seen[address] < (moment - 5000)) {
@@ -64,16 +80,20 @@ function getNearListLocal() {
 }
 
 //---------------------------------------------------------------------
+/**
 module.exports.doSomethingWith = function(id) {
-	
   console.log("doing something with " + id + " sensors !");
   pub_sub.connectToTopic();
   //pub_sub.publishMessage("Test pub sub message");
-  //save the sensor
+  //TODO save the sensor
 }
+*/
 
-
-
+/**
+ * function that adds a callback after the device connection and establish
+ * a connection to the device.
+ * @param {string} deviceAddress the mac address of the device to connect to
+ */
 function addCallbacksToDeviceConnections(deviceAddress) {
 	peripheral = noble._peripherals[deviceAddress];
 
@@ -85,8 +105,9 @@ function addCallbacksToDeviceConnections(deviceAddress) {
 		peripheral.on('servicesDiscover', function(services) {
 			for( var index in services) {
 				var service = services[index];
+				//ffeo is the default characteristic of SH-HC-08 device
 				if(service.uuid == 'ffe0') {
-					setCharacteristicCallback(service);
+					setCharacteristicCallback(service, deviceAddress);
 					service.discoverCharacteristics();
 				}
 			}
@@ -100,20 +121,24 @@ function addCallbacksToDeviceConnections(deviceAddress) {
 }
 
 //this is the default characteristic for this bluetooth device
-function setCharacteristicCallback(service) {
+function setCharacteristicCallback(service, deviceAddress) {
 	service.on('characteristicsDiscover', function(characteristics){
 		for (var index in characteristics) {
 			var characteristic = characteristics[index];
 			if(characteristic.uuid == 'ffe1') {
-				setCharacteristicDataReader(characteristic);
+				setCharacteristicDataReader(characteristic, deviceAddress);
 			}
 		}
 	});
 }
 
-function setCharacteristicDataReader(characteristic)  {
+function setCharacteristicDataReader(characteristic, deviceAddress)  {
 	characteristic.on('read', function(data, isNotification) {
-		console.log('on -> characteristic read ' + data + ' ' + isNotification);
-		console.log(data);
+		//TODO post data to analyser
+		var options = {
+			url : "http://localhost:3000/api/sensors/" + deviceAddress + "/data",
+			method: 'post'
+
+		}
 	});
 }
