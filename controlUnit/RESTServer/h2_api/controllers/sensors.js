@@ -4,6 +4,7 @@
 
 var jsonUtilities = require('../jsonUtilities');
 var sensorFileManager = require('../../control_unit_app/data_manager/saved_sensor_manager');
+var analyser = require('../../control_unit_app/analyser/analyser');
 
 /**
  * Function that return the entire list of previuosly connected sensors (AKA configured).
@@ -88,7 +89,8 @@ module.exports.addData = function (req,res) {
   console.log("Received data from " , req.params.sensorID);
   if(req.body){
     console.log("BODY: " , req.body);
+    analyser.analyseData(req.body);
   }
-  //console.log("BODY: " + JSON.stringify(req.body, null, 2))
+  //analyser.analyseData(req.body);
   jsonUtilities.sendJsonResponse(res, 200, null);
 };

@@ -7,7 +7,7 @@ var serverURL = "amqp://admin:exchange@213.209.230.94:8088";
 var dataSavedLocally = null;
 
 
-module.exports.connectToServer = function start() {
+module.exports.connectToServer = function() {//start() {
   amqp.connect(serverURL, function(error, connection) {
     console.log('amqp trying to connect');
     if (error) {
