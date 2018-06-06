@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+  .row
+    .col-xs-12.col-sm-8
+
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Home
+        
+        .panel-body
+          form.form-signin(action="", method="post", name="getHistory")
+            div.input
+                span.label Type
+                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature")
+            div.input
+                span.label Start
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
+            div.input
+                span.label End
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") get data history

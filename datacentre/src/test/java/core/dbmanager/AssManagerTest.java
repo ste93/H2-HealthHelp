@@ -11,7 +11,11 @@ import java.lang.Exception;
 
 public class AssManagerTest {
 
+<<<<<<< Updated upstream
     private AssManager associationsManager = new AssManagerImpl();
+=======
+    private AssManager associationsManager = new PatientManagerImpl();
+>>>>>>> Stashed changes
 
     @Test
     public void test() throws JSONException {
