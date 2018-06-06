@@ -15,10 +15,8 @@
 build/
 out/
 .gradle/
-Association RESTful API/node_modules
-H2-db RESTful API/node_modules
-Association RESTful API/package-lock.json
-H2-db RESTful API/package-lock.json
+*/node_modules
+*/package-lock.json
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
