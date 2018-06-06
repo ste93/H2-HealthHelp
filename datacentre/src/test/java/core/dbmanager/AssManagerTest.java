@@ -11,7 +11,7 @@ import java.lang.Exception;
 
 public class AssManagerTest {
 
-    private AssManager associationsManager = new AssociationsManagerImpl();
+    private AssManager associationsManager = new AssManagerImpl();
 
     @Test
     public void test() throws JSONException {

@@ -2,6 +2,7 @@ package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
 import core.SensorType;
+import core.UserRole;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
 import core.pubsub.core.TopicPublisher;
@@ -34,8 +35,7 @@ public class HistoryPublisherActor extends AbstractActor{
                 .match(HistoryMessage.class, message ->{
                     JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
 
-                    publisher.publishMessage(values.toString(),
-                            message.getRequesterRole().getRole()+"."+message.getRequesterId()+".receive.history");
+                    publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
                 })
                 .build();
     }

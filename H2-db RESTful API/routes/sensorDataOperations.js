@@ -226,4 +226,4 @@ function _sensorValueJsonFormat(message){
     return entireMessage
 }
 
-module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange, deleteSensorType}
+module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}

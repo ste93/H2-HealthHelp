@@ -1,8 +1,13 @@
 package core.pubsub.subscriber;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
 import core.pubsub.message.AdviceMessage;
 import core.pubsub.core.AbstractTopicSubscriber;
 import core.pubsub.core.SubscriberBehaviour;
+import core.pubsub.publisher.AdvicePublisherActor;
+import core.pubsub.publisher.LevelPublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +25,7 @@ public class AdviceReceiver extends AbstractTopicSubscriber {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-
+    private final ActorRef advicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(AdvicePublisherActor.class), "adviceActor");
 
     /**
      * Default constructor for the PatientDataReceiver class.
@@ -42,7 +47,7 @@ public class AdviceReceiver extends AbstractTopicSubscriber {
 
             AdviceMessage adviceMessage = new AdviceMessage(patientId, doctorId, advice, timestamp);
 
-
+            advicePublisherActor.tell(adviceMessage, advicePublisherActor);
         } catch (JSONException e) {
             e.printStackTrace();
         }

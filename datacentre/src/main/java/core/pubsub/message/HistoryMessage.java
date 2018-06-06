@@ -11,11 +11,10 @@ public class HistoryMessage {
     private String type;
     private String start;
     private String end;
-    private UserRole requesterRole;
+    private String requesterRole;
     private String requesterId;
 
-    public HistoryMessage(final String patientId, final String type, final String start, final String end,
-                                                        final  UserRole requesterRole, final String requesterId) {
+    public HistoryMessage(final String patientId, final String type, final String start, final String end, final  String requesterRole, final String requesterId) {
         this.patientId = patientId;
         this.type = type;
         this.start = start;
@@ -29,10 +28,10 @@ public class HistoryMessage {
     }
 
     public String getType() {
-        return type;
+        return type.toUpperCase();
     }
 
-    public UserRole getRequesterRole() {
+    public String getRequesterRole() {
         return requesterRole;
     }
 

@@ -52,13 +52,23 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
 
                 json = new JSONObject(body);
 
+                //System.out.println(json);
+
                 String type = (String) json.get("type");
+
+                //System.out.println(type);
 
                 JSONObject value = (JSONObject) json.get("message");
 
+                //System.out.println(value);
+
                 JSONObject output = (JSONObject) value.get("output");
 
-                String idPatient = (String)value.get("patientId");
+                //System.out.println(output);
+
+                String idPatient = (String) value.get("patientId");
+
+                System.out.println("ok");
 
                 int level = output.getInt("level");
                 if(level == 2 || level == 3){

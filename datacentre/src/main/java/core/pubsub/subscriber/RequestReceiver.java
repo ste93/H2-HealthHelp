@@ -7,6 +7,7 @@ import core.UserRole;
 import core.pubsub.core.AbstractTopicSubscriber;
 import core.pubsub.core.SubscriberBehaviour;
 import core.pubsub.message.HistoryMessage;
+import core.pubsub.message.MessagesUtils;
 import core.pubsub.publisher.HistoryPublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +26,8 @@ public class RequestReceiver extends AbstractTopicSubscriber {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
+
+    private final MessagesUtils utils = new MessagesUtils();
     private final ActorRef historyActor = ActorSystem.apply("datacentre").actorOf(Props.create(HistoryPublisherActor.class), "historyActor");
 
     /**
@@ -37,14 +40,16 @@ public class RequestReceiver extends AbstractTopicSubscriber {
 
     private SubscriberBehaviour behaviour = (String message) -> {
         try {
-            JSONObject json = new JSONObject(message);
+            String body = utils.getBody(message, ROUTING_KEY_HISTORY);
 
-            String patientId = json.get("patientId").toString();
-            String type = json.getString("type").toString();
-            String start = json.get("start").toString();
-            String end =  json.get("end").toString();
-            UserRole requesterRole= UserRole.valueOf(json.get("requestRole").toString());
-            String requesterId = json.get("requesterId").toString();
+            JSONObject json = new JSONObject(body);
+
+            String patientId = json.getString("patientId");
+            String type = json.getString("type");
+            String start = json.getString("start");
+            String end =  json.getString("end");
+            String requesterRole =  json.getString("requesterRole");
+            String requesterId = json.getString("requesterId");
 
             HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
             historyActor.tell(historyMessage, historyActor);

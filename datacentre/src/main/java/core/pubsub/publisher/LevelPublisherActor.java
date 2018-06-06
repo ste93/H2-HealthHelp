@@ -1,8 +1,8 @@
 package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
-import core.dbmanager.AssManager;
-import core.dbmanager.AssociationsManagerImpl;
+import core.dbmanager.associations.PatientManager;
+import core.dbmanager.associations.PatientManagerImpl;
 import core.pubsub.core.TopicPublisher;
 import core.pubsub.message.ValueMessage;
 import org.json.JSONArray;
@@ -21,7 +21,7 @@ public class LevelPublisherActor extends AbstractActor{
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-    private AssManager associations = new AssociationsManagerImpl();
+    private PatientManager patientManager = new PatientManagerImpl();
     private TopicPublisher publisher;
 
     @Override
@@ -35,7 +35,7 @@ public class LevelPublisherActor extends AbstractActor{
     public Receive createReceive() {
 
         return receiveBuilder().match(ValueMessage.class, message -> {
-            JSONArray doctors = associations.getPatientAssociations(message.getPatientId());
+            JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
 
                 IntStream.range(0, doctors.length()).forEach(x -> {
                     try {
