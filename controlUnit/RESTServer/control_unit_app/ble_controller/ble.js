@@ -55,7 +55,6 @@ function retrieveSavedSensorList() {
 	request.get('http://localhost:3000/api/sensors/', function (error, response, sensorList) {
 		console.log('error:', error); // Print the error if one occurred
 		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-		console.log('body : ' + sensorInfo );
 		if (sensorList === {}) {
 			addresses_saved_ble = [];
 		} else {
