@@ -79,16 +79,6 @@ module.exports.getNearList = function() {
 	return nearList;
 }
 
-//---------------------------------------------------------------------
-/**
-module.exports.doSomethingWith = function(id) {
-  console.log("doing something with " + id + " sensors !");
-  pub_sub.connectToTopic();
-  //pub_sub.publishMessage("Test pub sub message");
-  //TODO save the sensor
-}
-*/
-
 /**
  * function that adds a callback after the device connection and establish
  * a connection to the device.
@@ -120,7 +110,11 @@ function addCallbacksToDeviceConnections(deviceAddress) {
 	peripheral.connect();
 }
 
-//this is the default characteristic for this bluetooth device
+/**
+ * function that sets the callback called when the characteristic is discovered
+ * @param {} service a service structure that contains the service that the user wants to connect to
+ * @param {string} deviceAddress the mac address of the device to connect to
+ */
 function setCharacteristicCallback(service, deviceAddress) {
 	service.on('characteristicsDiscover', function(characteristics){
 		for (var index in characteristics) {
@@ -132,13 +126,27 @@ function setCharacteristicCallback(service, deviceAddress) {
 	});
 }
 
+/**
+ * Function that sets the callback when the program reads a characteristic
+ * @param {*} characteristic the structure that represents the characteristic that must be read
+ * @param {*} deviceAddress the mac address of the device to connect to
+ */
 function setCharacteristicDataReader(characteristic, deviceAddress)  {
 	characteristic.on('read', function(data, isNotification) {
 		//TODO post data to analyser
 		var options = {
 			url : "http://localhost:3000/api/sensors/" + deviceAddress + "/data",
-			method: 'post'
-
+			form: {
+				id: deviceAddress,
+				data: data
+			}			
 		}
+		request.post(options, function(error,httpResponse,body) {
+			if (error) {
+				console.log(error);
+			} else {
+				console.log(httpResponse.statusCode);
+			}
+		})
 	});
 }
