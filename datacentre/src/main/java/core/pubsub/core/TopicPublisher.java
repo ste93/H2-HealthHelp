@@ -54,7 +54,9 @@ public class TopicPublisher {
      */
     public void publishMessage(String message, String routingKey ){
         try {
+            System.out.println("prima pusblish");
             channel.basicPublish(this.exchangeName, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+            System.out.println("dopo pusblish");
         } catch (IOException e) {
             System.err.println("Error during message publishing");
             e.printStackTrace();

@@ -20,13 +20,12 @@ function getDataHistory (role, idCode){
     key = (args.length > 0) ? args[0] : "doctor"+"."+idCode+".receive.history";
     console.log(key);
     connection.createChannel(function(err, ch) {
-        var ex = 'logs';
-    
+        
         ch.assertExchange(ex, 'topic', {durable: false});
     
-        ch.assertQueue('history', {exclusive: true}, function(err, q) {
+        ch.assertQueue('history', {exclusive: false}, function(err, q) {
           console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-          ch.bindQueue(q.queue, ex, '');
+          ch.bindQueue(q.queue, ex, key);
     
           ch.consume(q.queue, function(msg) {
             console.log(" [x] %s", msg.content.toString());

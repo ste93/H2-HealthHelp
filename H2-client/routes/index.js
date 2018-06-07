@@ -76,7 +76,7 @@ router.get("/doctor", function(req, res){
 });
 
 router.post("/doctor", function(req, res){
-    doctor.getDataHistory(req.body.type, session.user, req.body.start, req.body.end, res);
+    doctor.getDataHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
 });
 
 router.get("/doctor/history", function(req, res){

@@ -41,9 +41,9 @@ public class RequestReceiver extends AbstractTopicSubscriber {
     private SubscriberBehaviour behaviour = (String message) -> {
         try {
             String body = utils.getBody(message, ROUTING_KEY_HISTORY);
-System.out.println(body);
+            System.out.println(body);
             JSONObject json = new JSONObject(body);
-
+            System.out.println(json);
             String patientId = json.getString("patientId");
             String type = json.getString("type");
             String start = json.getString("start");
@@ -52,6 +52,7 @@ System.out.println(body);
             String requesterId = json.getString("requesterId");
 
             HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
+           System.out.println(" message creato");
             historyActor.tell(historyMessage, historyActor);
 
         } catch (JSONException e) {

@@ -20,7 +20,6 @@ public class MainActor extends AbstractActor {
         final ActorRef patientDataReceiverActor = actorSystem.actorOf(Props.create(PatientDataReceiverActor.class), "patientDataReceiver");
         final ActorRef adviceReceiverActor = actorSystem.actorOf(Props.create(AdviceReceiverActor.class), "adviceReceiver");
         final ActorRef requestReceiverActor = actorSystem.actorOf(Props.create(RequestReceiverActor.class), "requestReceiver");
-
     }
 
     @Override
