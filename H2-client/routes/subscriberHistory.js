@@ -28,8 +28,14 @@ function getDataHistory (res, role, idCode){
           ch.bindQueue(q.queue, ex, key);
     
           ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content.toString());
-                    res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+msg.content.toString() });
+                    console.log(" [x] %s", msg.content);
+                    var element = "";
+                    var arraymessage = JSON.parse(msg.content) ;
+                   arraymessage.forEach(x => {
+                       console.log(x);
+                       element = element.concat("\n"+JSON.stringify(x));
+                    });
+                    res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
           }, {noAck: true});
         });
       });

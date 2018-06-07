@@ -88,7 +88,6 @@ router.get("/doctor/history", function(req, res){
         title: "WELCOME " + (session.user).replace(".", " ")+ "."
     }
     history.getDataHistory(res, "doctor", session.user)
-   // res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type });
 });
 router.get("/doctor/advice/edit");
 router.get("/doctor/drug/edit");
