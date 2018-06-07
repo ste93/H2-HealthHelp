@@ -1,5 +1,4 @@
 var amqp = require('amqplib/callback_api');
-var popup = require('window-popup');
 
 
 

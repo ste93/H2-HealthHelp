@@ -10,18 +10,48 @@ block content
 
       .panel.panel-primary
         .panel-heading
-          h2.panel-title Home
+          h2.panel-title History
         
         .panel-body
-          form.form-signin(action="", method="post", name="getHistory")
+          form.form-signin(action="/patient/ciao", method="post", name="getHistory")
             div.input
                 span.label Type
-                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature")
+                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature", value="glycemia")
             div.input
                 span.label Start
-                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
             div.input
                 span.label End
-                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") get data history
+
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Advices
+
+        .panel-body
+          form.form-signin(action="", method="post", name="getAdvice")
+            div.input
+                span.label Start
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
+            div.input
+                span.label End
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") get advices
+        
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Drugs
+
+        .panel-body
+          form.form-signin(action="", method="post", name="getDrugs")
+            div.input
+                span.label Start
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
+            div.input
+                span.label End
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") get druges
