@@ -3,13 +3,16 @@ package core.pubsub.subscriber;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import com.sun.xml.internal.ws.resources.UtilMessages;
 import core.pubsub.message.AdviceMessage;
 import core.pubsub.core.AbstractTopicSubscriber;
 import core.pubsub.core.SubscriberBehaviour;
+import core.pubsub.message.MessagesUtils;
 import core.pubsub.publisher.AdvicePublisherActor;
 import core.pubsub.publisher.LevelPublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
+import sun.misc.MessageUtils;
 
 import java.util.Arrays;
 
@@ -26,6 +29,7 @@ public class AdviceReceiver extends AbstractTopicSubscriber {
     private static final int PORT = 8088;
 
     private final ActorRef advicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(AdvicePublisherActor.class), "adviceActor");
+    private final MessagesUtils utils = new MessagesUtils();
 
     /**
      * Default constructor for the PatientDataReceiver class.
@@ -37,8 +41,10 @@ public class AdviceReceiver extends AbstractTopicSubscriber {
 
     private SubscriberBehaviour behaviour = (String message) -> {
         try {
-            JSONObject json = new JSONObject(message);
-
+            String body = utils.getBody(message, ROUTING_KEY_ADVICE);
+            System.out.println(body);
+            JSONObject json = new JSONObject(body);
+            System.out.println("arriato  "+ json);
             String patientId = json.getString("patientId");
             String doctorId = json.getString("doctorId");
             String advice = json.getString("advice");

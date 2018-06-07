@@ -10,7 +10,7 @@ public class RequestReceiverActor extends AbstractActor {
     public void preStart() throws Exception {
         super.preStart();
         RequestReceiver subscriber = new RequestReceiver();
-        System.out.println(" ----->RequestReceiver STARTED.");
+        System.out.println(" ----->RequestRequesterReceiver STARTED.");
     }
 
     @Override

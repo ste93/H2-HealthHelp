@@ -10,7 +10,7 @@ public class AdviceReceiverActor extends AbstractActor {
     public void preStart() throws Exception {
         super.preStart();
         AdviceReceiver subscriber = new AdviceReceiver();
-        System.out.println(" ----->AdviceReceiver STARTED.");
+        System.out.println(" -----> AdviceReceiver STARTED.");
     }
 
     @Override

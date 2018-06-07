@@ -17,4 +17,18 @@ public class MessagesUtils {
     public String getBody(String message, String bindKey){
         return message.split(bindKey)[1];
     }
+
+    /**
+     *
+     * @param value body of message.
+     *
+     * @return string in accepted format to H2 db API.
+     */
+    public String convertToFormatApi(String value){
+        String messageFormat = value.substring(1,value.length()-1)
+                .replace("}","")
+                .replace("{","");
+
+        return messageFormat;
+    }
 }

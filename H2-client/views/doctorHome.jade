@@ -29,3 +29,33 @@ block content
                 textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") get data history
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Advices
+
+        .panel-body
+          form.form-signin(action="", method="post", name="addAdvice")
+            div.input
+                span.label idPatient
+                textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+            div.input
+                span.label advice
+                textarea(type="text", name="text", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") Create Advice
+        .panel.panel-primary
+        .panel-heading
+          h2.panel-title Advices
+
+        .panel-body
+          form.form-signin(action="", method="post", name="addDrug")
+            div.input
+                span.label idPatient
+                textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+            div.input
+                span.label drug
+                textarea(type="text", name="text", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") Create Advice
+  
+  

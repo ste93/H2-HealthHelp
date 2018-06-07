@@ -76,7 +76,7 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
                     emergencyActor.tell(new ValueMessage(level,json, idPatient), emergencyActor);
                 }
 
-                String messageToInsert = convertToFormatApi(value.toString());
+                String messageToInsert = utils.convertToFormatApi(value.toString());
 
                 H2manager.addSensorValue(idPatient, SensorType.valueOf(type),messageToInsert);
 
@@ -95,19 +95,5 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
         }
 
     };
-
-    /**
-     *
-     * @param value body of message.
-     *
-     * @return string in accepted format to H2 db API.
-     */
-    private String convertToFormatApi(String value){
-        String messageFormat = value.substring(1,value.length()-1)
-                                .replace("}","")
-                                    .replace("{","");
-
-        return messageFormat;
-    }
 
 }

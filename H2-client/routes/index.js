@@ -88,18 +88,22 @@ router.get("/doctor", function(req, res){
 });
 
 router.post("/doctor", function(req, res){
-    session.pat = req.body.pat;
-    session.type = req.body.type;
-    doctor.getDataHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
+    if(req.body.text != undefined){
+        doctor.sendAdvice(req.body.pat, req.body.text, res);
+    }else if(req.body.drug != undefined){
+        
+    }else{
+        session.pat = req.body.pat;
+        session.type = req.body.type;
+        doctor.getDataHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
+    }
+    
 });
 
 router.get("/doctor/history", function(req, res){
-    var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")+ "."
-    }
-    history.getDataHistory(res, "doctor", session.user)
+    history.getDataHistory(res, "doctor", session.user);
+});
 
-router.get("/doctor/advice/edit");
 router.get("/doctor/drug/edit");
 router.get("/doctor/info");
 

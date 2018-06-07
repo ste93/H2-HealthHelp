@@ -10,10 +10,7 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 app.use(session({
-  cookieName: 'session',
-  secret: 'random_string_goes_here',
-  duration: 30 * 60 * 1000,
-  activeDuration: 5 * 60 * 1000,
+  secret: '0GBlJZ9EKBt2Zbi2flRPvztczCewBxXK' 
 }));
 
 app.set('views', path.join(__dirname, 'views'));

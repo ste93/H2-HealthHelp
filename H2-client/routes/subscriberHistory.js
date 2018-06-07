@@ -33,7 +33,7 @@ function getDataHistory (res, idCode){
                        console.log(x);
                        element = element.concat("\n"+JSON.stringify(x));
                     });
-                    res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
+                    res.render('historyPage', {role: session.role, title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
           }, {noAck: true});
         });
       });

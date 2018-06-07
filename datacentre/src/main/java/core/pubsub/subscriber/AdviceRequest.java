@@ -21,7 +21,7 @@ public class AdviceRequest extends AbstractTopicSubscriber {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-    private final ActorRef multiAdvicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(MultiAdvicePublisherActor.class), "adviceActor");
+    private final ActorRef multiAdvicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(MultiAdvicePublisherActor.class), "multiAdviceActor");
 
     /**
      * Default constructor for the PatientDataReceiver class.
@@ -42,7 +42,7 @@ public class AdviceRequest extends AbstractTopicSubscriber {
 
             AdviceRequestMessage adviceRequest = new AdviceRequestMessage(patientId, start, end);
 
-            multiAdvicePublisherActor .tell(adviceRequest, multiAdvicePublisherActor );
+            multiAdvicePublisherActor.tell(adviceRequest, multiAdvicePublisherActor );
         } catch (JSONException e) {
             e.printStackTrace();
         }

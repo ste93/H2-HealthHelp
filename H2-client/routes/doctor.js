@@ -1,4 +1,5 @@
 var amqp = require('amqplib/callback_api');
+var session = require("client-sessions");
 
 
 
@@ -28,9 +29,45 @@ function getDataHistory (type, patId, start, end, requester ,res){
             console.log(" [x] Sent %s:'%s'", key, message);
             res.redirect("/doctor/history");
     });
+}
+
+function sendAdvice(patientID,advice,res){
+    ex = 'advice';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.receive.advice';
+    var date = new Date().toISOString();
+    var message = '{ "patientId":"'
+                    + patientID + '", "doctorId":"'
+                    + session.user + '", "advice":"'
+                    + advice +'", "timestamp":"'
+                    + date+'"}';
+    connection.createChannel(function(err, ch) {
+            ch.assertExchange(ex, 'topic', {durable: false});
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/doctor");
+    });
     
+}
+
+function sendDrug(patientID,advice,res){
+    ex = 'advice';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.receive.advice';
+    var date = new Date().toISOString();
+    var message = '{ "patientId":"'
+                    + patientID + '", "doctorId":"'
+                    + session.user + '", "advice":"'
+                    + advice +'", "timestamp":"'
+                    + date+'"}';
+    connection.createChannel(function(err, ch) {
+            ch.assertExchange(ex, 'topic', {durable: false});
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/doctor");
+    });
     
 }
 
 
-module.exports = {getDataHistory};
+module.exports = {getDataHistory, sendAdvice};
