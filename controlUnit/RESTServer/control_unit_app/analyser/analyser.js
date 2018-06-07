@@ -1,5 +1,6 @@
 var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
+var moment = require('moment');
 
 var sensorsList = [];
 
@@ -120,13 +121,18 @@ function analyse(sensorData, sensorInfo) {
 
     console.log("Analysis completed ! ");
 
+    /*
+    var tryDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSS');//.toDate();
+    console.log("date: " , tryDate);
+    */
+
   var sensorMeasure = {
      type : sensorInfo.value.dataType,
      message: {
 		   patientId: sensorInfo.value.patientID,
 		   value: sensorData.data,
 		   unit: sensorInfo.value.unit,
-  		 timestamp: "31/02/1492-00:00:00", //TODO
+  		 timestamp: moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSS'),
   		 output: {
 			   level: level,
 			   description: description

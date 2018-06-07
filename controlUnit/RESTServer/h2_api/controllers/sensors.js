@@ -6,6 +6,8 @@ var jsonUtilities = require('../jsonUtilities');
 var sensorFileManager = require('../../control_unit_app/data_manager/saved_sensor_manager');
 var analyser = require('../../control_unit_app/analyser/analyser');
 
+var publisher = require('../../control_unit_app/pub_sub/sensorPublisher');
+
 /**
  * Function that return the entire list of previuosly connected sensors (AKA configured).
  * Read the list from file and then return to the requester in Json format.
@@ -60,6 +62,12 @@ module.exports.createSensors = function (req, res) {
   console.log(" --- unit : " + req.body.unit);
 
   sensorFileManager.addSensor(req.body.id, req.body.name, req.body.patient, req.body.dataType, req.body.unit);
+
+  var msg ={ patientId : req.body.patient,
+             type : req.body.dataType };
+
+  publisher.publishMessage(JSON.stringify(msg));
+  //publisher.publishMessage(msg);
   jsonUtilities.sendJsonResponse(res, 201, null);
 };
 
