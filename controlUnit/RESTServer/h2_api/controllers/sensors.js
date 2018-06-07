@@ -61,14 +61,36 @@ module.exports.createSensors = function (req, res) {
   console.log(" --- datatype : " + req.body.dataType);
   console.log(" --- unit : " + req.body.unit);
 
-  sensorFileManager.addSensor(req.body.id, req.body.name, req.body.patient, req.body.dataType, req.body.unit);
+  var newSensorID = req.body.id;
+  var alreadyRegistered = false;
 
-  var msg ={ patientId : req.body.patient,
-             type : req.body.dataType };
+  sensorFileManager.getSensorsList(function(error, jsonObj) {
+    if (error) {
+      jsonUtilities.sendJsonResponse(res, 400, error);
+    } else {
+      jsonObj.forEach(function(element) {
+        console.log(" Found element : ", element.sensorId);
+        if (element.sensorId === newSensorID){
+          console.log(" This sensor was already registered");
+          alreadyRegistered = true;
+        }
+      });
 
-  publisher.publishMessage(JSON.stringify(msg));
+      if (! alreadyRegistered ){
+        sensorFileManager.addSensor(req.body.id, req.body.name, req.body.patient, req.body.dataType, req.body.unit);
+
+        var msg ={ patientId : req.body.patient,
+                   type : req.body.dataType };
+
+        publisher.publishMessage(JSON.stringify(msg));
+        jsonUtilities.sendJsonResponse(res, 201, null);
+      } else {
+        jsonUtilities.sendJsonResponse(res, 200, null);
+      }
+    }
+  });
   //publisher.publishMessage(msg);
-  jsonUtilities.sendJsonResponse(res, 201, null);
+
 };
 
 /**
