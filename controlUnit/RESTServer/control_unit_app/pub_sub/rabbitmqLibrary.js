@@ -7,7 +7,12 @@ var serverURL = "amqp://admin:exchange@213.209.230.94:8088";
 var dataSavedLocally = null;
 
 
-module.exports.connectToServer = function start() {
+module.exports.connectToServer = function(callback) {
+  start(callback);
+}
+
+
+function start(callback) {
   amqp.connect(serverURL, function(error, connection) {
     console.log('amqp trying to connect');
     if (error) {
@@ -28,11 +33,11 @@ module.exports.connectToServer = function start() {
     //this function is called when the server is connected
     //whenConnected();
     //TODO here I send the data saved locally
+    callback();
   });
 }
 
 module.exports.publishToServer = function(exchangeName, exchangeType, routingKey, isDurable, message) {
-  //console.log("connection : ", amqpConnection);
   if(amqpConnection) {
     amqpConnection.createChannel(function(error, channel) {
       if(error) {
@@ -52,6 +57,5 @@ module.exports.publishToServer = function(exchangeName, exchangeType, routingKey
   }
   else {
     //TODO save data locally
-    //connectToServer()
   }
 }

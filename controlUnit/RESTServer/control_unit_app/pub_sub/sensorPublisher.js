@@ -6,8 +6,8 @@ var isDurable = false;
 
 var connected = false;
 
-function connect() {
-  rabbitMQ.connectToServer();
+function connect(callback) {
+  rabbitMQ.connectToServer(callback);
   connected = true;
 }
 
@@ -17,7 +17,6 @@ module.exports.publishMessage = function (data) {
     //TODO: Non servirebbe un valore di ritorno per sapere se è andato bene o no ?
     rabbitMQ.publishToServer(exchangeName, exchangeType, routingKey, isDurable, data);
   } else {
-    connect();
-    rabbitMQ.publishToServer(exchangeName, exchangeType, routingKey, isDurable, data);
+    connect(function() {rabbitMQ.publishToServer(exchangeName, exchangeType, routingKey, isDurable, data);});
   }
 }
