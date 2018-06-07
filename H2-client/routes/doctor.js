@@ -1,53 +1,37 @@
 var amqp = require('amqplib/callback_api');
+var popup = require('window-popup');
+
 
 
 var connection;
+var ex;
+var args;
+var key;
+
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
 });
 
-function doctorHome (res){
-    res.render('./view/doctorHome');
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**  var ex = 'historyRequest';
-    var args = process.argv.slice(2); 
-    var key = (args.length > 0) ? args[0] : 'datacentre.request.history'; 
-*/
-
-var msg = ' {"type": "glycemia", "patientId": "giulia.lucchi", "start": "2018-01-11 11:28", "end": "2018-04-24 08:00:03", "requesterId": "mario.rossi", "requesterRole": "doctor"}';  
-
-//var homeParameter = {    title: 'Web Server'}
-
-/*function connectToTopic (req, res) {
-        conn.createChannel(function(err, ch) {
+function getDataHistory (type, patId, start, end, res){
+    ex = 'historyRequest';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.request.history';
+    var message = '{"type":"' + type 
+                    + '", "patientId":" '
+                    + patId + '", "start":" '
+                    + start + '", "end":" '
+                    + end + '", "requesterId":" '
+                    + patId + '", "requesterRole": "doctor"}';
+    connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
-            ch.publish(ex, key, new Buffer(msg));
-            console.log(" [x] Sent %s:'%s'", key, msg);
-        });
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/doctor/history");
     });
-    res.render('index', homeParameter);
-}*/
-
-
-function _setProprietiesChannel(ex, args, key){
-    var ex = ex;
-    var args = args; 
-    var key = key;   
+    
+    
 }
 
-module.exports = {doctorHome};
+
+module.exports = {getDataHistory};

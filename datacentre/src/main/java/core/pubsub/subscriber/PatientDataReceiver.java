@@ -68,7 +68,7 @@ public class PatientDataReceiver extends AbstractTopicSubscriber {
 
                 String idPatient = (String) value.get("patientId");
 
-                System.out.println("ok");
+               // System.out.println("ok");
 
                 int level = output.getInt("level");
                 if(level == 2 || level == 3){

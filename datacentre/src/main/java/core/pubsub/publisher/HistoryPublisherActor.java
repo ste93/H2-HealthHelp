@@ -33,7 +33,7 @@ public class HistoryPublisherActor extends AbstractActor{
     public Receive createReceive() {
         return receiveBuilder()
                 .match(HistoryMessage.class, message ->{
-                    JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
+                    JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
 
                     publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
                 })

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var doctor = require('./doctor');
+var history = require('./subscriberHistory');
 var session= require('client-sessions');
 var patient = require('./patient')
 
@@ -39,7 +40,11 @@ router.post('/', function (req, res) {
 });
 
 router.get("/patient", function(req, res) {
-    res.render('patientHome', {title: 'Home'});
+    var homeParameter = {
+        title: "WELCOME " + (session.user).replace(".", " ")+ "."
+      }
+
+    res.render('patientHome', homeParameter);
 });
 
 router.post("/patient", function(req, res) {
@@ -65,11 +70,22 @@ router.get("/patient/info");
 router.get("/doctor", function(req, res){
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")+ "."
-      }
+    }
     
     res.render("doctorHome", homeParameter);
-} );
-router.get("/doctor/history");
+});
+
+router.post("/doctor", function(req, res){
+    doctor.getDataHistory(req.body.type, session.user, req.body.start, req.body.end, res);
+});
+
+router.get("/doctor/history", function(req, res){
+    var homeParameter = {
+        title: "WELCOME " + (session.user).replace(".", " ")+ "."
+    }
+    history.getDataHistory("doctor", session.user)
+    res.render('history', {title: 'Data History'});
+});
 router.get("/doctor/advice/edit");
 router.get("/doctor/drug/edit");
 router.get("/doctor/info");

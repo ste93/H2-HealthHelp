@@ -41,7 +41,7 @@ public class RequestReceiver extends AbstractTopicSubscriber {
     private SubscriberBehaviour behaviour = (String message) -> {
         try {
             String body = utils.getBody(message, ROUTING_KEY_HISTORY);
-
+System.out.println(body);
             JSONObject json = new JSONObject(body);
 
             String patientId = json.getString("patientId");
