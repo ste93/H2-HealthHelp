@@ -12,11 +12,11 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 });
 
 
-function getDataHistory (res, idCode){
-    ex = 'historyRequest';
+function getAdvices (res, idCode){
+    ex = 'adviceRequest';
     args = process.argv.slice(2);
     queue = "history";
-    key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.history";
+    key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.advice";
     console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
@@ -26,14 +26,8 @@ function getDataHistory (res, idCode){
           ch.bindQueue(q.queue, ex, key);
     
           ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content);
-                    var element = "";
-                    var arraymessage = JSON.parse(msg.content) ;
-                   arraymessage.forEach(x => {
-                       console.log(x);
-                       element = element.concat("\n"+JSON.stringify(x));
-                    });
-                    res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
+                    console.log(" [x] %s", msg.content.toString());
+                    res.render('advicesPage', {title: 'Advices', patient: 'patient: '+session.pat, values: ""+msg.content.toString() });
           }, {noAck: true});
         });
       });
@@ -42,4 +36,4 @@ function getDataHistory (res, idCode){
 }
 
 
-module.exports = {getDataHistory};
+module.exports = {getAdvices};

@@ -52,7 +52,7 @@ public class RequestReceiver extends AbstractTopicSubscriber {
             String requesterId = json.getString("requesterId");
 
             HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
-           System.out.println(" message creato");
+            System.out.println(" message creato");
             historyActor.tell(historyMessage, historyActor);
 
         } catch (JSONException e) {

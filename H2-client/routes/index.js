@@ -3,6 +3,7 @@ var router = express.Router();
 
 var doctor = require('./doctor');
 var history = require('./subscriberHistory');
+var advices = require('./subscriberAdvices');
 var session= require('client-sessions');
 var patient = require('./patient')
 
@@ -42,34 +43,43 @@ router.post('/', function (req, res) {
 });
 
 router.get("/patient", function(req, res) {
+    session.role = "patient";
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")+ "."
+        title: "WELCOME " + (session.user).replace(".", " ")
       }
 
     res.render('patientHome', homeParameter);
 });
 
 router.post("/patient", function(req, res) {
-    console.log("soooooooooooooooooooooooonoooooooooooooooooooooo");
-    console.log(req.body.type);
-    console.log(req.body.start);
-    console.log(req.body.end);
-    patient.getDataHistory(req.body.type, userId, req.body.start, req.body.end, res);
+    session.type = req.body.type;
+    session.pat = session.user;
+    patient.getDataHistory(req.body.type, session.user, req.body.start, req.body.end,res);
 });
-
-
 
 router.get("/patient/history", function(req, res) {
-    console.log("soooooooooooooooooooooooonoooooooooooooooooooooo in history");
-    res.render('history', {title: 'Data History'});
+    var homeParameter = {
+        title: "WELCOME " + (session.user).replace(".", " ")
+    }
+    history.getDataHistory(res, session.user)
 });
 
-router.get("/patient/advice");
+router.get("/patient/advice", function(req, res) {
+    var homeParameter = {
+        title: "WELCOME " + (session.user).replace(".", " ")
+    }
+    advices.getAdvices(res, session.user)
+});
+
 router.get("/patient/drug");
 router.get("/patient/info");
 
 
+
+
+
 router.get("/doctor", function(req, res){
+    session.role = "doctor";
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")+ "."
     }
@@ -88,7 +98,7 @@ router.get("/doctor/history", function(req, res){
         title: "WELCOME " + (session.user).replace(".", " ")+ "."
     }
     history.getDataHistory(res, "doctor", session.user)
-});
+
 router.get("/doctor/advice/edit");
 router.get("/doctor/drug/edit");
 router.get("/doctor/info");

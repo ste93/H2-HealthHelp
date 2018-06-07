@@ -2,6 +2,7 @@ package core.pubsub;
 
 import akka.actor.*;
 import core.pubsub.subscriber.AdviceReceiverActor;
+import core.pubsub.subscriber.AdviceRequestActor;
 import core.pubsub.subscriber.PatientDataReceiverActor;
 import core.pubsub.subscriber.RequestReceiverActor;
 
@@ -20,6 +21,7 @@ public class MainActor extends AbstractActor {
         final ActorRef patientDataReceiverActor = actorSystem.actorOf(Props.create(PatientDataReceiverActor.class), "patientDataReceiver");
         final ActorRef adviceReceiverActor = actorSystem.actorOf(Props.create(AdviceReceiverActor.class), "adviceReceiver");
         final ActorRef requestReceiverActor = actorSystem.actorOf(Props.create(RequestReceiverActor.class), "requestReceiver");
+        final ActorRef adviceRequestActor = actorSystem.actorOf(Props.create(AdviceRequestActor.class), "adviceRequester");
     }
 
     @Override

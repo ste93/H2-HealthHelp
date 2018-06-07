@@ -27,7 +27,7 @@ public class HistoryPublisherActor extends AbstractActor{
     public void preStart() throws Exception {
         super.preStart();
         this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
-        System.out.println("HISTORY ACTOR START.");
+        //System.out.println("HISTORY ACTOR START.");
     }
 
     @Override
