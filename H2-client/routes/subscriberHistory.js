@@ -1,6 +1,6 @@
 var amqp = require('amqplib/callback_api');
 var popup = require('window-popup');
-
+var session = require('client-sessions');
 
 var connection;
 var ex;
@@ -13,7 +13,7 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 });
 
 
-function getDataHistory (role, idCode){
+function getDataHistory (res, role, idCode){
     ex = 'historyRequest';
     args = process.argv.slice(2);
     queue = "history";
@@ -28,7 +28,8 @@ function getDataHistory (role, idCode){
           ch.bindQueue(q.queue, ex, key);
     
           ch.consume(q.queue, function(msg) {
-            console.log(" [x] %s", msg.content.toString());
+                    console.log(" [x] %s", msg.content.toString());
+                    res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+msg.content.toString() });
           }, {noAck: true});
         });
       });

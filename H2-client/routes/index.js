@@ -11,6 +11,8 @@ var Client = require('node-rest-client').Client;
 var client = new Client();
 
 var userId;
+var patientId;
+var type;
 
 router.get('/', function (req, res) {
     var homeParameter = {
@@ -76,6 +78,8 @@ router.get("/doctor", function(req, res){
 });
 
 router.post("/doctor", function(req, res){
+    session.pat = req.body.pat;
+    session.type = req.body.type;
     doctor.getDataHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
 });
 
@@ -83,8 +87,8 @@ router.get("/doctor/history", function(req, res){
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")+ "."
     }
-    history.getDataHistory("doctor", session.user)
-    res.render('history', {title: 'Data History'});
+    history.getDataHistory(res, "doctor", session.user)
+   // res.render('historyPage', {title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type });
 });
 router.get("/doctor/advice/edit");
 router.get("/doctor/drug/edit");

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+        h3= patient
+        h3= type
+  .row
+    .col-xs-12.col-sm-8
+
+      input(type="text", name="scroll" ,class="scrollabletextbox", value= values)
