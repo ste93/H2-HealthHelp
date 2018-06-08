@@ -21,6 +21,7 @@ function getSensorInfo(id, callback) {
 
   if (! found){
   // retrieve sensor informations from data storage
+	  console.log(id);
     request.get('http://localhost:3000/api/sensors/' + id, function (error, response, info) {
       console.log('error:', error); // Print the error if one occurred
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received

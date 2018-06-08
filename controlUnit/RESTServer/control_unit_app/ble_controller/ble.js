@@ -21,7 +21,7 @@ noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
 	// allow duplicates
 	retrieveSavedSensorList();
-    noble.startScanning([],true);
+	//noble.startScanning([],true);
   }
 });
 
@@ -54,14 +54,21 @@ module.exports.addPairedPeripheral = function(sensorId) {
 function retrieveSavedSensorList() {
 	addresses_saved_ble = [];
 	request.get('http://localhost:3000/api/sensors/', function (error, response, sensorList) {
-		console.log('error:', error); // Print the error if one occurred
-		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+		if (error) {
+			console.log('error:', error); // Print the error if one occurred
+		}
+		//console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
 		if (sensorList === {}) {
 			addresses_saved_ble = [];
 		} else {
-			for (var index in sensorList) {
-				addresses_saved_ble.push(sensorList[index].sensorId);
-			}
+			var jsonSensorList = JSON.parse(sensorList);
+			jsonSensorList.forEach(function(data) {
+				if (data != null) {
+					console.log(data)
+					addresses_saved_ble.push(data.sensorId)
+				}
+			});
+			noble.startScanning([],true);
 		}
 	});
 }
@@ -71,9 +78,13 @@ function retrieveSavedSensorList() {
  */
 module.exports.getNearList = function() {
 	var nearList = [];
+	console.log("[getNearList]");
 	for (var address in seen){
-		if (seen[address] < (moment - 5000)) {
-			nearList[noble._peripherals[address].advertisement.localName] = address
+		if (moment().diff(seen[address]) < 5000) {
+			nearList.push({
+				"id": address,
+				"name" : noble._peripherals[address].advertisement.localName
+			})
 		}
 	}
 	return nearList;
@@ -86,7 +97,7 @@ module.exports.getNearList = function() {
  */
 function addCallbacksToDeviceConnections(deviceAddress) {
 	peripheral = noble._peripherals[deviceAddress];
-
+	console.log('[BLE] adding callback')
 	//discover the services available when connects to the peripheral
 	peripheral.on('connect', function() {
 		console.log('on -> connect');
@@ -133,12 +144,13 @@ function setCharacteristicCallback(service, deviceAddress) {
  */
 function setCharacteristicDataReader(characteristic, deviceAddress)  {
 	characteristic.on('read', function(data, isNotification) {
+		console.log(data);
 		//TODO post data to analyser
 		var options = {
 			url : "http://localhost:3000/api/sensors/" + deviceAddress + "/data",
 			form: {
-				id: deviceAddress,
-				data: data
+				"id" : deviceAddress,
+				"data": data
 			}			
 		}
 		request.post(options, function(error,httpResponse,body) {

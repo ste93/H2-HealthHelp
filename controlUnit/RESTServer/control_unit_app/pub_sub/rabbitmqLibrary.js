@@ -14,21 +14,21 @@ module.exports.connectToServer = function(callback) {
 
 function start(callback) {
   amqp.connect(serverURL, function(error, connection) {
-    console.log('amqp trying to connect');
+   // console.log('amqp trying to connect');
     if (error) {
       console.error("[AMQP connection]", error.message);
       return setTimeout(start, 1000, serverURL);
     }
     connection.on("error", function(error) {
       if (error.message !== "Connection closing") {
-        console.error("[AMQP] conn error", error.message);
+     //   console.error("[AMQP] conn error", error.message);
       }
     });
     connection.on("close", function() {
       console.error("[AMQP] reconnecting");
       return setTimeout(start, 1000, serverURL);
     });
-    console.log("[AMQP] connected");
+    //console.log("[AMQP] connected");
     amqpConnection = connection;
     //this function is called when the server is connected
     //whenConnected();
@@ -46,9 +46,9 @@ module.exports.publishToServer = function(exchangeName, exchangeType, routingKey
         //here how many times I try the createchannel??
         //TODO save data locally
       } else {
-        console.log(" [AMQP] Channel created")
+       // console.log(" [AMQP] Channel created")
         channel.assertExchange(exchangeName, exchangeType, {durable: isDurable});
-        console.log(" [AMQP] exchange created : ", typeof exchangeName )
+        console.log(" [AMQP] exchange created : ", exchangeName )
         // Note: on Node 6 Buffer.from(msg) should be used
         channel.publish(exchangeName, routingKey, new Buffer(message));
         console.log(" [x] Sent " + message);

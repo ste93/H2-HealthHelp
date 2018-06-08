@@ -23,7 +23,7 @@ var renderSensorHomepage = function(req, res, responseBody){
   res.render('sensors', {
     title: 'H2 Sensors Manager',
     sensorsList: sensorsList,
-    nearSensorsList : [{}]//ble.getNearList()
+    nearSensorsList : ble.getNearList()
     //action : 'console.log("doing something");'
   });
 };
