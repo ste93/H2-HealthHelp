@@ -46,7 +46,7 @@ function getAdvices(patId, start, end, res) {
 }
 
 function getDrugs(req, res) {
-    res.render('drugs', {title: 'Drugs'});
+    
 }
 
 function getInfo(req, res) {

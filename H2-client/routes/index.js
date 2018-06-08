@@ -10,7 +10,7 @@ var patient = require('./patient')
 
 var userAuthentication = require('./userAuthentication');
 var pubSubAdvice = require('./pubSubAdvice');
-var pubSubHistory = require('./pubsubHistory');
+var pubSubHistory = require('./pubSubHistory');
 var pubSubInfo = require('./pubSubInfo');
 var pubSubDrug = require('./pubSubDrug');
 
@@ -59,9 +59,15 @@ router.get("/patient", function(req, res) {
 });
 
 router.post("/patient", function(req, res) {
-    session.type = req.body.type;
     session.pat = session.user;
-    patient.getDataHistory(req.body.type, session.user, req.body.start, req.body.end,res);
+    if(req.body.sartAdvice != undefined){
+        patien.getAdvices(session.user, req.body.startAdvice, req.body.end, res);
+    }else if(req.body.startDrug != undefined){
+        patient.getDrugs(session.user, req.body.startDrug, req.body.end, res);
+    }else{
+        session.type = req.body.type;
+        patient.getDataHistory(req.body.type, session.user, req.body.start, req.body.end, res);
+    }    
 });
 
 router.get("/patient/history", function(req, res) {

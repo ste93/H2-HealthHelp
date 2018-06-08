@@ -74,14 +74,15 @@ public abstract class AbstractTopicSubscriber {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+
                                 String message = new String(body, "UTF-8");
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
-              behaviour.handleMessage(message, envelope.getRoutingKey());
+           //   behaviour.handleMessage(message, envelope.getRoutingKey());
+
             }
         };
         try {
             channel.basicConsume(queueName, true, consumer);
-
         } catch (IOException e) {
             System.err.println("Error during starting operation");
             e.printStackTrace();
@@ -119,13 +120,13 @@ public abstract class AbstractTopicSubscriber {
     private void mqttSetup() {
         try {
             this.connection = factory.newConnection();
-            this.channel = connection.createChannel();
+            channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
             //channel.basicQos(1);
-            this.channel.queueDeclare(this.queueName, true, false, false, null);
+            channel.queueDeclare(this.queueName, true, false, false, null);
             this.topicBindKey.forEach(bindKey ->{
                 try {
-                    this.channel.queueBind(this.queueName, this.exchangeName, bindKey);
+                    channel.queueBind(this.queueName, this.exchangeName, bindKey);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
