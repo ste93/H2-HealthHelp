@@ -13,3 +13,8 @@
   font-size: 82%;
   overflow:scroll;
 }
+
+.nav{
+  position: relative;
+  display: inline-block;
+}

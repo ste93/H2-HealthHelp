@@ -1,0 +1,33 @@
+extends layout
+
+block nav
+   .navbar-header
+            a.navbar-brand(href='/doctor') H2 - Health Help
+            a.navbar-brand(href='/doctor/info') About
+            a.navbar-brand(href='/') Logout
+            button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+        
+
+block content
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+        h3= subtitle
+    .row
+        .col-xs-12.col-sm-8
+        .row.list-group
+            .col-xs-12.list-group-item
+                h4 
+                p #{sidebar}
+
+              
+           
+
+        
+        
+  
+  

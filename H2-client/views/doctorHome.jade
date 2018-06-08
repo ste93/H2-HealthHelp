@@ -1,5 +1,16 @@
 extends layout
 
+block nav
+   .navbar-header
+            a.navbar-brand(href='/doctor') H2 - Health Help
+            a.navbar-brand(href='/doctor/info') About
+            a.navbar-brand(href='/') Logout
+            button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+        
+
 block content
   #banner.page-header
     .row
@@ -28,7 +39,7 @@ block content
                 span.label End
                 textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
             div.actions
-              button.btn.btn-large.btn-primary(type="submit") get data history
+              button.btn.btn-large.btn-primary(type="submit") Get data history
       .panel.panel-primary
         .panel-heading
           h2.panel-title Advices
@@ -36,26 +47,27 @@ block content
         .panel-body
           form.form-signin(action="", method="post", name="addAdvice")
             div.input
-                span.label idPatient
+                span.label Patient id
                 textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
             div.input
                 span.label advice
                 textarea(type="text", name="text", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
             div.actions
-              button.btn.btn-large.btn-primary(type="submit") Create Advice
-        .panel.panel-primary
+              button.btn.btn-large.btn-primary(type="submit") Send Advice
+        
+      .panel.panel-primary
         .panel-heading
-          h2.panel-title Advices
+          h2.panel-title Drug
 
         .panel-body
           form.form-signin(action="", method="post", name="addDrug")
             div.input
-                span.label idPatient
+                span.label Patient id
                 textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
             div.input
-                span.label drug
-                textarea(type="text", name="text", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
+                span.label Drug Name
+                textarea(type="text", name="drug", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
             div.actions
-              button.btn.btn-large.btn-primary(type="submit") Create Advice
+              button.btn.btn-large.btn-primary(type="submit") Prescribe Drug
   
   

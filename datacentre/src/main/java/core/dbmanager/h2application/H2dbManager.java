@@ -4,6 +4,7 @@ import core.SensorType;
 import core.UserRole;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Optional;
 
@@ -34,6 +35,16 @@ public interface H2dbManager {
      *                 false otherwise
      */
     boolean login(final String idCode, final String password, final UserRole role);
+
+    /**
+     * Gets patient or doctor information.
+     *
+     * @param role user's role, rapresented in Enum UserRole
+     * @param idCode patient or doctor identifier
+     *
+     * @return JSONObject includes the information saved in the db application.
+     */
+    JSONObject getUserInformation(final String role, final UserRole idCode);
 
     /**
      * Returns the list of sensor's types.

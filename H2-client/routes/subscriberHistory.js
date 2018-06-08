@@ -27,6 +27,9 @@ function getDataHistory (res, idCode){
     
           ch.consume(q.queue, function(msg) {
                     console.log(" [x] %s", msg.content);
+                    if(msg.content.toString() == "500"){
+                        res.redirect("/doctor");
+                    }
                     var element = "";
                     var arraymessage = JSON.parse(msg.content) ;
                    arraymessage.forEach(x => {

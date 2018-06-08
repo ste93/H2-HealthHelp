@@ -50,16 +50,17 @@ function sendAdvice(patientID,advice,res){
     
 }
 
-function sendDrug(patientID,advice,res){
-    ex = 'advice';
+function sendDrug(patientID,drug,res){
+    ex = 'drug';
     args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.receive.advice';
+    key = (args.length > 0) ? args[0] : 'datacentre.receive.drug';
     var date = new Date().toISOString();
     var message = '{ "patientId":"'
-                    + patientID + '", "doctorId":"'
-                    + session.user + '", "advice":"'
-                    + advice +'", "timestamp":"'
-                    + date+'"}';
+                    + patientID + '", "message": { "doctorId":"'
+                    + session.user + '", "timestamp":"'
+                    + date +'", "drugName":"'
+                    + drug+'"}}';
+    console.log( message);
     connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
             ch.publish(ex, key, new Buffer(message));
@@ -69,5 +70,43 @@ function sendDrug(patientID,advice,res){
     
 }
 
+function sendDrug(patientID,drug,res){
+    ex = 'drug';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.receive.drug';
+    var date = new Date().toISOString();
+    var message = '{ "patientId":"'
+                    + patientID + '", "message": { "doctorId":"'
+                    + session.user + '", "timestamp":"'
+                    + date +'", "drugName":"'
+                    + drug+'"}}';
+    console.log( message);
+    connection.createChannel(function(err, ch) {
+            ch.assertExchange(ex, 'topic', {durable: false});
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/doctor");
+    });
+    
+}
 
-module.exports = {getDataHistory, sendAdvice};
+function getInfo(role, id, res){
+    ex = 'info';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.request.info';
+    var date = new Date().toISOString();
+    var message = '{ "role":"'
+                    + session.role + '", "id":"'
+                    + session.user + '}';
+    console.log( message);
+    connection.createChannel(function(err, ch) {
+            ch.assertExchange(ex, 'topic', {durable: false});
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/doctor/info");
+    });
+}
+
+
+
+module.exports = {getDataHistory, sendAdvice, sendDrug, getInfo};

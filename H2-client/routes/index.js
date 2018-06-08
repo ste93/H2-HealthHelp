@@ -91,7 +91,8 @@ router.post("/doctor", function(req, res){
     if(req.body.text != undefined){
         doctor.sendAdvice(req.body.pat, req.body.text, res);
     }else if(req.body.drug != undefined){
-        
+        console.log("entraaaaa");
+        doctor.sendDrug(req.body.pat, req.body.drug,res);
     }else{
         session.pat = req.body.pat;
         session.type = req.body.type;
@@ -104,8 +105,9 @@ router.get("/doctor/history", function(req, res){
     history.getDataHistory(res, "doctor", session.user);
 });
 
-router.get("/doctor/drug/edit");
-router.get("/doctor/info");
+router.get("/doctor/info", function(req, res){
+    res.render('About');
+});
 
 
 

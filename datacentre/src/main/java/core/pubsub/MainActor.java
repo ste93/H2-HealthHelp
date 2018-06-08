@@ -1,10 +1,7 @@
 package core.pubsub;
 
 import akka.actor.*;
-import core.pubsub.subscriber.AdviceReceiverActor;
-import core.pubsub.subscriber.AdviceRequestActor;
-import core.pubsub.subscriber.PatientDataReceiverActor;
-import core.pubsub.subscriber.RequestReceiverActor;
+import core.pubsub.subscriber.*;
 
 /**
  * Starts all the actors that communicate in the data centre.
@@ -22,6 +19,7 @@ public class MainActor extends AbstractActor {
         final ActorRef adviceReceiverActor = actorSystem.actorOf(Props.create(AdviceReceiverActor.class), "adviceReceiver");
         final ActorRef requestReceiverActor = actorSystem.actorOf(Props.create(RequestReceiverActor.class), "requestReceiver");
         final ActorRef adviceRequestActor = actorSystem.actorOf(Props.create(AdviceRequestActor.class), "adviceRequester");
+        final ActorRef drugReceiverActor = actorSystem.actorOf(Props.create(DrugReceiverActor.class), "drugReceiverActor");
     }
 
     @Override

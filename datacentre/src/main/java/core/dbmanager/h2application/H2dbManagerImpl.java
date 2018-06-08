@@ -71,6 +71,18 @@ public class H2dbManagerImpl implements H2dbManager {
     }
 
     /**
+     * Gets patient or doctor information.
+     *
+     * @param role   user's role, rapresented in Enum UserRole
+     * @param idCode patient or doctor identifier
+     * @return JSONObject includes the information saved in the db application.
+     */
+    @Override
+    public JSONObject getUserInformation(String role, UserRole idCode) {
+        return null;
+    }
+
+    /**
      * Returns the list of sensor's types.
      *
      * @param idPatient patient's identifier
@@ -310,7 +322,7 @@ public class H2dbManagerImpl implements H2dbManager {
         } else {
             json = new JSONArray();
             json.put(responseCode);
-            throw new Exception("" + responseCode);
+//            throw new Exception("" + responseCode);
         }
         return  json;
     }

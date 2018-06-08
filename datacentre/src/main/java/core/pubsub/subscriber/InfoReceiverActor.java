@@ -1,19 +1,16 @@
 package core.pubsub.subscriber;
 
 import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 
 /**
- * Created by lucch on 07/06/2018.
+ * Created by lucch on 08/06/2018.
  */
-public class DrugReceiverActor extends AbstractActor {
+public class InfoReceiverActor extends AbstractActor {
 
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        DrugReceiver drugReceiver = new DrugReceiver();
-        System.out.println(" -----> DrugReceierActor");
+        InfoReceiver infoReceiver = new InfoReceiver();
     }
 
     @Override
