@@ -24,6 +24,7 @@ public abstract class AbstractTopicSubscriber {
     private Connection connection;
     private Channel channel;
 
+
     /**
      * Default constructor for class AbstractTopicSubscriber.
      * It use localhost as host for the message broker server.
@@ -73,20 +74,13 @@ public abstract class AbstractTopicSubscriber {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                String message = new String(body, "UTF-8");
-                try {
-                    //receivedMessage ++;
-                    behaviour.handleMessage(envelope.getRoutingKey()+ message);
-
-                }
-                finally {
-                    //If the worker die before complete the message handling the message is send to another one.
-                    channel.basicAck(envelope.getDeliveryTag(), false);
-                }
+                                String message = new String(body, "UTF-8");
+                System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+              behaviour.handleMessage(message, envelope.getRoutingKey());
             }
         };
         try {
-            channel.basicConsume(queueName, false, consumer);
+            channel.basicConsume(queueName, true, consumer);
 
         } catch (IOException e) {
             System.err.println("Error during starting operation");
@@ -127,7 +121,7 @@ public abstract class AbstractTopicSubscriber {
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
-            channel.basicQos(1);
+            //channel.basicQos(1);
             this.channel.queueDeclare(this.queueName, true, false, false, null);
             this.topicBindKey.forEach(bindKey ->{
                 try {

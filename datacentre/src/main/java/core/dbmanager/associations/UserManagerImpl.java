@@ -112,7 +112,7 @@ public class UserManagerImpl implements UserManager {
             String userData = builder.get(String.class);
             json = new JSONArray(userData);
         } else {
-            throw new Exception("" + response);
+               throw new Exception("" + response);
         }
 
         return json;

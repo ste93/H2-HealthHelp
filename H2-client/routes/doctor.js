@@ -70,25 +70,6 @@ function sendDrug(patientID,drug,res){
     
 }
 
-function sendDrug(patientID,drug,res){
-    ex = 'drug';
-    args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.receive.drug';
-    var date = new Date().toISOString();
-    var message = '{ "patientId":"'
-                    + patientID + '", "message": { "doctorId":"'
-                    + session.user + '", "timestamp":"'
-                    + date +'", "drugName":"'
-                    + drug+'"}}';
-    console.log( message);
-    connection.createChannel(function(err, ch) {
-            ch.assertExchange(ex, 'topic', {durable: false});
-            ch.publish(ex, key, new Buffer(message));
-            console.log(" [x] Sent %s:'%s'", key, message);
-            res.redirect("/doctor");
-    });
-    
-}
 
 function getInfo(role, id, res){
     ex = 'info';

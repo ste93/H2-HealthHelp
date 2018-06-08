@@ -11,5 +11,5 @@ public interface SubscriberBehaviour {
      * the method that define the behaviour to apply to a message received.
      * @param message - the message received
      */
-    void handleMessage(String message);
+    String handleMessage(String message, String key);
 }

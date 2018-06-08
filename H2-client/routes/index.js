@@ -1,11 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
+
 var doctor = require('./doctor');
 var history = require('./subscriberHistory');
 var advices = require('./subscriberAdvices');
 var session= require('client-sessions');
 var patient = require('./patient')
+
+var userAuthentication = require('./userAuthentication');
+var pubSubAdvice = require('./pubSubAdvice');
+var pubSubHistory = require('./pubsubHistory');
+var pubSubInfo = require('./pubSubInfo');
+var pubSubDrug = require('./pubSubDrug');
 
 var Client = require('node-rest-client').Client;
  

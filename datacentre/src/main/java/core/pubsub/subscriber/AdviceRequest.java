@@ -6,6 +6,7 @@ import akka.actor.Props;
 import core.pubsub.core.AbstractTopicSubscriber;
 import core.pubsub.core.SubscriberBehaviour;
 import core.pubsub.message.AdviceRequestMessage;
+import core.pubsub.message.MessagesUtils;
 import core.pubsub.publisher.MultiAdvicePublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ public class AdviceRequest extends AbstractTopicSubscriber {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
+    private final MessagesUtils utils = new MessagesUtils();
     private final ActorRef multiAdvicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(MultiAdvicePublisherActor.class), "multiAdviceActor");
 
     /**
@@ -33,7 +35,8 @@ public class AdviceRequest extends AbstractTopicSubscriber {
 
     private SubscriberBehaviour behaviour = (String message) -> {
         try {
-            JSONObject json = new JSONObject(message);
+            String body = utils.getBody(message, ROUTING_KEY_ADVICE);
+            JSONObject json = new JSONObject(body);
 
             String patientId = json.getString("patientId");
             String start = json.getString("start");
