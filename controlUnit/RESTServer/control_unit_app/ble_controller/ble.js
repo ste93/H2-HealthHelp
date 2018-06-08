@@ -149,7 +149,7 @@ function setCharacteristicDataReader(characteristic, deviceAddress)  {
 		var options = {
 			url : "http://localhost:3000/api/sensors/" + deviceAddress + "/data",
 			form: {
-				"id" : deviceAddress,
+				"sensorID" : deviceAddress,
 				"data": data
 			}			
 		}
