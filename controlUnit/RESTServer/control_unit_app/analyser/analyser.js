@@ -1,6 +1,8 @@
 var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
 var moment = require('moment');
+var emergencyManager = require ('../hardware/emergencyManager');
+
 
 var sensorsList = [];
 
@@ -95,8 +97,7 @@ function analyse(sensorData, sensorInfo) {
         if (value <= 20 || value >= 250 ){
           level = 3;
           description = 'just start digging';
-          //TODO
-          //startEmergency();
+          emergencyManager.startEmergency() ;
         } else if ( value <= 40 || value >= 180) {
           level = 2;
           description = 'warning, something strange is happening';
@@ -116,8 +117,7 @@ function analyse(sensorData, sensorInfo) {
       } else {
         level = 3;
         description = 'just start digging';
-        //TODO
-        //startEmergency();
+        emergencyManager.startEmergency() ;
       }
       break;
 
@@ -142,7 +142,7 @@ function analyse(sensorData, sensorInfo) {
   		 timestamp: moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSS'),
   		 output: {
 			   level: level,
-			   description: description
+			   description: description  
        }
     }
   }

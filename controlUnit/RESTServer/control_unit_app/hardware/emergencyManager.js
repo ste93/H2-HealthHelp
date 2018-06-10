@@ -1,33 +1,39 @@
 var Gpio = require('onoff').Gpio;
 
 var buzzer = require('./buzzer');
-var emergencyLed = require('./led');
-var phoneLed = require('./led');
-var lcd = require('./controlUnitLCD');
+var emergencyLed = require('./emergencyLed');
+var phoneLed = require('./phoneLed');
+///var lcd = require('./controlUnitLCD');
 
-var pushButton = new Gpio(17, 'in', 'both');
+var pushButton = new Gpio(25, 'in', 'rising', {debounceTimeout: 10}); //OK
 var emergency = false;
+var initialized = false;
 
-modules.exports.initializeEmergencyProtocol = function() {
+function initialize () {
 
-  emergencyLed.initializeLed(24);
-  phoneLed.initializeLed(21);
-  buzzer.initializeBuzzer(23);
+  if (!initialized){
+    console.log("initializing");
+    emergencyLed.initializeLed(24);  
+    phoneLed.initializeLed(21);    
+    buzzer.initializeBuzzer(23);
   //lcd.initializeLcd();
 
-  pushButton.watch(function (err, state) { //Watch for hardware interrupts on pushButton GPIO, specify callback function
-    if (err) { //if an error
-      console.error('There was an error : ', err); //output error message to console
-      return;
-    }
-    if (emergency === 1) {
-        emergency = 0;
-        reset();
+    pushButton.watch(function (err, state) { //Watch for hardware interrupts on pushButton GPIO, specify callback function
+      if (err) { //if an error
+        console.error('There was an error : ', err); //output error message to console
+        return;
+      }
+      if (emergency === 1) {
+          emergency = 0;
+          reset();
         //lcd.write("NO EMERGENCY");
-    }
-  //LED.writeSync(value); //turn LED on or off depending on the button state (0 or 1)
-  });
+      }
+      });
+    initialized = true;
+  }
+  console.log("Emergency Manager Modules initialized.");
 }
+
 
   function reset(){
     emergencyLed.turnOff();
@@ -39,31 +45,42 @@ modules.exports.initializeEmergencyProtocol = function() {
   function emergencyProtocol() {
     emergency = 1;
     emergencyLed.blink(250, 10000);
-    buzzer.alarmBeep(250, 10000);
+    buzzer.beep();
     //lcd.write("EMERGENCY");
   }
 
-  function stopEmergency() {
+  function checkEmergency() {
+    console.log(" -- End of control time. What to do ? ");
+    buzzer.stop();
     if(emergency === 1){
         callRescuers();
     }
     else {
-        System.out.println("NO MORE EMERGENCY");
+        console.log("NO MORE EMERGENCY");
+        emergencyLed.turnOff();
+        phoneLed.turnOff();
         //lcd.reset();
     }
   }
 
-  module.exports.startEmergency = function () {
-    emergencyProtocol();
-    setTimeout(stopEmergency, 10000);
-  }
-
-    private void callRescuers(){
+  function callRescuers() {
         console.log("CALLING EMERGENCY RESCUERS");
         //lcd.write("CALLING RESCUERS");
-        buzzer.stop();
-        emergencyLed.turnOn();
+        emergencyLed.turnOff();
         phoneLed.turnOn();
         emergency = 0;
+        setTimeout(reset, 5000);
+  }
+
+  module.exports.startEmergency = function () {
+    console.log(" -- StartEmergency()");
+    if (initialized) {
+      emergencyProtocol();
+      setTimeout(checkEmergency, 10000);
+    } else {
+      initialize();
+      emergencyProtocol();
+      setTimeout(checkEmergency, 10000);
     }
-}
+
+  }

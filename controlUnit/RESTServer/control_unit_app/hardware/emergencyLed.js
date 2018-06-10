@@ -9,23 +9,20 @@ module.exports.initializeLed = function(gpioNumber) {
   //use GPIO with the specified number, and specify that it is output
    LED = new Gpio(gpioNumber, 'out');
    state = false;
+   console.log(" [Led] initialized on gpio", gpioNumber);
  }
 
- module.exports.turnOn = function() {
-   if ( ! state ){
+ module.exports.turnOn = function turnOn() {
      LED.writeSync(1);
-     state = true;
-   };
+     console.log(" [Led] on ");
  }
 
- module.exports.turnOff = function() {
-   if ( state ){
+ module.exports.turnOff = function turnOff() {
      LED.writeSync(0);
-     state = false;
-   };
+     console.log(" [Led] off");
  }
 
- module.exports.switchLED = function() {
+function switchLED() {
    if (! state) { //check the pin state, if the state is 0 (or off)
      LED.writeSync(1); //set pin state to 1 (turn LED on)
      state = true;
@@ -35,9 +32,10 @@ module.exports.initializeLed = function(gpioNumber) {
    }
  }
 
-module.exports.blink = function(period, timeout) {
+ module.exports.blink = function(period, timeout) {
   blinkInterval = setInterval(switchLED, period);
   setTimeout(endBlink, timeout); 
+  console.log(" [Led] blink for" , timeout);
 }
 
 function endBlink() { //function to stop blinking
