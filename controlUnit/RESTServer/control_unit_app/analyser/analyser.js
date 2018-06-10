@@ -15,7 +15,8 @@ function getSensorInfo(id, callback) {
     if (json.sensorId === id){
       console.log("Found sensor info locally");
       found = true;
-      callback(JSON.stringify(json));
+      sensorInfo = json;
+      callback(JSON.stringify(sensorInfo));
     }
   });
 
@@ -25,11 +26,16 @@ function getSensorInfo(id, callback) {
     request.get('http://localhost:3000/api/sensors/' + id, function (error, response, info) {
       console.log('error:', error); // Print the error if one occurred
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      //console.log('body : ' + info );
-      sensorsList.push(info);
-      console.log("Found sensor info remotelly");
-      //console.log(info);
-      callback(info);
+      console.log('body : ' + info );
+      if ( info != undefined && info != ''){
+        sensorsList.push(info);
+        console.log("Found sensor info remotelly");
+        //console.log(info);
+        sensorInfo = info;
+        callback(sensorInfo);
+      } else {
+        callback(sensorInfo)
+      }
     });
   }
 }
