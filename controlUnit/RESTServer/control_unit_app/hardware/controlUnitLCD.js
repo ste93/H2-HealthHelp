@@ -1,25 +1,34 @@
-var LCD = require('lcd'),
+var LCD = require('lcd');
 
 var lcd;
 
+var initialized = false;
+
 module.exports.initializeLcd = function() {
 
-  lcd = new LCD({rs: 7, e: 8, data: [17, 18, 27, 22], cols: 16, rows: 2});
+  if (! initialized){
 
-  lcd.on('ready', function () {
+    lcd = new LCD({rs: 7, e: 8, data: [17, 18, 27, 22], cols: 16, rows: 2});
 
-    lcd.clear(function(err){
-      if (err) {
-        console.log("error : " , err);
-      }
-    });
+    lcd.on('ready', function () {
+      initialized = true;
 
-    lcd.print('H2 - Health Help', function (err, str) {
+      console.log("[LCD] Initialization completed");
+
+      lcd.clear(function(err){
+        if (err) {
+          console.log("error : " , err);
+        }
+      });
+
+      lcd.print('H2 - Health Help', function (err, str) {
         if (err) {
           console.log("error : " , err);
         };
+      });
+  
     });
-  });
+  }
 }
 
 /**
@@ -28,7 +37,7 @@ module.exports.initializeLcd = function() {
  *
  * @param message - the message to be printed.
  */
-modules.exports.write = function(message) {
+module.exports.write = function(message) {
 
   console.log("printing message !");
   // write on line 2.
@@ -36,8 +45,8 @@ modules.exports.write = function(message) {
   lcd.print(message, function (err, str) {
     if (err) {
       console.log("error : " , err);
-    });
-  };
+    };
+  });
 }
 
 module.exports.reset = function()  {

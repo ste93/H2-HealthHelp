@@ -11,6 +11,10 @@ var mySensorsList = {};
   return mySensorsList;
 }*/
 
+// use the hardware LCD
+var lcd = require('../../control_unit_app/hardware/controlUnitLCD');
+lcd.initializeLcd()
+
 
 ////////////// Sensor List Page /////////////////////////////////////
 var renderSensorHomepage = function(req, res, responseBody){
