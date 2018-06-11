@@ -69,7 +69,7 @@ function login(idCode, role, password, res){
 }
 
 function findPatient(idCode, res){
-    patients.findOne({"idCode": idCode}, function(err, pat) {
+    patients.findOne({"idCode": idCode}, {"_id":0, "password":0}, function(err, pat) {
         if(pat == null) {
             res.send(404);
         } else if (err) {
@@ -81,7 +81,7 @@ function findPatient(idCode, res){
 }
 
 function findDoctor(idCode, res){
-    doctors.findOne({"idCode": idCode}, function(err, doc) {
+    doctors.findOne({"idCode": idCode}, {"_id":0, "password":0}, function(err, doc) {
         if(doc == null) {
             res.send(404);
         } else if (err) {

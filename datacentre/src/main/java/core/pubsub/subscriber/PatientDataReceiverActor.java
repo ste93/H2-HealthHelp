@@ -66,7 +66,7 @@ public class PatientDataReceiverActor extends AbstractActor {
                         int level = output.getInt("level");
                         if(level == 2 || level == 3){
 
-                            emergencyActor.tell(new ValueMessage(level,json, idPatient), emergencyActor);
+                            getContext().actorSelection("/user/app/levelPublisherActor").tell(new ValueMessage(level,json, idPatient), emergencyActor);
                         }
 
                         String messageToInsert = utils.convertToFormatApi(value.toString());

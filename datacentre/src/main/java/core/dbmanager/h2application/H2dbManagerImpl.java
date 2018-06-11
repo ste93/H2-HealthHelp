@@ -22,6 +22,8 @@ public class H2dbManagerImpl implements H2dbManager {
 
     private static WebTarget H2_REGISTRATION = TARGET.path("/registration");
     private static WebTarget H2_LOGIN = TARGET.path("/login");
+    private static WebTarget H2_DOCTORS = TARGET.path("/doctors");
+    private static WebTarget H2_PATIENTS = TARGET.path("/patients");
     private static WebTarget SENSOR_TYPE = TARGET.path("/sensors");
     private static WebTarget SENSOR_VALUES = SENSOR_TYPE.path("/values");
     private static WebTarget H2_ADVICE = TARGET.path("/advices");
@@ -78,8 +80,28 @@ public class H2dbManagerImpl implements H2dbManager {
      * @return JSONObject includes the information saved in the db application.
      */
     @Override
-    public JSONObject getUserInformation(String role, UserRole idCode) {
-        return null;
+    public JSONObject getUserInformation(UserRole role, String idCode) throws Exception {
+
+        JSONObject json;
+        Invocation.Builder request;
+
+        if(role.equals(UserRole.DOCTOR)) {
+            request = H2_DOCTORS.queryParam("idCode", idCode)
+                    .request();
+
+        }else{
+            request = H2_PATIENTS.queryParam("idCode", idCode)
+                    .request();
+        }
+
+        int  responseCode = request.get().getStatus();
+        if (responseCode== 200) {
+            json = new JSONObject(request.get(String.class));
+        } else {
+            throw new Exception("" + responseCode);
+        }
+
+        return json;
     }
 
     /**

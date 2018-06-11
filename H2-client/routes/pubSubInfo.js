@@ -17,17 +17,41 @@ function requestInfo(role, id, res){
     args = process.argv.slice(2);
     key = (args.length > 0) ? args[0] : 'datacentre.request.info';
     var date = new Date().toISOString();
-    var message = '{ "role":"'
+    var message = '{"role":"'
                     + session.role + '", "id":"'
-                    + session.user + '}';
+                    + session.user + '"}';
     console.log( message);
     connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
             ch.publish(ex, key, new Buffer(message));
             console.log(" [x] Sent %s:'%s'", key, message);
-            res.redirect("/doctor/info");
     });
 }
 
-
-module.exports = {requestInfo};
+function receiveInfo(){
+    ex = 'receive.info';
+    args = process.argv.slice(2);
+    key = (args.length > 0) ? args[0] : 'datacentre.receive.info';
+    queue = "info.queue";
+   
+    connection.createChannel(function(err, ch) {
+        ch.assertExchange(ex, 'topic', {durable: false});
+    
+        ch.assertQueue(queue, {exclusive: false}, function(err, q) {
+          console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+          ch.bindQueue(q.queue, ex, key);
+    
+          ch.consume(q.queue, function(msg) {
+                    console.log(" [x] %s", msg.content);
+                    if(msg.content.toString() == "500"){
+                        res.redirect("/doctor");
+                    }
+                    var element = "";
+                    var json = JSON.parse(msg.content) ;
+                   console.log(json.get("name"));
+                    res.render('infoPage', {title: 'Personal Information'});
+          }, {noAck: true});
+        });
+      });
+}
+module.exports = {requestInfo, receiveInfo};

@@ -32,9 +32,6 @@ public class AdviceReceiverActor extends AbstractActor {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-    private final ActorRef advicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(AdvicePublisherActor.class), "adviceActor");
-    private final MessagesUtils utils = new MessagesUtils();
-
     @Override
     public void preStart() throws Exception {
         super.preStart();
@@ -58,7 +55,7 @@ public class AdviceReceiverActor extends AbstractActor {
 
                     AdviceMessage adviceMessage = new AdviceMessage(patientId, doctorId, advice, timestamp);
 
-                    advicePublisherActor.tell(adviceMessage, advicePublisherActor);
+                    getContext().actorSelection("/user/app/advicePublisherActor").tell(adviceMessage, ActorRef.noSender());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -33,7 +33,6 @@ public class RequestReceiverActor extends AbstractActor {
 
 
     private final MessagesUtils utils = new MessagesUtils();
-    private final ActorRef historyActor = ActorSystem.apply("datacentre").actorOf(Props.create(HistoryPublisherActor.class), "historyActor");
 
     @Override
     public void preStart() throws Exception {
@@ -66,7 +65,7 @@ public class RequestReceiverActor extends AbstractActor {
 
                     HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
                     //System.out.println(" message creato");
-                    historyActor.tell(historyMessage, historyActor);
+                    getContext().actorSelection("/user/app/historyActor").tell(historyMessage, ActorRef.noSender());
 
                 } catch (JSONException e) {
                     e.printStackTrace();

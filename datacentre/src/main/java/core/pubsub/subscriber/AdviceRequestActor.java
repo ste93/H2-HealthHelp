@@ -29,7 +29,6 @@ public class AdviceRequestActor extends AbstractActor {
     private static final int PORT = 8088;
 
     private final MessagesUtils utils = new MessagesUtils();
-    private final ActorRef multiAdvicePublisherActor = ActorSystem.apply("datacentre").actorOf(Props.create(MultiAdvicePublisherActor.class), "multiAdviceActor");
 
     @Override
     public void preStart() throws Exception {
@@ -55,7 +54,7 @@ public class AdviceRequestActor extends AbstractActor {
 
                     AdviceRequestMessage adviceRequest = new AdviceRequestMessage(patientId, start, end);
 
-                    multiAdvicePublisherActor.tell(adviceRequest, multiAdvicePublisherActor );
+                    getContext().actorSelection("/user/app/multiAdviceActor").tell(adviceRequest, ActorRef.noSender() );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -3,7 +3,7 @@ extends layout
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor') H2 - Health Help
-            a.navbar-brand(href='/doctor/info') About
+            a.navbar-brand(action = sendRequest, href='/doctor/info') About
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
@@ -69,5 +69,6 @@ block content
                 textarea(type="text", name="drug", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") Prescribe Drug
+
   
   

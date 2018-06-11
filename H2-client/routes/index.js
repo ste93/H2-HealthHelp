@@ -52,7 +52,8 @@ router.post('/', function (req, res) {
 router.get("/patient", function(req, res) {
     session.role = "patient";
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
+        title: "WELCOME " + (session.user).replace(".", " "),
+        sendRequest: pubSubInfo.requestInfo()
       }
 
     res.render('patientHome', homeParameter);
@@ -94,7 +95,8 @@ router.get("/patient/info");
 router.get("/doctor", function(req, res){
     session.role = "doctor";
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")+ "."
+        title: "WELCOME " + (session.user).replace(".", " ")+ ".",
+        sendRequest: pubSubInfo.requestInfo()
     }
     
     res.render("doctorHome", homeParameter);
@@ -119,7 +121,7 @@ router.get("/doctor/history", function(req, res){
 });
 
 router.get("/doctor/info", function(req, res){
-    res.render('About');
+    pubSubInfo.receiveInfo();
 });
 
 

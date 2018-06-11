@@ -44,7 +44,7 @@ public interface H2dbManager {
      *
      * @return JSONObject includes the information saved in the db application.
      */
-    JSONObject getUserInformation(final String role, final UserRole idCode);
+    JSONObject getUserInformation(final UserRole role, final String idCode) throws Exception;
 
     /**
      * Returns the list of sensor's types.
