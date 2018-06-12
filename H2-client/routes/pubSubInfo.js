@@ -1,11 +1,8 @@
 var amqp = require('amqplib/callback_api');
 var session = require('client-sessions');
-
+var jsontype = require('jsontype');
+   
 var connection;
-var ex;
-var args;
-var key;
-var queue;
 
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
@@ -13,9 +10,9 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 
 
 function requestInfo(role, id, res){
-    ex = 'info';
-    args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.request.info';
+    var ex = 'info';
+    var args = process.argv.slice(2);
+    var key = (args.length > 0) ? args[0] : 'datacentre.request.info';
     var date = new Date().toISOString();
     var message = '{"role":"'
                     + session.role + '", "id":"'
@@ -28,11 +25,11 @@ function requestInfo(role, id, res){
     });
 }
 
-function receiveInfo(){
-    ex = 'receive.info';
-    args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.receive.info';
-    queue = "info.queue";
+function receiveInfo(res){
+    var ex = 'receive.info';
+    var args = process.argv.slice(2);
+    var key = (args.length > 0) ? args[0] : 'datacentre.receive.info';
+    var queue = "info";
    
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
@@ -46,10 +43,20 @@ function receiveInfo(){
                     if(msg.content.toString() == "500"){
                         res.redirect("/doctor");
                     }
-                    var element = "";
-                    var json = JSON.parse(msg.content) ;
-                   console.log(json.get("name"));
-                    res.render('infoPage', {title: 'Personal Information'});
+            
+                    var json = JSON.parse(msg.content.toString());
+                    
+                    var personalInfo = {
+                        title: 'Personal Information',
+                        id : json.idCode,
+                        name: json.name,
+                        surname: json.surname,
+                        mail: json.mail,
+                        cf : json.cf,
+                        phones: json.phones,
+                        role: session.role
+                    }
+                    res.render('infoPage', personalInfo);
           }, {noAck: true});
         });
       });

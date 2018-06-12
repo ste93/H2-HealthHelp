@@ -46,9 +46,7 @@ public class DrugReceiverActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
-                    //String body = utils.getBody(message, ROUTING_KEY_DRUG);
-                    //System.out.println(body);
-                    //JSONObject json = new JSONObject(body);
+
                     json = new JSONObject(message);
 
                     System.out.println("arrivato drug   "+ json);

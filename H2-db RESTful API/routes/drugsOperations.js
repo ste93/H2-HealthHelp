@@ -18,7 +18,7 @@ function addDrug(idCode, message, res){
    var mess  = JSON.parse("{"+message+"}");
    collection.create(mess, function(err, value){
         if(err){
-            console.log(err);
+            console.log("errore "+ err);
             res.send(500);
         } else {
             res.send(200);

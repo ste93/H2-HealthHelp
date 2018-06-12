@@ -2,10 +2,6 @@ var amqp = require('amqplib/callback_api');
 var session = require('client-sessions');
 
 var connection;
-var ex;
-var args;
-var key;
-var queue;
 
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
@@ -13,10 +9,10 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 
 
 function receiveHistory (res, idCode){
-    ex = 'historyRequest';
-    args = process.argv.slice(2);
-    queue = "history";
-    key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.history";
+    var ex = 'historyRequest';
+    var args = process.argv.slice(2);
+    var queue = "history";
+    var key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.history";
     console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
@@ -30,13 +26,15 @@ function receiveHistory (res, idCode){
                     if(msg.content.toString() == "500"){
                         res.redirect("/doctor");
                     }
-                    var element = "";
-                    var arraymessage = JSON.parse(msg.content) ;
-                   arraymessage.forEach(x => {
-                       console.log(x);
-                       element = element.concat("\n"+JSON.stringify(x));
-                    });
-                    res.render('historyPage', {role: session.role, title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
+                    var message = msg.content;
+                    var infoHistory = {
+                        role: session.role,
+                        title: 'Data History',
+                        patient: 'patient: '+session.pat, 
+                        type: "sensor type: "+session.type,
+                        values: message
+                    }
+                    res.render('historyPage', infoHistory);
           }, {noAck: true});
         });
       });
@@ -45,9 +43,9 @@ function receiveHistory (res, idCode){
 }
 
 function requestHistory (type, patId, start, end, requester ,res){
-    ex = 'historyRequest';
-    args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.request.history';
+    var ex = 'historyRequest';
+    var args = process.argv.slice(2);
+    var key = (args.length > 0) ? args[0] : 'datacentre.request.history';
     var message = '{"type":"' + type 
                     + '", "patientId":"'
                     + patId + '", "start":"'

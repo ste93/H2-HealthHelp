@@ -104,24 +104,24 @@ router.get("/doctor", function(req, res){
 
 router.post("/doctor", function(req, res){
     if(req.body.text != undefined){
-        doctor.sendAdvice(req.body.pat, req.body.text, res);
+        pubSubAdvice.sendNewAdvice(req.body.pat, req.body.text, res);
     }else if(req.body.drug != undefined){
-        console.log("entraaaaa");
-        doctor.sendDrug(req.body.pat, req.body.drug,res);
+        pubSubDrug.sendNewDrug(req.body.pat, req.body.drug,res);
     }else{
         session.pat = req.body.pat;
         session.type = req.body.type;
-        doctor.getDataHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
+        pubSubHistory.requestHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
     }
     
 });
 
 router.get("/doctor/history", function(req, res){
-    history.getDataHistory(res, "doctor", session.user);
+    pubSubHistory.receiveHistory(res, "doctor", session.user);
 });
 
 router.get("/doctor/info", function(req, res){
-    pubSubInfo.receiveInfo();
+    console.log("entra");
+    pubSubInfo.receiveInfo(res);
 });
 
 

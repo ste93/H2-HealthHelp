@@ -2,10 +2,6 @@ var amqp = require('amqplib/callback_api');
 var session = require('client-sessions');
 
 var connection;
-var ex;
-var args;
-var key;
-var queue;
 
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
@@ -13,9 +9,9 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 
 
 function requestAdvices(patId, start, end, res) {
-    ex = 'adviceRequest';
-    args = process.argv.slice(2);
-    key = (args.length > 0) ? args[0] : 'datacentre.request.advice';
+    var ex = 'adviceRequest';
+    var args = process.argv.slice(2);
+    var key = (args.length > 0) ? args[0] : 'datacentre.request.advice';
     var message = '{"patientId":"' + patId 
         + '", "start":"' + start 
         + '", "end":"' + end;
@@ -29,10 +25,10 @@ function requestAdvices(patId, start, end, res) {
 }
 
 function receiveAdvices (res, idCode){
-    ex = 'adviceRequest';
-    args = process.argv.slice(2);
-    queue = "history";
-    key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.advice";
+    var ex = 'adviceRequest';
+    var args = process.argv.slice(2);
+    var queue = "history";
+    var key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.advice";
     console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
@@ -51,7 +47,7 @@ function receiveAdvices (res, idCode){
     
 }
 
-function sendNewAdvice (type, patId, start, end, requester ,res){
+function sendNewAdvice(patientID,advice,res){
     ex = 'advice';
     args = process.argv.slice(2);
     key = (args.length > 0) ? args[0] : 'datacentre.receive.advice';
@@ -67,6 +63,7 @@ function sendNewAdvice (type, patId, start, end, requester ,res){
             console.log(" [x] Sent %s:'%s'", key, message);
             res.redirect("/doctor");
     });
+    
 }
 
 

@@ -20,7 +20,14 @@ block content
         h3= type
   .row
     .col-xs-12.col-sm-8
-      
-      input(type="text", name="scroll" ,class="scrollabletextbox", value= values)
+        .row.list-group
+          - var json = JSON.parse(values)
+          - for(var i = 0; i < json.length; i++)
+            .col-xs-12.list-group-item
+                p timestamp : #{json[i].timestamp.toString()}
+                p value : #{json[i].value}
+                p unit : #{json[i].unit}
+                p level analyze: #{json[i].output.level}
+                p level description: #{json[i].output.description}
     
-      a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back
+    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back

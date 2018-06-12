@@ -65,7 +65,7 @@ public class RequestReceiverActor extends AbstractActor {
 
                     HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
                     //System.out.println(" message creato");
-                    getContext().actorSelection("/user/app/historyActor").tell(historyMessage, ActorRef.noSender());
+                    getContext().actorSelection("/user/app/historyPublisherActor").tell(historyMessage, ActorRef.noSender());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
