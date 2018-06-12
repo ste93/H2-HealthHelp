@@ -1,5 +1,6 @@
 /**
 * Router class to handle different request to the variuos API.
+* Every istruction handle a different HTTP Method for a specific resources, defining the REST API for H2.
 */
 
 var express = require('express');

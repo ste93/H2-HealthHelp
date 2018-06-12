@@ -1,5 +1,6 @@
-
-// about page controller
+/**
+* Controller methods to handle the about page.
+*/
 
 var textParameter = {
   title: 'About Page of H2 Project',
@@ -7,10 +8,14 @@ var textParameter = {
   otherContent: "The H2 Team is composed by Stefano B., Manuel B., Giulia L. and Margherita P. "
 }
 
-
+/**
+* Function that return the about page's HTML render to the requester.
+* @param req Is the HTTP Request. Not used by this function.
+* @param res Is the HTTP Response, returned to the requesting host with the result.
+*/
 module.exports.about = function(req, res){
-  //  render() is an express function.
+  // render() is an express function.
   //  the first parameter is the name of jade file in folder 'views' to be rendered
-  //  the second is the parameter used in the jade template
+  //  the second is the parameters list used in the jade template
   res.render('generic-text', textParameter);
 };
