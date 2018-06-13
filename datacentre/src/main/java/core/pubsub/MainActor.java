@@ -23,6 +23,7 @@ public class MainActor extends AbstractActor {
         final ActorRef drugReceiverActor = getContext().actorOf(Props.create(DrugReceiverActor.class), "drugReceiverActor");
         final ActorRef drugRequesterActor = getContext().actorOf(Props.create(DrugRequestActor.class), "drugRequesterActor");
         final ActorRef infoReceiveActor = getContext().actorOf(Props.create(InfoReceiverActor.class), "infoReceiveActor");
+        
 
         /* Create Publisher Actor */
         final ActorRef advicePublisherActor = getContext().actorOf(Props.create(core.pubsub.publisher.AdvicePublisherActor.class), "advicePublisherActor");

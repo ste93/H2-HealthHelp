@@ -1,13 +1,12 @@
 var amqp = require('amqplib/callback_api');
 var session = require('client-sessions');
-
 var connection;
 
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
 });
 
-function receiveNotificationLevel2 (res, idCode){
+function receiveNotificationLevel2 (res, idCode, sendMessage){
     var ex = 'level';
     var args = process.argv.slice(2);
     var queue = "level2.queue";
@@ -22,12 +21,7 @@ function receiveNotificationLevel2 (res, idCode){
     
             ch.consume(q.queue, function(msg) {
                 console.log(" [x] %s", msg.content);
-                
-
-            //TODO (notifica)
-
-
-
+                sendMessage(msg.content);
             }, {noAck: true});
         });
     });  
@@ -58,5 +52,7 @@ function receiveNotificationLevel3 (res, idCode){
         });
     });  
 }
+
+
 
 module.exports = {receiveNotificationLevel2, receiveNotificationLevel3};

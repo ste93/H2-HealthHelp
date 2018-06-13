@@ -35,18 +35,19 @@ public class LevelPublisherActor extends AbstractActor{
     public Receive createReceive() {
 
         return receiveBuilder().match(ValueMessage.class, message -> {
-            JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
-                IntStream.range(0, doctors.length()).forEach(x -> {
+            //JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
+               // IntStream.range(0, doctors.length()).forEach(x -> {
                     try {
                         if(message.getLevel() == 2){
-                            this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.alert");
+                            this.publisher.publishMessage(message.getValue(), "doctor."+/*doctors.get(x)*/"mario.rossi.receive.alert");
                         }else{
-                            this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.emergency");
+                            //this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.emergency");
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                });
+                //}
+                    //);
 
 
 

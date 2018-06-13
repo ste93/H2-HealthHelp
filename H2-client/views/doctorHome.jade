@@ -1,5 +1,11 @@
 extends layout
 
+script.
+  var webSocket = new WebSocket("ws://localhost:9090");
+  socket.onmessage = function(event) {
+    alert(event.data)
+  }
+
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor') H2 - Health Help
@@ -12,8 +18,10 @@ block nav
         
 
 block content
+
+
   #banner.page-header
-    .row
+    .row    
       .col-lg-6
         h1= title
         h3= subtitle

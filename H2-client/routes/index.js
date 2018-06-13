@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var app = express();
+var subNotificationLevel = require('./subNotificationLevel')
 
-var session= require('client-sessions');
+var session = require('client-sessions');
 
+var webSocketServer = require('ws').Server;
 var userAuthentication = require('./userAuthentication');
 var pubSubAdvice = require('./pubSubAdvice');
 var pubSubHistory = require('./pubSubHistory');
@@ -10,7 +13,9 @@ var pubSubInfo = require('./pubSubInfo');
 var pubSubDrug = require('./pubSubDrug');
 
 var Client = require('node-rest-client').Client;
- 
+
+var webSocket = new webSocketServer({port : 9090});
+
 var client = new Client();
 
 var userId;
@@ -20,7 +25,8 @@ var type;
 router.get('/', function (req, res) {
     var homeParameter = {
         title: 'H2 - Login'
-    };
+      }
+
     res.render('index', homeParameter);
 });
 
@@ -28,6 +34,7 @@ router.post('/', function (req, res) {
     var loginArgs = {
         path: { "username": req.body.username, "password": req.body.password, "role": req.body.role }	
     };
+   
     client.get("http://localhost:3000/database/application/login?idCode=${username}&role=${role}&password=${password}", loginArgs,
     function (data, response) {
         if(response.statusCode == 200){
@@ -37,6 +44,7 @@ router.post('/', function (req, res) {
         }else{
             res.redirect("/"); // pagine per errore
         }
+        
     });    
 });
 
@@ -44,7 +52,8 @@ router.get("/patient", function(req, res) {
     session.role = "patient";
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    };
+      }
+
     res.render('patientHome', homeParameter);
 });
 
@@ -63,21 +72,21 @@ router.post("/patient", function(req, res) {
 router.get("/patient/history", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    };
+    }
     pubSubHistory.receiveHistory(res, session.user)
 });
 
 router.get("/patient/advice", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    };
+    }
     pubSubAdvice.receiveAdvices(res, session.user)
 });
 
 router.get("/patient/drug", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    };
+    }
     pubSubDrug.receiveDrugs(res, session.user)
 });
 
@@ -88,9 +97,21 @@ router.get("/patient/info", function(req, res){
 
 router.get("/doctor", function(req, res){
     session.role = "doctor";
+
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    };
+    }
+
+    console.log("before websocket");
+    webSocket.on('connetion', function(connection) {
+        console.log("connected websocket");
+        function sendMessage(message) {
+            webSocket.send(message);
+        }
+        subNotificationLevel.receiveNotificationLevel2(res, session.user, sendMessage);
+        
+    });
+
     res.render("doctorHome", homeParameter);
 });
 
@@ -114,5 +135,7 @@ router.get("/doctor/info", function(req, res){
     pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });
+
+
 
 module.exports = router;

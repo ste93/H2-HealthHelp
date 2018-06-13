@@ -37,7 +37,6 @@ public class PatientDataReceiverActor extends AbstractActor {
 
     private final H2dbManager H2manager = new H2dbManagerImpl();
     private final MessagesUtils utils = new MessagesUtils();
-    private final ActorRef emergencyActor = ActorSystem.apply("datacentre").actorOf(Props.create(LevelPublisherActor.class), "emergencyActor");
 
     @Override
     public void preStart() throws Exception {
@@ -59,7 +58,7 @@ public class PatientDataReceiverActor extends AbstractActor {
                         String idPatient = (String) value.get("patientId");
                         int level = output.getInt("level");
                         if(level == 2 || level == 3){
-                            getContext().actorSelection("/user/app/levelPublisherActor").tell(new ValueMessage(level,json, idPatient), emergencyActor);
+                            getContext().actorSelection("/user/app/levelPublisherActor").tell(new ValueMessage(level,json, idPatient), ActorRef.noSender());
                         }
                         String messageToInsert = utils.convertToFormatApi(value.toString());
                         H2manager.addSensorValue(idPatient, SensorType.valueOf(type),messageToInsert);

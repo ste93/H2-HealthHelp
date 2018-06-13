@@ -5,6 +5,12 @@ html
     title= title
     link(rel='stylesheet', href='/bootstrap/css/amelia.bootstrap.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    
+    script.
+      var webSocket = new WebSocket("ws://localhost:9090");
+      webSocket.onmessage = function(event) {
+        alert(event.data)
+      }
   body
     .navbar.navbar-default.navbar-fixed-top
       .container
