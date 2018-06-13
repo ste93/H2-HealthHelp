@@ -2,8 +2,6 @@ package core.pubsub.subscriber;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
@@ -11,7 +9,6 @@ import com.rabbitmq.client.Envelope;
 import core.pubsub.core.TopicSubscribe;
 import core.pubsub.message.AdviceRequestMessage;
 import core.pubsub.message.MessagesUtils;
-import core.pubsub.publisher.MultiAdvicePublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,26 +40,18 @@ public class AdviceRequestActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
-                    //String body = utils.getBody(message, ROUTING_KEY_ADVICE);
-                    //JSONObject json = new JSONObject(body);
                     json = new JSONObject(message);
-
                     String patientId = json.getString("patientId");
                     String start = json.getString("start");
                     String end =  json.getString("end");
-
-
                     AdviceRequestMessage adviceRequest = new AdviceRequestMessage(patientId, start, end);
-
                     getContext().actorSelection("/user/app/multiAdvicePublisherActor").tell(adviceRequest, ActorRef.noSender() );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         };
         subscribe.setConsumer(consumer);
-
         System.out.println(" -----> AdviceReceiver STARTED.");
     }
 

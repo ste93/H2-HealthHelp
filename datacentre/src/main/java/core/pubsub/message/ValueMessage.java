@@ -1,6 +1,5 @@
 package core.pubsub.message;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**

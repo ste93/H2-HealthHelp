@@ -31,14 +31,9 @@ public class InfoReceiverActor extends AbstractActor {
 
     private static final H2dbManager H2manager = new H2dbManagerImpl();
 
-
-
     @Override
     public void preStart() throws Exception {
         super.preStart();
-
-
-
         TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_INFO, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
@@ -49,28 +44,18 @@ public class InfoReceiverActor extends AbstractActor {
                     System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                     JSONObject json;
                     try {
-
-                        System.out.println(message);
                         json = new JSONObject(message);
-
                         UserRole role = UserRole.valueOf(json.getString("role").toUpperCase());
                         String idCode = json.getString("id");
-
                         JSONObject response = H2manager.getUserInformation(role, idCode);
-
-                        System.out.println("CAZZO" + response);
                         String id = response.getString("idCode");
                         String name = response.getString("name");
                         String surname = response.getString("surname");
                         String cf = response.getString("cf");
                         String mail = response.getString("mail");
                         String phones = response.getString("phone");
-
                         UserMessage info = new UserMessage(id, name, surname, cf, phones, mail);
-
                         getContext().actorSelection("/user/app/infoPublisherActor").tell(info, ActorRef.noSender());
-
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -78,7 +63,6 @@ public class InfoReceiverActor extends AbstractActor {
             }
         };
         subscribe.setConsumer(consumer);
-
         System.out.println(" -----> InfoReceierActor STARTED");
     }
 

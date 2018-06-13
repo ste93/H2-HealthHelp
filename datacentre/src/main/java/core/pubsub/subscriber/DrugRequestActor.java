@@ -7,7 +7,6 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import core.pubsub.core.TopicSubscribe;
-import core.pubsub.message.AdviceRequestMessage;
 import core.pubsub.message.DrugRequestMessage;
 import core.pubsub.message.MessagesUtils;
 import org.json.JSONException;
@@ -31,7 +30,6 @@ public class DrugRequestActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-
         TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
@@ -41,26 +39,18 @@ public class DrugRequestActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
-                    //String body = utils.getBody(message, ROUTING_KEY_ADVICE);
-                    //JSONObject json = new JSONObject(body);
                     json = new JSONObject(message);
-
                     String patientId = json.getString("patientId");
                     String start = json.getString("start");
                     String end =  json.getString("end");
-
-
                     DrugRequestMessage drugRequest = new DrugRequestMessage(patientId, start, end);
-
                     getContext().actorSelection("/user/app/multiDrugPublisherActor").tell(drugRequest, ActorRef.noSender() );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         };
         subscribe.setConsumer(consumer);
-
         System.out.println(" -----> DrugReceiver STARTED.");
     }
 

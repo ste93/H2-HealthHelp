@@ -3,9 +3,7 @@ package core.pubsub.core;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -74,11 +72,8 @@ public abstract class AbstractTopicSubscriber {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-
-                                String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
-           //   behaviour.handleMessage(message, envelope.getRoutingKey());
-
+                String message = new String(body, "UTF-8");
+                //System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
             }
         };
         try {
@@ -94,7 +89,6 @@ public abstract class AbstractTopicSubscriber {
      * After invoking this the class cannot receive more message from folder.
      */
     public void close() {
-
         try {
             channel.close();
             connection.close();
@@ -122,7 +116,6 @@ public abstract class AbstractTopicSubscriber {
             this.connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(this.exchangeName, BuiltinExchangeType.TOPIC);
-            //channel.basicQos(1);
             channel.queueDeclare(this.queueName, true, false, false, null);
             this.topicBindKey.forEach(bindKey ->{
                 try {
@@ -139,6 +132,4 @@ public abstract class AbstractTopicSubscriber {
             e.printStackTrace();
         }
     }
-
-
 }

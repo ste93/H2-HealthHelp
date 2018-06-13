@@ -20,7 +20,6 @@ public class DrugRequestMessage {
     }
 
     public String getStart() {
-
         return start;
     }
 

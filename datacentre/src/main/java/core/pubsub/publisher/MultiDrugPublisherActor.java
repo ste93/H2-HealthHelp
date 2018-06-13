@@ -1,7 +1,6 @@
 package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
-import core.SensorType;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
 import core.pubsub.core.TopicPublisher;
@@ -32,11 +31,6 @@ public class MultiDrugPublisherActor extends AbstractActor {
         return receiveBuilder().match(DrugRequestMessage.class, message -> {
             JSONArray values = h2dbManage.getDrugs(message.getPatientId(), Optional.of(message.getStart()), Optional.of(message.getEnd()));
             publisher.publishMessage(values.toString(), "patient."+message.getPatientId()+".receive.drug");
-
-            System.out.println(values.toString());
-
-//            h2dbManage.getDrugs(message.getPatientId(), Optional.of(message.getStart()), Optional.of(message.getEnd()));
-//            this.publisher.publishMessage(message.getMessage(), "patient."+message.getPatientId()+".receive.drug");
         }).build();
     }
 

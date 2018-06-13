@@ -11,7 +11,7 @@ import org.json.JSONException;
 import java.util.stream.IntStream;
 
 /**
- * Actor that manages the emergency, derived from sensor data values.
+ * Actor that manages the emergency, derived from sensor data values.emergency
  *
  * @author Giulia Lucchi
  */
@@ -36,14 +36,12 @@ public class LevelPublisherActor extends AbstractActor{
 
         return receiveBuilder().match(ValueMessage.class, message -> {
             JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
-
                 IntStream.range(0, doctors.length()).forEach(x -> {
                     try {
                         if(message.getLevel() == 2){
-
                             this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.alert");
                         }else{
-                            this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.alert");
+                            this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.emergency");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

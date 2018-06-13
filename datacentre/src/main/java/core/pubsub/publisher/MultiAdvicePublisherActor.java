@@ -30,10 +30,6 @@ public class MultiAdvicePublisherActor extends AbstractActor {
         return receiveBuilder().match(AdviceRequestMessage.class, message -> {
             JSONArray values = h2dbManage.getAdvices(message.getPatientId(), Optional.of(message.getStart()), Optional.of(message.getEnd()));
             publisher.publishMessage(values.toString(), "patient."+message.getPatientId()+".receive.advice");
-
-
-//            h2dbManage.getAdvices(message.getPatientId(), Optional.of(message.getStart()), Optional.of(message.getEnd()));
-//            this.publisher.publishMessage(message.getMessage(), "patient."+message.getPatientId()+".receive.advice");
         }).build();
     }
 

@@ -3,7 +3,6 @@ package core.pubsub.core;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -28,7 +27,6 @@ public class TopicSubscribe {
         this.queueName = queueName;
         this.topicBindKey = topicBindKey;
         channel = connection.createChannel();
-        //this.consumer = consumer;
     }
 
     public Channel getChannel() {
@@ -57,16 +55,5 @@ public class TopicSubscribe {
         });
 
         channel.basicConsume(queueName, true, consumer);
-
     }
-
-//    Consumer consumer = new DefaultConsumer(channel) {
-//        @Override
-//        public void handleDelivery(String consumerTag, Envelope envelope,
-//                                   AMQP.BasicProperties properties, byte[] body) throws IOException {
-//            String message = new String(body, "UTF-8");
-//            System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
-//        }
-//    };
-
 }

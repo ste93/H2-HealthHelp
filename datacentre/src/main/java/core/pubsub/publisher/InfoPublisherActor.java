@@ -4,8 +4,6 @@ import akka.actor.AbstractActor;
 import core.pubsub.core.TopicPublisher;
 import core.pubsub.message.UserMessage;
 
-import javax.sound.midi.SysexMessage;
-
 /**
  * Created by lucch on 11/06/2018.
  */
@@ -27,7 +25,7 @@ public class InfoPublisherActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(UserMessage.class, userMessage -> {
-            System.out.println("ARRIVATO IN INFO PUBLISHER");
+            //System.out.println("ARRIVATO IN INFO PUBLISHER");
             publisher.publishMessage(userMessage.toJson(), ROUTING_KEY);
         }).build();
     }

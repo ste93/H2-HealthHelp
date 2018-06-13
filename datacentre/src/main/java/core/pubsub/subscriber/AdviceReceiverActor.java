@@ -41,24 +41,19 @@ public class AdviceReceiverActor extends AbstractActor {
                 JSONObject json;
                 try {
                     json = new JSONObject(message);
-
-                    System.out.println("arriato  "+ json);
+                    //System.out.println("arriato  "+ json);
                     String patientId = json.getString("patientId");
                     String doctorId = json.getString("doctorId");
                     String advice = json.getString("advice");
                     String timestamp =  json.getString("timestamp");
-
                     AdviceMessage adviceMessage = new AdviceMessage(patientId, doctorId, advice, timestamp);
-
                     getContext().actorSelection("/user/app/advicePublisherActor").tell(adviceMessage, ActorRef.noSender());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         };
         subscribe.setConsumer(consumer);
-
         System.out.println(" -----> AdviceReceiver STARTED.");
     }
 

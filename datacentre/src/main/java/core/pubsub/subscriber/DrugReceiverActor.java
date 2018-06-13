@@ -34,9 +34,6 @@ public class DrugReceiverActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-
-
-
         TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_DRUG, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
@@ -46,31 +43,18 @@ public class DrugReceiverActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
-
                     json = new JSONObject(message);
-
-                    System.out.println("arrivato drug   "+ json);
+                    //System.out.println("arrivato drug   "+ json);
                     String patientId = json.getString("patientId");
                     String prescribedDrug = json.getString("message");
-
                     String messageToInsert = utils.convertToFormatApi(prescribedDrug);
-
                     H2dbmanager.addDrug(patientId, messageToInsert);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         };
         subscribe.setConsumer(consumer);
-
-
-
-
-
-
-        //DrugReceiver drugReceiver = new DrugReceiver();
         System.out.println(" -----> DrugReceierActor STARTED");
     }
 

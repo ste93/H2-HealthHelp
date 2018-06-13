@@ -37,7 +37,6 @@ public class HistoryMessage {
     }
 
     public String getStart() {
-
         return start;
     }
 

@@ -42,43 +42,31 @@ public class PatientDataReceiverActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-
         TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope,
-                                       AMQP.BasicProperties properties, byte[] body) throws IOException {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try{
                     if(envelope.getRoutingKey().equals(ROUTING_KEY_DATA)){
-
                         json = new JSONObject(message);
-                        System.out.println(json);
-
                         String type = (String) json.get("type");
                         JSONObject value = (JSONObject) json.get("message");
                         JSONObject output = (JSONObject) value.get("output");
                         String idPatient = (String) value.get("patientId");
-
                         int level = output.getInt("level");
                         if(level == 2 || level == 3){
-
                             getContext().actorSelection("/user/app/levelPublisherActor").tell(new ValueMessage(level,json, idPatient), emergencyActor);
                         }
-
                         String messageToInsert = utils.convertToFormatApi(value.toString());
                         H2manager.addSensorValue(idPatient, SensorType.valueOf(type),messageToInsert);
-
                     }else if(envelope.getRoutingKey().equals(ROUTING_KEY_SENSOR)){
                         json = new JSONObject(message);
-                        System.out.println(json);
-
                         String patientId = (String) json.get("patientId");
                         String type = (String) json.get("type");
-
                         H2manager.addNewSensorType(patientId,SensorType.valueOf(type));
                     }
                 } catch (JSONException e) {
@@ -87,7 +75,6 @@ public class PatientDataReceiverActor extends AbstractActor {
             }
         };
         subscribe.setConsumer(consumer);
-
         System.out.println(" -----> PatientDataReceiverActor STARTED.");
     }
 

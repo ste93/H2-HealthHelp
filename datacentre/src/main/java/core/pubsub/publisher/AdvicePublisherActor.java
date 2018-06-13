@@ -32,7 +32,6 @@ public class AdvicePublisherActor extends AbstractActor {
         return receiveBuilder().match(AdviceMessage.class, message -> {
             String messageToInsert = utils.convertToFormatApi(message.getMessage());
             h2dbManage.addAdvice(messageToInsert);
-
             this.publisher.publishMessage(message.getMessage(), "patient."+message.getPatientId()+".receive.advice");
         }).build();
     }
