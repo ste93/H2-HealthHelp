@@ -12,18 +12,18 @@ function requestHistory (type, patId, start, end, requester, res){
     var args = process.argv.slice(2);
     var key = (args.length > 0) ? args[0] : 'datacentre.request.history';
     var message = '{"type":"' + type 
-                    + '", "patientId":"' + patId
-                    + '", "start":"' + start 
-                    + '", "end":"' + end 
-                    + '", "requesterId":"' + requester 
-                    + '", "requesterRole":"' + session.role
-                    + '"}';
+        + '", "patientId":"' + patId
+        + '", "start":"' + start 
+        + '", "end":"' + end 
+        + '", "requesterId":"' + requester 
+        + '", "requesterRole":"' + session.role
+        + '"}';
     connection.createChannel(function(err, ch) {
-            ch.assertExchange(ex, 'topic', {durable: false});
-            ch.publish(ex, key, new Buffer(message));
-            console.log(" [x] Sent %s:'%s'", key, message);
-            var path = "/" + session.role + "/history";
-            res.redirect(path);
+        ch.assertExchange(ex, 'topic', {durable: false});
+        ch.publish(ex, key, new Buffer(message));
+        console.log(" [x] Sent %s:'%s'", key, message);
+        var path = "/" + session.role + "/history";
+        res.redirect(path);
     });
 }
 
@@ -37,28 +37,28 @@ function receiveHistory (res, idCode){
         ch.assertExchange(ex, 'topic', {durable: false});
     
         ch.assertQueue('history', {exclusive: false}, function(err, q) {
-          console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-          ch.bindQueue(q.queue, ex, key);
+            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+            ch.bindQueue(q.queue, ex, key);
     
-          ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content.toString());
-                    if(msg.content.toString() == "[500]"){
-                        var path = "/" + session.role;
-                        res.redirect(path);
-                    } else {
-                        var message = msg.content;
-                        var infoHistory = {
-                            role: session.role,
-                            title: 'Data History',
-                            patient: 'patient: '+session.pat, 
-                            type: "sensor type: "+session.type,
-                            values: message
-                        }
-                        res.render('historyPage', infoHistory);
+            ch.consume(q.queue, function(msg) {
+                console.log(" [x] %s", msg.content.toString());
+                if(msg.content.toString() == "[500]"){
+                    var path = "/" + session.role;
+                    res.redirect(path);
+                } else {
+                    var message = msg.content;
+                    var infoHistory = {
+                        role: session.role,
+                        title: 'Data History',
+                        patient: 'patient: '+session.pat, 
+                        type: "sensor type: "+session.type,
+                        values: message
                     }
-          }, {noAck: true});
+                    res.render('historyPage', infoHistory);
+                }
+            }, {noAck: true});
         });
-      });
+    });
 }
 
 

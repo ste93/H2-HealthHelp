@@ -7,7 +7,6 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
 });
 
-
 function requestAdvices(patId, start, end, res) {
     var ex = 'adviceRequest';
     var args = process.argv.slice(2);
@@ -17,11 +16,11 @@ function requestAdvices(patId, start, end, res) {
         + '", "end":"' + end 
         + '"}';
     
-        connection.createChannel(function(err, ch) {
-            ch.assertExchange(ex, 'topic', {durable: false});
-            ch.publish(ex, key, new Buffer(message));
-            console.log(" [x] Sent %s:'%s'", key, message);
-            res.redirect("/patient/advice");
+    connection.createChannel(function(err, ch) {
+        ch.assertExchange(ex, 'topic', {durable: false});
+        ch.publish(ex, key, new Buffer(message));
+        console.log(" [x] Sent %s:'%s'", key, message);
+        res.redirect("/patient/advice");
     });
 }
 
@@ -38,32 +37,26 @@ function receiveAdvices (res, idCode){
           console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
           ch.bindQueue(q.queue, ex, key);
     
-          ch.consume(q.queue, function(msg) {
-            console.log(" [x] %s", msg.content);
-            if(msg.content.toString() == "[500]"){
-                var path = "/" + session.role;
-                res.redirect(path);
-            } else {
-                var message = msg.content;
-                
-                var advices = {
-                    role: session.role,
-                    title: 'Advices',
-                    patient: 'patient: ' + session.pat, 
-                    values: "" + msg.content.toString(),
-                    values: message
+            ch.consume(q.queue, function(msg) {
+                console.log(" [x] %s", msg.content);
+                if(msg.content.toString() == "[500]"){
+                    var path = "/" + session.role;
+                    res.redirect(path);
+                } else {
+                    var message = msg.content;
+                    
+                    var advices = {
+                        role: session.role,
+                        title: 'Advices',
+                        patient: 'patient: ' + session.pat, 
+                        values: "" + msg.content.toString(),
+                        values: message
+                    }
+                    res.render('advicesPage', advices);
                 }
-                res.render('advicesPage', advices);
-            }
-        }, {noAck: true});
-
-
-
-
-
-
+            }, {noAck: true});
         });
-      });  
+    });  
 }
 
 function sendNewAdvice(patientID,advice,res){
@@ -78,13 +71,11 @@ function sendNewAdvice(patientID,advice,res){
                     + date
                     + '"}';
     connection.createChannel(function(err, ch) {
-            ch.assertExchange(ex, 'topic', {durable: false});
-            ch.publish(ex, key, new Buffer(message));
-            console.log(" [x] Sent %s:'%s'", key, message);
-            res.redirect("/doctor");
-    });
-    
+        ch.assertExchange(ex, 'topic', {durable: false});
+        ch.publish(ex, key, new Buffer(message));
+        console.log(" [x] Sent %s:'%s'", key, message);
+        res.redirect("/doctor");
+    });   
 }
-
 
 module.exports = {sendNewAdvice, receiveAdvices, requestAdvices};

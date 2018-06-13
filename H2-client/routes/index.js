@@ -20,8 +20,7 @@ var type;
 router.get('/', function (req, res) {
     var homeParameter = {
         title: 'H2 - Login'
-      }
-
+    };
     res.render('index', homeParameter);
 });
 
@@ -29,7 +28,6 @@ router.post('/', function (req, res) {
     var loginArgs = {
         path: { "username": req.body.username, "password": req.body.password, "role": req.body.role }	
     };
-   
     client.get("http://localhost:3000/database/application/login?idCode=${username}&role=${role}&password=${password}", loginArgs,
     function (data, response) {
         if(response.statusCode == 200){
@@ -39,7 +37,6 @@ router.post('/', function (req, res) {
         }else{
             res.redirect("/"); // pagine per errore
         }
-        
     });    
 });
 
@@ -47,8 +44,7 @@ router.get("/patient", function(req, res) {
     session.role = "patient";
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-      }
-
+    };
     res.render('patientHome', homeParameter);
 });
 
@@ -67,21 +63,21 @@ router.post("/patient", function(req, res) {
 router.get("/patient/history", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    }
+    };
     pubSubHistory.receiveHistory(res, session.user)
 });
 
 router.get("/patient/advice", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    }
+    };
     pubSubAdvice.receiveAdvices(res, session.user)
 });
 
 router.get("/patient/drug", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    }
+    };
     pubSubDrug.receiveDrugs(res, session.user)
 });
 
@@ -94,7 +90,7 @@ router.get("/doctor", function(req, res){
     session.role = "doctor";
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
-    }
+    };
     res.render("doctorHome", homeParameter);
 });
 
@@ -118,7 +114,5 @@ router.get("/doctor/info", function(req, res){
     pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });
-
-
 
 module.exports = router;
