@@ -12,7 +12,6 @@ function receiveNotificationLevel2 (res, idCode){
     var args = process.argv.slice(2);
     var queue = "level2.queue";
     var key = (args.length > 0) ? args[0] : "doctor."+idCode+".receive.alert";
-    console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
     

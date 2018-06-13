@@ -61,5 +61,4 @@ function receiveHistory (res, idCode){
     });
 }
 
-
 module.exports = {receiveHistory, requestHistory};
