@@ -1,8 +1,5 @@
 package core.pubsub.message;
 
-import core.UserRole;
-import org.json.JSONArray;
-
 /**
  * Created by lucch on 05/06/2018.
  */

@@ -14,7 +14,8 @@ function requestAdvices(patId, start, end, res) {
     var key = (args.length > 0) ? args[0] : 'datacentre.request.advice';
     var message = '{"patientId":"' + patId 
         + '", "start":"' + start 
-        + '", "end":"' + end;
+        + '", "end":"' + end 
+        + '"}';
     
         connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
@@ -27,24 +28,42 @@ function requestAdvices(patId, start, end, res) {
 function receiveAdvices (res, idCode){
     var ex = 'adviceRequest';
     var args = process.argv.slice(2);
-    var queue = "history";
+    var queue = "advice";
     var key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.advice";
     console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
     
-        ch.assertQueue('history', {exclusive: false}, function(err, q) {
+        ch.assertQueue('advice', {exclusive: false}, function(err, q) {
           console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
           ch.bindQueue(q.queue, ex, key);
     
           ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content.toString());
-                    res.render('advicesPage', {title: 'Advices', patient: 'patient: '+session.pat, values: ""+msg.content.toString() });
-          }, {noAck: true});
+            console.log(" [x] %s", msg.content);
+            if(msg.content.toString() == "[500]"){
+                var path = "/" + session.role;
+                res.redirect(path);
+            } else {
+                var message = msg.content;
+                
+                var advices = {
+                    role: session.role,
+                    title: 'Advices',
+                    patient: 'patient: ' + session.pat, 
+                    values: "" + msg.content.toString(),
+                    values: message
+                }
+                res.render('advicesPage', advices);
+            }
+        }, {noAck: true});
+
+
+
+
+
+
         });
-      });
-    
-    
+      });  
 }
 
 function sendNewAdvice(patientID,advice,res){
@@ -56,7 +75,8 @@ function sendNewAdvice(patientID,advice,res){
                     + patientID + '", "doctorId":"'
                     + session.user + '", "advice":"'
                     + advice +'", "timestamp":"'
-                    + date+'"}';
+                    + date
+                    + '"}';
     connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
             ch.publish(ex, key, new Buffer(message));

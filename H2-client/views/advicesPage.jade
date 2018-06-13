@@ -1,5 +1,15 @@
 extends layout
 
+block nav
+   .navbar-header
+            a.navbar-brand(href="/"+role) H2 - Health Help
+            a.navbar-brand(href="/"+role+"/info") About
+            a.navbar-brand(href='/') Logout
+            button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+
 block content
   #banner.page-header
     .row
@@ -9,5 +19,13 @@ block content
         h3= type
   .row
     .col-xs-12.col-sm-8
+        .row.list-group
+          - var json = JSON.parse(values)
+          - for(var i = 0; i < json.length; i++)
+            .col-xs-12.list-group-item
+                p timestamp : #{json[i].timestamp.toString()}
+                p doctorId : #{json[i].doctorId}
+                p patientId : #{json[i].patientId}
+                p advice : #{json[i].advice}
 
-      input(type="text", name="scroll" ,class="scrollabletextbox", value= values)
+    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back

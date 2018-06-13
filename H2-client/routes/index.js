@@ -1,12 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-
-var doctor = require('./doctor');
-var history = require('./subscriberHistory');
-var advices = require('./subscriberAdvices');
 var session= require('client-sessions');
-var patient = require('./patient')
 
 var userAuthentication = require('./userAuthentication');
 var pubSubAdvice = require('./pubSubAdvice');
@@ -42,18 +37,16 @@ router.post('/', function (req, res) {
             console.log( "     "+session.user);
             res.redirect("/"+req.body.role+"");
         }else{
-            res.redirect("/"); // pagie per erroe
+            res.redirect("/"); // pagine per errore
         }
         
-    });
-       
+    });    
 });
 
 router.get("/patient", function(req, res) {
     session.role = "patient";
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " "),
-        sendRequest: pubSubInfo.requestInfo()
+        title: "WELCOME " + (session.user).replace(".", " ")
       }
 
     res.render('patientHome', homeParameter);
@@ -61,13 +54,13 @@ router.get("/patient", function(req, res) {
 
 router.post("/patient", function(req, res) {
     session.pat = session.user;
-    if(req.body.sartAdvice != undefined){
-        patien.getAdvices(session.user, req.body.startAdvice, req.body.end, res);
+    if(req.body.startAdvice != undefined){
+        pubSubAdvice.requestAdvices(session.user, req.body.startAdvice, req.body.end, res);
     }else if(req.body.startDrug != undefined){
-        patient.getDrugs(session.user, req.body.startDrug, req.body.end, res);
+        pubSubDrug.requestDrugs(session.user, req.body.startDrug, req.body.end, res);
     }else{
         session.type = req.body.type;
-        patient.getDataHistory(req.body.type, session.user, req.body.start, req.body.end, res);
+        pubSubHistory.requestHistory(req.body.type, session.user, req.body.start, req.body.end, session.user, res);
     }    
 });
 
@@ -75,30 +68,33 @@ router.get("/patient/history", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
     }
-    history.getDataHistory(res, session.user)
+    pubSubHistory.receiveHistory(res, session.user)
 });
 
 router.get("/patient/advice", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
     }
-    advices.getAdvices(res, session.user)
+    pubSubAdvice.receiveAdvices(res, session.user)
 });
 
-router.get("/patient/drug");
-router.get("/patient/info");
+router.get("/patient/drug", function(req, res) {
+    var homeParameter = {
+        title: "WELCOME " + (session.user).replace(".", " ")
+    }
+    pubSubDrug.receiveDrugs(res, session.user)
+});
 
-
-
-
+router.get("/patient/info", function(req, res){
+    pubSubInfo.requestInfo(session.role, session.user, res);
+    pubSubInfo.receiveInfo(res);
+});
 
 router.get("/doctor", function(req, res){
     session.role = "doctor";
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")+ ".",
-        sendRequest: pubSubInfo.requestInfo()
+        title: "WELCOME " + (session.user).replace(".", " ")
     }
-    
     res.render("doctorHome", homeParameter);
 });
 
@@ -110,17 +106,16 @@ router.post("/doctor", function(req, res){
     }else{
         session.pat = req.body.pat;
         session.type = req.body.type;
-        pubSubHistory.requestHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user,res);
+        pubSubHistory.requestHistory(req.body.type, req.body.pat, req.body.start, req.body.end, session.user, res);
     }
-    
 });
 
 router.get("/doctor/history", function(req, res){
-    pubSubHistory.receiveHistory(res, "doctor", session.user);
+    pubSubHistory.receiveHistory(res, session.user);
 });
 
 router.get("/doctor/info", function(req, res){
-    console.log("entra");
+    pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });
 

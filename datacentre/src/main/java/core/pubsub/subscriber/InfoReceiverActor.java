@@ -9,12 +9,8 @@ import com.rabbitmq.client.Envelope;
 import core.UserRole;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
-import core.dbmanager.h2application.User;
-import core.dbmanager.h2application.UserBuilder;
 import core.pubsub.core.TopicSubscribe;
-import core.pubsub.message.MessagesUtils;
 import core.pubsub.message.UserMessage;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -83,10 +79,6 @@ public class InfoReceiverActor extends AbstractActor {
         };
         subscribe.setConsumer(consumer);
 
-
-
-
-        //InfoReceiver infoReceiver = new InfoReceiver();
         System.out.println(" -----> InfoReceierActor STARTED");
     }
 

@@ -94,7 +94,7 @@ public class H2dbManagerImpl implements H2dbManager {
                     .request();
         }
 
-        int  responseCode = request.get().getStatus();
+        int responseCode = request.get().getStatus();
         if (responseCode== 200) {
             json = new JSONObject(request.get(String.class));
         } else {
@@ -250,9 +250,9 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public JSONArray getDrugs(final String idPatient, final Optional<String> start, final Optional<String> end) throws Exception {
-        Invocation.Builder request = this.drugsOrAdviceOnRange(H2_DRUGS,idPatient, start,end);
+        Invocation.Builder request = this.drugsOrAdviceOnRange(H2_DRUGS, idPatient, start, end);
 
-        int  responseCode = request.get().getStatus();
+        int responseCode = request.get().getStatus();
         return responseToJSONArray(responseCode, request);
     }
 

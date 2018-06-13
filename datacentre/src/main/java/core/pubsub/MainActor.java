@@ -21,6 +21,7 @@ public class MainActor extends AbstractActor {
         final ActorRef requestReceiverActor = getContext().actorOf(Props.create(RequestReceiverActor.class), "requestReceiver");
         final ActorRef adviceRequestActor = getContext().actorOf(Props.create(AdviceRequestActor.class), "adviceRequester");
         final ActorRef drugReceiverActor = getContext().actorOf(Props.create(DrugReceiverActor.class), "drugReceiverActor");
+        final ActorRef drugRequesterActor = getContext().actorOf(Props.create(DrugRequestActor.class), "drugRequesterActor");
         final ActorRef infoReceiveActor = getContext().actorOf(Props.create(InfoReceiverActor.class), "infoReceiveActor");
 
         /* Create Publisher Actor */
@@ -29,8 +30,7 @@ public class MainActor extends AbstractActor {
         final ActorRef infoPublisherActor = getContext().actorOf(Props.create(InfoPublisherActor.class), "infoPublisherActor");
         final ActorRef levelPublisherActor = getContext().actorOf(Props.create(LevelPublisherActor.class), "levelPublisherActor");
         final ActorRef multiAdvicePublisherActor = getContext().actorOf(Props.create(MultiAdvicePublisherActor.class), "multiAdvicePublisherActor");
-
-
+        final ActorRef multiDrugPublisherActor = getContext().actorOf(Props.create(MultiDrugPublisherActor.class), "multiDrugPublisherActor");
     }
 
     @Override

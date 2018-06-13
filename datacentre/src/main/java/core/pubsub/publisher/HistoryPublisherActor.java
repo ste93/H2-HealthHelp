@@ -27,17 +27,15 @@ public class HistoryPublisherActor extends AbstractActor{
     public void preStart() throws Exception {
         super.preStart();
         this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
-        //System.out.println("HISTORY ACTOR START.");
     }
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder()
-                .match(HistoryMessage.class, message ->{
+        return receiveBuilder().match(HistoryMessage.class, message -> {
                     JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
-                    System.out.println("1 hist  "+ message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
+                    //System.out.println("1 hist  "+ message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
                     publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
-                    System.out.println("2 hist  "+  values.toString());
+                    //System.out.println("2 hist  "+  values.toString());
                 })
                 .build();
     }

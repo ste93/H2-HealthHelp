@@ -38,6 +38,8 @@ function addDrug(idCode, message, res){
 function getDrugs(idCode, res){
     var collection = _getCollection(idCode);
 
+    //console.log(collection);
+
     collection.find({},{"_id":0}, function(err, value){
         if(err){
             res.send(500);
@@ -61,9 +63,13 @@ function getDrugs(idCode, res){
 function getDrugsOnRange(idCode, start, end, res){
     var collection = _getCollection(idCode);
 
+    //console.log(collection);
+
     var enddate;
     var startdate = new Date(start);
     end == undefined ? enddate = new Date() : enddate = new Date(end);
+    //console.log(startdate);
+    //console.log(enddate);
  
     collection.find({"timestamp": { $gte: startdate, $lt: enddate}},{"_id":0, "patientId":0},function(err, value){
         if(err){

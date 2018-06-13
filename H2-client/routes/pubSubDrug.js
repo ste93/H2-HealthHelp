@@ -9,37 +9,56 @@ amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
 });
 
 
-function getDrugs (res, idCode){
-    //DA ADATTARE
-    var ex = 'historyRequest';
+function requestDrugs (patId, start, end, res){
+    var ex = 'drugRequest';
     var args = process.argv.slice(2);
-    var queue = "history";
-    var key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.history";
+    var key = (args.length > 0) ? args[0] : 'datacentre.request.drug';
+    var message = '{"patientId":"' + patId 
+        + '", "start":"' + start 
+        + '", "end":"' + end
+        + '"}';
+    
+        connection.createChannel(function(err, ch) {
+            ch.assertExchange(ex, 'topic', {durable: false});
+            ch.publish(ex, key, new Buffer(message));
+            console.log(" [x] Sent %s:'%s'", key, message);
+            res.redirect("/patient/drug");
+    });
+}
+
+function receiveDrugs(res, idCode){
+    var ex = 'drugRequest';
+    var args = process.argv.slice(2);
+    var queue = "drug";
+    var key = (args.length > 0) ? args[0] : ""+session.role+"."+idCode+".receive.drug";
     console.log(key);
     connection.createChannel(function(err, ch) {
         ch.assertExchange(ex, 'topic', {durable: false});
     
-        ch.assertQueue('history', {exclusive: false}, function(err, q) {
+        ch.assertQueue('drug', {exclusive: false}, function(err, q) {
           console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
           ch.bindQueue(q.queue, ex, key);
     
-          ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content);
-                    if(msg.content.toString() == "500"){
-                        res.redirect("/doctor");
+            ch.consume(q.queue, function(msg) {
+                console.log(" [x] %s", msg.content);
+                if(msg.content.toString() == "[500]"){
+                    var path = "/" + session.role;
+                    res.redirect(path);
+                } else {        
+                    var message = msg.content;
+                    
+                    var drugs = {
+                        role: session.role,
+                        title: 'Drugs',
+                        patient: 'patient: ' + session.pat, 
+                        values: "" + msg.content.toString(),
+                        values: message
                     }
-                    var element = "";
-                    var arraymessage = JSON.parse(msg.content) ;
-                   arraymessage.forEach(x => {
-                       console.log(x);
-                       element = element.concat("\n"+JSON.stringify(x));
-                    });
-                    res.render('historyPage', {role: session.role, title: 'Data History', patient: 'patient: '+session.pat, type: "sensor type: "+session.type, values: ""+ element.toString()});
-          }, {noAck: true});
+                    res.render('drugsPage', drugs);
+                }
+            }, {noAck: true});
         });
-      });
-    
-    
+    });
 }
 
 function sendNewDrug(patientID,drug,res){
@@ -51,7 +70,8 @@ function sendNewDrug(patientID,drug,res){
                     + patientID + '", "message": { "doctorId":"'
                     + session.user + '", "timestamp":"'
                     + date +'", "drugName":"'
-                    + drug+'"}}';
+                    + drug
+                    + '"}}';
     console.log( message);
     connection.createChannel(function(err, ch) {
             ch.assertExchange(ex, 'topic', {durable: false});
@@ -62,4 +82,4 @@ function sendNewDrug(patientID,drug,res){
     
 }
 
-module.exports = {sendNewDrug, getDrugs};
+module.exports = {sendNewDrug, requestDrugs, receiveDrugs};

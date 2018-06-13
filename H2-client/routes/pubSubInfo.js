@@ -35,15 +35,15 @@ function receiveInfo(res){
         ch.assertExchange(ex, 'topic', {durable: false});
     
         ch.assertQueue(queue, {exclusive: false}, function(err, q) {
-          console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-          ch.bindQueue(q.queue, ex, key);
+            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+            ch.bindQueue(q.queue, ex, key);
     
-          ch.consume(q.queue, function(msg) {
-                    console.log(" [x] %s", msg.content);
-                    if(msg.content.toString() == "500"){
-                        res.redirect("/doctor");
-                    }
-            
+            ch.consume(q.queue, function(msg) {
+                console.log(" [x] %s", msg.content);
+                if(msg.content.toString() == "500"){
+                    var path = "/" + session.role;
+                    res.redirect(path);
+                } else {
                     var json = JSON.parse(msg.content.toString());
                     
                     var personalInfo = {
@@ -57,8 +57,9 @@ function receiveInfo(res){
                         role: session.role
                     }
                     res.render('infoPage', personalInfo);
-          }, {noAck: true});
+                }
+            }, {noAck: true});
         });
-      });
+    });
 }
 module.exports = {requestInfo, receiveInfo};

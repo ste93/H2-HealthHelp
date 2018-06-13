@@ -3,7 +3,7 @@ extends layout
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor') H2 - Health Help
-            a.navbar-brand( action = sendRequest ,href='/doctor/info') About me
+            a.navbar-brand(href='/doctor/info') About me
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
@@ -42,7 +42,7 @@ block content
               button.btn.btn-large.btn-primary(type="submit") Get data history
       .panel.panel-primary
         .panel-heading
-          h2.panel-title Advices
+          h2.panel-title Advice
 
         .panel-body
           form.form-signin(action="", method="post", name="addAdvice")

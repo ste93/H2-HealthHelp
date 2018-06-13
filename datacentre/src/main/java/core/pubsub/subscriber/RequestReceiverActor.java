@@ -38,9 +38,6 @@ public class RequestReceiverActor extends AbstractActor {
     public void preStart() throws Exception {
         super.preStart();
 
-
-
-
         TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_HISTORY, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
@@ -50,9 +47,6 @@ public class RequestReceiverActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
-                    //String body = utils.getBody(message, ROUTING_KEY_HISTORY);
-                    //System.out.println(body);
-                    //JSONObject json = new JSONObject(body);
                     json = new JSONObject(message);
 
                     System.out.println(json);
@@ -64,7 +58,7 @@ public class RequestReceiverActor extends AbstractActor {
                     String requesterId = json.getString("requesterId");
 
                     HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
-                    //System.out.println(" message creato");
+
                     getContext().actorSelection("/user/app/historyPublisherActor").tell(historyMessage, ActorRef.noSender());
 
                 } catch (JSONException e) {

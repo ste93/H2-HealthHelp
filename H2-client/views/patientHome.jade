@@ -27,13 +27,13 @@ block content
           form.form-signin(action="", method="post", name="getHistory")
             div.input
                 span.label Type
-                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature", value="glycemia")
+                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature")
             div.input
                 span.label Start
-                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
             div.input
                 span.label End
-                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") get data history
 
@@ -45,10 +45,10 @@ block content
           form.form-signin(action="", method="post", name="getAdvice")
             div.input
                 span.label Start
-                textarea(type="text", name="startAdvice", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
+                textarea(type="text", name="startAdvice", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
             div.input
                 span.label End
-                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") get advices
         
@@ -60,9 +60,9 @@ block content
           form.form-signin(action="", method="post", name="getDrugs")
             div.input
                 span.label Start
-                textarea(type="text", name="startDrug", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00", value="2018-01-01 11:00")
+                textarea(type="text", name="startDrug", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
             div.input
                 span.label End
-                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00", value="2018-05-01 11:00")
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") get drugs

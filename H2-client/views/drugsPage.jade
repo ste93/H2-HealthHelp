@@ -9,22 +9,22 @@ block nav
               span.icon-bar
               span.icon-bar
               span.icon-bar
-        
 
 block content
   #banner.page-header
     .row
       .col-lg-6
         h1= title
-    .row
-        .col-xs-12.col-sm-8
+        h3= patient
+        h3= type
+  .row
+    .col-xs-12.col-sm-8
         .row.list-group
+          - var json = JSON.parse(values)
+          - for(var i = 0; i < json.length; i++)
             .col-xs-12.list-group-item
-                p idCode : #{idCode}
-                p name : #{name}
-                p surname : #{surname}
-                p cf: #{cf}
-                p mail : #{mail}
-                p phones : #{phones}
+                p timestamp : #{json[i].timestamp.toString()}
+                p doctorId : #{json[i].doctorId}
+                p drugName : #{json[i].drugName}
 
-       a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back
+    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back

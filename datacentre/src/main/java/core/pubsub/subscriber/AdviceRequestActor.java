@@ -54,7 +54,7 @@ public class AdviceRequestActor extends AbstractActor {
 
                     AdviceRequestMessage adviceRequest = new AdviceRequestMessage(patientId, start, end);
 
-                    getContext().actorSelection("/user/app/multiAdviceActor").tell(adviceRequest, ActorRef.noSender() );
+                    getContext().actorSelection("/user/app/multiAdvicePublisherActor").tell(adviceRequest, ActorRef.noSender() );
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -63,11 +63,6 @@ public class AdviceRequestActor extends AbstractActor {
         };
         subscribe.setConsumer(consumer);
 
-
-
-
-
-        //AdviceRequest subscriber = new AdviceRequest();
         System.out.println(" -----> AdviceReceiver STARTED.");
     }
 

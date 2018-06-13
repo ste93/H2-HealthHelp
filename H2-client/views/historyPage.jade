@@ -2,8 +2,8 @@ extends layout
 
 block nav
    .navbar-header
-            a.navbar-brand(href='/doctor') H2 - Health Help
-            a.navbar-brand(action = sendRequest, href='/doctor/info') About
+            a.navbar-brand(href="/"+role) H2 - Health Help
+            a.navbar-brand(shref="/"+role+"/info") About
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
