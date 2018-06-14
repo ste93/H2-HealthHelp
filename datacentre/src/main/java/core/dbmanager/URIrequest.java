@@ -5,8 +5,7 @@ package core.dbmanager;
  * @author Giulia Lucchi
  */
 public enum URIrequest {
-    BASIC_ROUTE("http://localhost:3000/"),
-
+    BASIC_ROUTE("http://localhost:5225/"),
     H2_ROUTE(BASIC_ROUTE.getPath()+"database/application"),
     ASSOCIATIONS_ROUTE(BASIC_ROUTE.getPath()+"database/associations");
 

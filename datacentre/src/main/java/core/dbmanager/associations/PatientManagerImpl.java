@@ -30,7 +30,7 @@ public class PatientManagerImpl extends UserManagerImpl implements PatientManage
      */
     @Override
     public JSONArray getPatientAssociations(String userId) throws Exception {
-        return super.getUserAssociations(userId, "idPatinet", RELATIONSHIP_TARGET);
+        return super.getUserAssociations(userId, "idPatient", RELATIONSHIP_TARGET);
     }
 
 }

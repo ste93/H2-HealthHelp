@@ -2,37 +2,35 @@ package core.dbmanager;
 
 import static org.junit.Assert.*;
 
+import core.dbmanager.associations.*;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
-
 import java.lang.Exception;
 
-public class AssManagerTest {
+public class AssociationAndUserManagerTest {
 
-<<<<<<< Updated upstream
-    private AssManager associationsManager = new AssManagerImpl();
-=======
-    private AssManager associationsManager = new PatientManagerImpl();
->>>>>>> Stashed changes
+    private AssociationsManager associationsManager = new AssociationsManagerImpl();
+    private PatientManager patientManager = new PatientManagerImpl();
+    private DoctorManager doctorManager = new DoctorManagerImpl();
 
     @Test
-    public void test() throws JSONException {
+    public void test() throws Exception {
         //-------------------------------------------------------CREATE NEW PATIENTS-------------------------------------------------------
+
         //try adding a new patient, we want it to success
-        assert(associationsManager.createNewPatient("marghe.pecos", "Margherita", "Pecorelli", "jskdlkdfjdjfi"));
+        assert(patientManager.createNewUser("marghe.pecos", "Margherita", "Pecorelli", "jskdlkdfjdjfi"));
 
         //try adding the same patient, we want it to fail
-        assertFalse(associationsManager.createNewPatient("marghe.pecos", "Margherita", "Pecorelli", "jskdlkdfjdjfi"));
+        assertFalse(patientManager.createNewUser("marghe.pecos", "Margherita", "Pecorelli", "jskdlkdfjdjfi"));
 
         //try adding a different patient but with the same ID, we want it to fail
-        assertFalse(associationsManager.createNewPatient("marghe.pecos", "Marghe", "Peco", "alsllsalallal"));
+        assertFalse(patientManager.createNewUser("marghe.pecos", "Marghe", "Peco", "alsllsalallal"));
 
         //try adding a new patient but with missing credential, we want it to fail
-        assertFalse(associationsManager.createNewPatient("sara.rossi", "Sara", "Rossi", ""));
-        assertFalse(associationsManager.createNewPatient("sara.rossi", "", "Rossi", "alslallksf"));
-        assertFalse(associationsManager.createNewPatient("", "Sara", "Rossi", "alslallksf"));
+        assertFalse(patientManager.createNewUser("sara.rossi", "Sara", "Rossi", ""));
+        assertFalse(patientManager.createNewUser("sara.rossi", "", "Rossi", "alslallksf"));
+        assertFalse(patientManager.createNewUser("", "Sara", "Rossi", "alslallksf"));
 
 
 
@@ -40,25 +38,26 @@ public class AssManagerTest {
         //same of the patient
 
         //try adding a new doctor, we want it to success
-        assert(associationsManager.createNewDoctor("mario.bianchi", "Mario", "Bianchi", "ksjdsofòjdfk"));
+        assert(doctorManager.createNewUser("mario.bianchi", "Mario", "Bianchi", "ksjdsofòjdfk"));
 
         //try adding the same doctor, we want it to fail
-        assertFalse(associationsManager.createNewDoctor("mario.bianchi", "Mario", "Bianchi", "ksjdsofòjdfk"));
+        assertFalse(doctorManager.createNewUser("mario.bianchi", "Mario", "Bianchi", "ksjdsofòjdfk"));
 
         //try adding a different doctor but with the same ID, we want it to fail
-        assertFalse(associationsManager.createNewDoctor("mario.bianchi", "Ma", "Bianchinini", "laldaslaskdjask"));
+        assertFalse(doctorManager.createNewUser("mario.bianchi", "Ma", "Bianchinini", "laldaslaskdjask"));
 
         //try adding a new doctor but with missing credential, we want it to fail
-        assertFalse(associationsManager.createNewDoctor("matteo.rosa", "Matteo", "Rosa", ""));
-        assertFalse(associationsManager.createNewDoctor("matteo.rosa", "", "Rosa", "qpqpwoeqowoepw"));
-        assertFalse(associationsManager.createNewDoctor("", "Matteo", "Rosa", "qpqpwoeqowoepw"));
+        assertFalse(doctorManager.createNewUser("matteo.rosa", "Matteo", "Rosa", ""));
+        assertFalse(doctorManager.createNewUser("matteo.rosa", "", "Rosa", "qpqpwoeqowoepw"));
+        assertFalse(doctorManager.createNewUser("", "Matteo", "Rosa", "qpqpwoeqowoepw"));
 
 
 
         //-------------------------------------------------------GET PATIENTS' DATA-------------------------------------------------------
         try {
             //getting patient's data
-            JSONObject json = associationsManager.getPatientData("marghe.pecos");
+            JSONObject json = patientManager.getUserData("marghe.pecos");
+
             //checking if patient's data are those expected
             assertEquals(json.get("_id"), "marghe.pecos");
             assertEquals(json.get("name"), "Margherita");
@@ -70,7 +69,7 @@ public class AssManagerTest {
 
         //try getting data of an non-existent patient, we want it to throw an exception: 404 (not found)
         try {
-            JSONObject fail = associationsManager.getPatientData("fail.fail");
+            JSONObject fail = patientManager.getUserData("fail.fail");
             Assert.fail();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "404");
@@ -83,7 +82,8 @@ public class AssManagerTest {
 
         try {
             //getting doctor's data
-            JSONObject json = associationsManager.getDoctorData("mario.bianchi");
+            JSONObject json = doctorManager.getUserData("mario.bianchi");
+
             //checking if patient's data are those expected
             assertEquals(json.get("_id"), "mario.bianchi");
             assertEquals(json.get("name"), "Mario");
@@ -95,7 +95,7 @@ public class AssManagerTest {
 
         //try getting data of an non-existent doctor, we want it to throw an exception: 404 (not found)
         try {
-            JSONObject fail = associationsManager.getDoctorData("fail.fail");
+            JSONObject fail = doctorManager.getUserData("fail.fail");
             Assert.fail();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "404");
@@ -105,10 +105,10 @@ public class AssManagerTest {
 
         //-------------------------------------------------------DELETE PATIENTS-------------------------------------------------------
         //deleting the patient created before
-        assert(associationsManager.deletePatient("marghe.pecos"));
+        assert(patientManager.deleteUser("marghe.pecos"));
 
         //try deleting a patient the doesn't exist, we want it to fail
-        assertFalse(associationsManager.deletePatient("doesnt.exist"));
+        assertFalse(patientManager.deleteUser("doesnt.exist"));
 
 
 
@@ -116,19 +116,19 @@ public class AssManagerTest {
         //same of the patient
 
         // deleting the doctor created before
-        assert(associationsManager.deleteDoctor("mario.bianchi"));
+        assert(doctorManager.deleteUser("mario.bianchi"));
 
         //try deleting a doctor the doesn't exist, we want it to fail
-        assertFalse(associationsManager.deleteDoctor("doesnt.exist"));
+        assertFalse(doctorManager.deleteUser("doesnt.exist"));
 
 
 
         //-------------------------------------------------------CREATE NEW ASSOCIATIONS-------------------------------------------------------
         //creating new patients and doctors
-        associationsManager.createNewPatient("prova.pat", "Prova", "Pat", "ProvaPatCF");
-        associationsManager.createNewPatient("prova.pat2", "Prova", "Pat2", "ProvaPat2CF");
-        associationsManager.createNewDoctor("prova.doc", "Prova", "Doc", "ProvaDocCF");
-        associationsManager.createNewDoctor("prova.doc2", "Prova", "Doc2", "ProvaDoc2CF");
+        patientManager.createNewUser("prova.pat", "Prova", "Pat", "ProvaPatCF");
+        patientManager.createNewUser("prova.pat2", "Prova", "Pat2", "ProvaPat2CF");
+        doctorManager.createNewUser("prova.doc", "Prova", "Doc", "ProvaDocCF");
+        doctorManager.createNewUser("prova.doc2", "Prova", "Doc2", "ProvaDoc2CF");
 
         //try adding a new association between the patient and the doctor created before
         assert(associationsManager.createNewAssociation("prova.pat", "prova.doc"));
@@ -155,7 +155,7 @@ public class AssManagerTest {
         //-------------------------------------------------------GET ASSOCIATIONS-------------------------------------------------------
         JSONObject json = new JSONObject();
 
-        //try getting the association (created before) between a specific patient and a specific doctor
+        //try getting associations (created before) between a specific patient and a specific doctor
         try {
             json = associationsManager.getAssociation("prova.pat", "prova.doc");
         } catch (Exception e) {
@@ -192,29 +192,30 @@ public class AssManagerTest {
 
 
         //-------------------------------------------------------GET PATIENTS' ASSOCIATIONS-------------------------------------------------------
-        JSONArray patientAssociations;
+        JSONArray patientAssociations1 = null;
+        JSONArray patientAssociations2 = null;
 
         //try getting all doctors associated to the specific patient
         try {
-            patientAssociations = associationsManager.getPatientAssociations("prova.pat");
-            patientAssociations = associationsManager.getPatientAssociations("prova.pat2");
+            patientAssociations1 = patientManager.getPatientAssociations("prova.pat");
+            patientAssociations2 = patientManager.getPatientAssociations("prova.pat2");
         } catch (Exception e) {
             Assert.fail();
         }
 
         //try getting all doctors associated to the patient that doesn't exist, we want it to fail
         try {
-            patientAssociations = associationsManager.getPatientAssociations("doesnt.exist");
+            patientAssociations1 = patientManager.getPatientAssociations("doesnt.exist");
             Assert.fail();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "404");
         }
 
         //try getting all doctors associated to a new patient that has no associations, we want it to return an empty JSONArray
-        associationsManager.createNewPatient("prova.pat3", "Prova", "Pat3", "ProvaCF");
+        patientManager.createNewUser("prova.pat3", "Prova", "Pat3", "ProvaCF");
         try {
-            patientAssociations = associationsManager.getPatientAssociations("prova.pat3");
-            assertEquals(patientAssociations.length(), 0);
+            patientAssociations1 = patientManager.getPatientAssociations("prova.pat3");
+            assertEquals(patientAssociations1.length(), 0);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -223,30 +224,30 @@ public class AssManagerTest {
 
         //-------------------------------------------------------GET DOCTORS' ASSOCIATIONS-------------------------------------------------------
         //same of the patient
-
-        JSONArray doctorAssociations;
+        JSONArray doctorAssociations1 = null;
+        JSONArray doctorAssociations2 = null;
 
         //try getting all patients associated to the specific doctor
         try {
-            doctorAssociations = associationsManager.getDoctorAssociations("prova.doc");
-            doctorAssociations = associationsManager.getDoctorAssociations("prova.doc2");
+            doctorAssociations1 = doctorManager.getDoctorAssociations("prova.doc");
+            doctorAssociations2 = doctorManager.getDoctorAssociations("prova.doc2");
         } catch (Exception e) {
             Assert.fail();
         }
 
         //try getting all patients associated to the doctor that doesn't exist, we want it to fail
         try {
-            doctorAssociations = associationsManager.getDoctorAssociations("doesnt.exist");
+            doctorAssociations1 = doctorManager.getDoctorAssociations("doesnt.exist");
             Assert.fail();
         } catch (Exception e) {
             assertEquals(e.getMessage(), "404");
         }
 
         //try getting all patients associated to a new doctor that has no associations, we want it to return an empty JSONArray
-        associationsManager.createNewDoctor("prova.doc3", "Prova", "Doc3", "ProvaCF");
+        doctorManager.createNewUser("prova.doc3", "Prova", "Doc3", "ProvaCF");
         try {
-            doctorAssociations = associationsManager.getDoctorAssociations("prova.doc3");
-            assertEquals(doctorAssociations.length(), 0);
+            doctorAssociations1 = doctorManager.getDoctorAssociations("prova.doc3");
+            assertEquals(doctorAssociations1.length(), 0);
         } catch (Exception e) {
             Assert.fail();
         }
@@ -267,12 +268,12 @@ public class AssManagerTest {
         assertFalse(associationsManager.deleteAssociation("doesnt.exist", "doesnt.exist"));
 
         //deleting all patients and doctors created for testing
-        associationsManager.deletePatient("prova.pat");
-        associationsManager.deletePatient("prova.pat2");
-        associationsManager.deletePatient("prova.pat3");
-        associationsManager.deleteDoctor("prova.doc");
-        associationsManager.deleteDoctor("prova.doc2");
-        associationsManager.deleteDoctor("prova.doc3");
+        patientManager.deleteUser("prova.pat");
+        patientManager.deleteUser("prova.pat2");
+        patientManager.deleteUser("prova.pat3");
+        doctorManager.deleteUser("prova.doc");
+        doctorManager.deleteUser("prova.doc2");
+        doctorManager.deleteUser("prova.doc3");
     }
 
 }

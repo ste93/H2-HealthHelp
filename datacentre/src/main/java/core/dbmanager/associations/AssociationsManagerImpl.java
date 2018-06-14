@@ -9,7 +9,7 @@ import javax.ws.rs.client.*;
 
 public class AssociationsManagerImpl implements AssociationsManager {
 
-    private static Client CLIENT =ClientBuilder.newClient();
+    private static Client CLIENT = ClientBuilder.newClient();
     private static WebTarget TARGET = CLIENT.target(URIrequest.ASSOCIATIONS_ROUTE.getPath());
     private static WebTarget RELATIONSHIP_TARGET = TARGET.path("/relationship");
 
