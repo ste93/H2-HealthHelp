@@ -2,9 +2,9 @@
 * Module to analyse patient's parameter locally in order to handle emergency protocol even if the control unit is not connected to the network.
 */
 
-var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
 var moment = require('moment');
+var publisher = require('../pub_sub/controlUnitPublisher');
 var emergencyManager = require ('../hardware/emergencyManager');
 
 var sensorsList = [];
@@ -19,6 +19,7 @@ var emergencyCount = 0;
 function getSensorInfo(id, callback) {
   var found = false;
   var sensorInfo = "{}";
+
   // check if it's already loaded locally :
   sensorsList.forEach(function(element) {
     json = JSON.parse(element)
@@ -75,7 +76,7 @@ function analysisError(sensorData) {
 }
 
 /**
-* Perform simple analysis on the data received from the sensors.
+* Perform simple analysis on the data received from the sensors based on information available for this sensor.
 */
 function analyse(sensorData, sensorInfo) {
   console.log("Analysis started ! ");
@@ -85,6 +86,7 @@ function analyse(sensorData, sensorInfo) {
   var level;
   var description;
 
+  // analysis result depend on the vital parameter measured by the sensor.
   switch(sensorInfo.value.dataType) {
     case 'heart_rate' :
     case 'heartbeat':
@@ -135,7 +137,7 @@ function analyse(sensorData, sensorInfo) {
         if (emergencyCount >= emergencyThreshold){
           emergencyManager.startEmergency() ;
           emergencyCount = 0;
-        } 
+        }
       }
       break;
     default:
@@ -145,11 +147,7 @@ function analyse(sensorData, sensorInfo) {
 
     console.log("Analysis completed ! ");
 
-    /*
-    var tryDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSS');//.toDate();
-    console.log("date: " , tryDate);
-    */
-
+// After analysis create the message with the right format and try to send it to the rabbitMQ server.
   var sensorMeasure = {
      type : sensorInfo.value.dataType,
      message: {
@@ -167,7 +165,22 @@ function analyse(sensorData, sensorInfo) {
   sendToDataCenter(sensorMeasure);
 }
 
-
+/**
+* Function that try to send the data message to the publish-subscribe server.
+* Message format must be :
+* {"type" : String (dataType),
+*  "message" : {
+*    "patientID" : String,
+*    "value" : String,
+*    "unit" : String,
+*    "timestamp" : String,
+*    "output" : {
+*       "level" : String,
+*       "description" : String
+*     }
+*   }
+* }
+*/
 function sendToDataCenter(data) {
   console.log("Received data to publish : ");
   console.log("--- type : ", data.type);
@@ -183,6 +196,9 @@ function sendToDataCenter(data) {
   publisher.publishMessage(JSON.stringify(data));
 }
 
+/**
+* Function that invalidate the local cached sensors list and force the system to retrive it remotely again.
+*/
 module.exports.invalidateList = function() {
   sensorsList = [];
 }
