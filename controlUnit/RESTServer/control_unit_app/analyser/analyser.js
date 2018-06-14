@@ -82,6 +82,7 @@ function analyse(sensorData, sensorInfo) {
   var description;
 
   switch(sensorInfo.value.dataType) {
+    case 'heart_rate' :
     case 'heartbeat':
         if (value <= 20 || value >= 250 ){
           level = 3;
@@ -110,6 +111,19 @@ function analyse(sensorData, sensorInfo) {
       }
       break;
 
+    case 'glycemia' :
+      if (value >= 60 && value < 110 ){
+        level = 1;
+        description = 'everything ok';
+      } else if ( value <= 200) {
+        level = 2;
+        description = 'warning, something strange is happening';
+      } else {
+        level = 3;
+        description = 'just start digging';
+        emergencyManager.startEmergency() ;
+      }
+      break;
     default:
       level = 2;
       description = 'warning, cannot analyze this parameter !';
