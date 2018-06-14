@@ -1,59 +1,89 @@
+/**
+* Basic module to interact with an hardware buzzer for sound output.
+*/
 
-var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+var Gpio = require('onoff').Gpio; //include onoff module to interact with the GPIO
 
-var BUZZER;
+var buzzer;
 var state;
 var beepInterval;
 
+/**
+* Initialize buzzer control and GPIO.
+* @param gpioNumber is the pin number in which the buzzer is connected.
+*/
 module.exports.initializeBuzzer = function(gpioNumber) {
-  //use GPIO with the specified number, and specify that it is output
-   BUZZER = new Gpio(gpioNumber, 'out');
+   buzzer = new Gpio(gpioNumber, 'out');
    state = false;
-   console.log(" [Buzzer] Initialized on gpio", gpioNumber );
+   console.log(" [Buzzer] Initialized on gpio ", gpioNumber );
  }
 
+ /**
+ * Function to make the buzzer sound continuosly.
+ * If already playing sound this does nothing.
+ */
  module.exports.beep = function() {
-     BUZZER.writeSync(1);
+     buzzer.writeSync(1);
      console.log(" [Buzzer] beep on ");
  }
 
- module.exports.beepFor = function(period) {
-     BUZZER.writeSync(1);
+ /**
+ * Function to make the buzzer sound continuosly for a certain amount of time.
+ * @param duration is the amount of millisecond in which buzzer emit sound.
+ */
+ module.exports.beepFor = function(duration) {
+     buzzer.writeSync(1);
      state = true;
-     setTimeout(BUZZER.writeSync(0), timeout);
-     console.log(" [Buzzer] beep for ", period);
+     setTimeout(buzzer.writeSync(0), duration);
+     console.log(" [Buzzer] beep for ", duration);
 
  }
 
+ /**
+ * Function to stop the buzzer from emitting sound.
+ * If already stopped this does nothing.
+ */
  module.exports.stop = function stop () {
-     BUZZER.writeSync(0);  
+     buzzer.writeSync(0);
      console.log(" [Buzzer] beep off");
 }
 
-module.exports.alarmBeep = function(period, timeout) {
-// potrebbe non andare, devo toglierlo
+/**
+* Function to make the buzzer sound alternatively for a certain amount of time.
+* @param period is the duration of a single state ( SOUND - STOP ) before switching.
+* @param duration is the amount of millisecond in which buzzer emit sound.
+*/
+module.exports.alarm = function(period, duration) {
   beepInterval = setInterval(switchSound, period);
-  setTimeout(endBeep, timeout); //stop blinking after 5 seconds
+  setTimeout(endAlarm, duration);
   console.log(" [Buzzer] alarm beep ");
 }
 
+/**
+* Function to alternate buzzer state:
+* If is playing sound it stop, if is stopped start playong sound.
+*/
 function switchSound() {
   if (state) {
-    BUZZER.writeSync(1);
+    buzzer.writeSync(1);
     state = true;
   } else {
-    BUZZER.writeSync(0);
+    buzzer.writeSync(0);
     state = false;
   }
 }
 
-function endBeep() {
+/**
+* Function to stop alarm after a certain period.
+*/
+function endAlarm() {
   clearInterval(beepInterval);
-  BUZZER.writeSync(0);
+  buzzer.writeSync(0);
 }
 
+// clean exit when the process is terminated.
 process.on('SIGINT', function () {
   endBeep();
-  BUZZER.unexport();
+  buzzer.unexport();
   process.exit();
 });

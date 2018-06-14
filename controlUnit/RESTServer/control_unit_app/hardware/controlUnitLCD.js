@@ -1,20 +1,24 @@
+/**
+* Basic module to interact with an hardware 16x2 LCD.
+* By default this hold the project name in the first row and write messages on the second one.
+*/
+
 var LCD = require('lcd');
 
 var lcd;
-
 var initialized = false;
 
+/**
+* Initialize lcd control and GPIO.
+*/
 module.exports.initializeLcd = function() {
 
   if (! initialized){
-
     lcd = new LCD({rs: 7, e: 8, data: [17, 18, 27, 22], cols: 16, rows: 2});
 
     lcd.on('ready', function () {
       initialized = true;
-
       console.log("[LCD] Initialization completed");
-
       lcd.clear(function(err){
         if (err) {
           console.log("error : " , err);
@@ -26,7 +30,7 @@ module.exports.initializeLcd = function() {
           console.log("error : " , err);
         };
       });
-  
+
     });
   }
 }
@@ -49,6 +53,9 @@ module.exports.write = function(message) {
   });
 }
 
+/**
+ * Clean the message from screen and return to default state ( Project name on first row, no message on the second )
+ */
 module.exports.reset = function()  {
   console.log("resetting screen !");
   lcd.clear(function (err) {
@@ -64,7 +71,7 @@ module.exports.reset = function()  {
   });
 }
 
-// If ctrl+c is hit, free resources and exit.
+// clean exit when the process is terminated.
 process.on('SIGINT', function () {
   lcd.close();
   process.exit();
