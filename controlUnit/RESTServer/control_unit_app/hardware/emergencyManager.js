@@ -16,6 +16,7 @@ lcd.initializeLcd();
 
 var emergency = false;
 var initialized = false;
+var lastEmergencyTerminated = true;
 
 /**
 * Function that initialize the whole hardware.
@@ -34,8 +35,8 @@ function initialize () {
         console.error('There was an error : ', err);
         return;
       }
-      if (emergency === 1) {
-          emergency = 0;
+      if (emergency) {
+          emergency = false;
           reset();
           lcd.write("NO EMERGENCY");
       }
@@ -53,13 +54,15 @@ function reset(){
   phoneLed.turnOff();
   buzzer.stop();
   lcd.reset();
+  lastEmergencyTerminated = true;
 }
 
 /**
 * Function that handle hardware output when an emergency is detected.
 */
 function emergencyProtocol() {
-  emergency = 1;
+  emergency = true;
+  lastEmergencyTerminated = false;
   lcd.write("EMERGENCY");
   emergencyLed.blink(250, 10000);
   //TODO: UNCOMMENT IN LAST VERSION ( COMMENTED DURING TEST BECAUSE THE SOUND IS VERY ANNOYING)
@@ -73,7 +76,7 @@ function emergencyProtocol() {
 function checkEmergency() {
   console.log(" -- End of control time. What to do ? ");
   buzzer.stop();
-  if(emergency === 1){
+  if(emergency){
       callRescuers();
   }
   else {
@@ -93,7 +96,7 @@ function callRescuers() {
     lcd.write("CALLING RESCUERS");
     emergencyLed.turnOff();
     phoneLed.turnOn();
-    emergency = 0;
+    emergency = false;
     // TODO : Add a button to reset the control unit instead of a timeout
     setTimeout(reset, 5000);
 }
@@ -101,13 +104,17 @@ function callRescuers() {
 //TODO:
 // start protocol and wait for X second to check if is a real emergency or a false alarm ( the user could stop it).
 module.exports.startEmergency = function () {
-  console.log(" -- StartEmergency()");
-  if (initialized) {
+  if (lastEmergencyTerminated){
+    console.log(" -- Start Emergency ");
+    if (initialized) {
     emergencyProtocol();
     setTimeout(checkEmergency, 10000);
-  } else {
+    } else {
     initialize();
     emergencyProtocol();
     setTimeout(checkEmergency, 10000);
+    }
+  } else {
+    console.log(" -- Already handling this emergency ! ");
   }
 }

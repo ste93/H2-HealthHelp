@@ -9,6 +9,10 @@ var emergencyManager = require ('../hardware/emergencyManager');
 
 var sensorsList = [];
 
+// start emergency protocol after some critical data detected, in order to avoid  occasional reading errors in sensors
+var emergencyThreshold = 10;
+var emergencyCount = 0;
+
 /**
 * Function to retrieve sensor's information necessary for the analysis.
 */
@@ -87,7 +91,11 @@ function analyse(sensorData, sensorInfo) {
         if (value <= 20 || value >= 250 ){
           level = 3;
           description = 'just start digging';
-          emergencyManager.startEmergency() ;
+          emergencyCount += 1;
+          if (emergencyCount >= emergencyThreshold){
+            emergencyManager.startEmergency() ;
+            emergencyCount = 0;
+          }
         } else if ( value <= 40 || value >= 180) {
           level = 2;
           description = 'warning, something strange is happening';
@@ -107,7 +115,10 @@ function analyse(sensorData, sensorInfo) {
       } else {
         level = 3;
         description = 'just start digging';
-        emergencyManager.startEmergency() ;
+        if (emergencyCount >= emergencyThreshold){
+          emergencyManager.startEmergency() ;
+          emergencyCount = 0;
+        }
       }
       break;
 
@@ -121,7 +132,10 @@ function analyse(sensorData, sensorInfo) {
       } else {
         level = 3;
         description = 'just start digging';
-        emergencyManager.startEmergency() ;
+        if (emergencyCount >= emergencyThreshold){
+          emergencyManager.startEmergency() ;
+          emergencyCount = 0;
+        } 
       }
       break;
     default:
