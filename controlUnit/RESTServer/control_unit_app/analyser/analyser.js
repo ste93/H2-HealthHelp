@@ -1,19 +1,23 @@
+/**
+* Module to analyse patient's parameter locally in order to handle emergency protocol even if the control unit is not connected to the network.
+*/
+
 var publisher = require('../pub_sub/controlUnitPublisher');
 var request = require('request');
 var moment = require('moment');
 var emergencyManager = require ('../hardware/emergencyManager');
 
-
 var sensorsList = [];
 
+/**
+* Function to retrieve sensor's information necessary for the analysis.
+*/
 function getSensorInfo(id, callback) {
   var found = false;
   var sensorInfo = "{}";
   // check if it's already loaded locally :
   sensorsList.forEach(function(element) {
     json = JSON.parse(element)
-    //console.log(" -- Saved Sensors : " , json);
-    //console.log(" -- Saved Sensors ID : " , json.sensorId);
     if (json.sensorId === id){
       console.log("Found sensor info locally");
       found = true;
@@ -23,7 +27,7 @@ function getSensorInfo(id, callback) {
   });
 
   if (! found){
-  // retrieve sensor informations from data storage
+  // retrieve sensor informations from data storage using REST service.
 	  console.log(id);
     request.get('http://localhost:3000/api/sensors/' + id, function (error, response, info) {
       console.log('error:', error); // Print the error if one occurred
@@ -32,7 +36,6 @@ function getSensorInfo(id, callback) {
       if ( info != undefined && info != ''){
         sensorsList.push(info);
         console.log("Found sensor info remotelly");
-        //console.log(info);
         sensorInfo = info;
         callback(sensorInfo);
       } else {
@@ -42,49 +45,35 @@ function getSensorInfo(id, callback) {
   }
 }
 
-function sendToDataCenter(data) {
-
-  console.log("Received data to publish : ");
-  console.log("--- type : ", data.type);
-  console.log("--- message : ");
-  console.log("----- patientID : ", data.message.patientId);
-  console.log("----- value  : ", data.message.value);
-  console.log("----- unit : ", data.message.unit);
-  console.log("----- timestamp : ", data.message.timestamp);
-  console.log("----- output");
-  console.log("------- level : ", data.message.output.level);
-  console.log("------- description : ", data.message.output.description);
-
-  publisher.publishMessage(JSON.stringify(data));
-}
-
+/**
+* Perform simple analysis on the data received from the sensors.
+*/
 module.exports.analyseData = function (data) {
   console.log("Received data to analyse : " , data);
-  //var sensorData = JSON.parse(data);
   var sensorData = data;
 
   var sensorID = sensorData.sensorID;
   sensorInfo = getSensorInfo(sensorID, function (sensorInfo) {
-    //console.log("Sensor info : " , sensorInfo);
     if (sensorInfo === '{}'){
-      // the sensor is not connected to the system
-      analyseDefault(sensorData);
+      analysisError(sensorData);
     } else {
-      //sensorsList.push(sensorData)
       analyse(sensorData, JSON.parse(sensorInfo));
     }
   });
-
-
 }
 
-
-function analyseDefault(sensorData) {
-  console.log("This sensor is not connected to the system, cannot perform analysis");
+/**
+* Handle error due to the lack of information about the sensor that send data.
+* ( analysis cannot be performed without dataType of the sensor).
+*/
+function analysisError(sensorData) {
+  console.log("This sensor is not connected to the system, cannot perform analysis on : " , sensorData);
 }
 
+/**
+* Perform simple analysis on the data received from the sensors.
+*/
 function analyse(sensorData, sensorInfo) {
-
   console.log("Analysis started ! ");
   console.log("Analysing ", sensorInfo.value.dataType);
 
@@ -142,10 +131,30 @@ function analyse(sensorData, sensorInfo) {
   		 timestamp: moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSS'),
   		 output: {
 			   level: level,
-			   description: description  
+			   description: description
        }
     }
   }
 
   sendToDataCenter(sensorMeasure);
+}
+
+
+function sendToDataCenter(data) {
+  console.log("Received data to publish : ");
+  console.log("--- type : ", data.type);
+  console.log("--- message : ");
+  console.log("----- patientID : ", data.message.patientId);
+  console.log("----- value  : ", data.message.value);
+  console.log("----- unit : ", data.message.unit);
+  console.log("----- timestamp : ", data.message.timestamp);
+  console.log("----- output");
+  console.log("------- level : ", data.message.output.level);
+  console.log("------- description : ", data.message.output.description);
+
+  publisher.publishMessage(JSON.stringify(data));
+}
+
+module.exports.invalidateList = function() {
+  sensorsList = [];
 }

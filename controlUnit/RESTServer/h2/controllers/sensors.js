@@ -2,6 +2,7 @@ var request = require('request');
 
 //use data from ble
 var ble = require("../../control_unit_app/ble_controller/ble");
+var analyser = require('../../control_unit_app/analyser/analyser');
 
 //local list of previuosly connected sensors
 var mySensorsList = {};
@@ -178,6 +179,8 @@ module.exports.delete = function(req, res){
     if(error)
       console.log('error:', error);
     console.log('statusCode:', response && response.statusCode);
+    // tell the analyser to retrieve a new list of available sensors beacuse locally cahced info are no more updated.
+    analyser.invalidateList();
     // return to the main sensors page after deletion.
     res.redirect('/sensors/');
   });
