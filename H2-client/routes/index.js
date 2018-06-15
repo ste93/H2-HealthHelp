@@ -5,7 +5,9 @@ var subNotificationLevel = require('./subNotificationLevel')
 
 var session = require('client-sessions');
 
-var webSocketServer = require('ws').Server;
+var httpServer = require('../bin/www').webSocketServer;
+
+var webSocket = require('socket.io')(httpServer);
 var userAuthentication = require('./userAuthentication');
 var pubSubAdvice = require('./pubSubAdvice');
 var pubSubHistory = require('./pubSubHistory');
@@ -14,7 +16,7 @@ var pubSubDrug = require('./pubSubDrug');
 
 var Client = require('node-rest-client').Client;
 
-var webSocket = new webSocketServer({port : 9090});
+//var webSocket = new webSocketServer({port : 9090});
 
 var client = new Client();
 
@@ -43,8 +45,7 @@ router.post('/', function (req, res) {
             res.redirect("/"+req.body.role+"");
         }else{
             res.redirect("/"); // pagine per errore
-        }
-        
+        } 
     });    
 });
 
@@ -53,7 +54,6 @@ router.get("/patient", function(req, res) {
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
       }
-
     res.render('patientHome', homeParameter);
 });
 
@@ -97,7 +97,6 @@ router.get("/patient/info", function(req, res){
 
 router.get("/doctor", function(req, res){
     session.role = "doctor";
-
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
     }
@@ -106,12 +105,10 @@ router.get("/doctor", function(req, res){
     webSocket.on('connetion', function(connection) {
         console.log("connected websocket");
         function sendMessage(message) {
-            webSocket.send(message);
+            connection.send(message);
         }
-        subNotificationLevel.receiveNotificationLevel2(res, session.user, sendMessage);
-        
+        subNotificationLevel.receiveNotificationLevel2(res, session.user, sendMessage);    
     });
-
     res.render("doctorHome", homeParameter);
 });
 
@@ -135,7 +132,5 @@ router.get("/doctor/info", function(req, res){
     pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });
-
-
 
 module.exports = router;

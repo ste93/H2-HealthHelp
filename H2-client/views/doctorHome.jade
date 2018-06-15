@@ -1,11 +1,14 @@
 extends layout
 
-script.
-  var webSocket = new WebSocket("ws://localhost:9090");
-  socket.onmessage = function(event) {
-    alert(event.data)
-  }
 
+block scriptWebSocket
+  script(src='socket.io/socket.io.js')
+  //script(src="javascripts/")
+  script.
+    var webSocket = io();
+    webSocket.on('message', function(data) {
+      alert(data);
+    });
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor') H2 - Health Help
