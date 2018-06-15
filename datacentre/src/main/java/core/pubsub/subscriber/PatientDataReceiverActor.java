@@ -52,21 +52,27 @@ public class PatientDataReceiverActor extends AbstractActor {
                 try{
                     if(envelope.getRoutingKey().equals(ROUTING_KEY_DATA)){
                         json = new JSONObject(message);
+
                         String type = (String) json.get("type");
+
                         JSONObject value = (JSONObject) json.get("message");
+                        //System.out.println("VALUE " + value);
                         JSONObject output = (JSONObject) value.get("output");
                         String idPatient = (String) value.get("patientId");
                         int level = output.getInt("level");
                         if(level == 2 || level == 3){
                             getContext().actorSelection("/user/app/levelPublisherActor").tell(new ValueMessage(level,json, idPatient), ActorRef.noSender());
                         }
+
+
                         String messageToInsert = utils.convertToFormatApi(value.toString());
-                        H2manager.addSensorValue(idPatient, SensorType.valueOf(type),messageToInsert);
+                        //System.out.println(messageToInsert);
+                        H2manager.addSensorValue(idPatient, SensorType.valueOf(type.toUpperCase()),messageToInsert);
                     }else if(envelope.getRoutingKey().equals(ROUTING_KEY_SENSOR)){
                         json = new JSONObject(message);
                         String patientId = (String) json.get("patientId");
                         String type = (String) json.get("type");
-                        H2manager.addNewSensorType(patientId,SensorType.valueOf(type));
+                        H2manager.addNewSensorType(patientId,SensorType.valueOf(type.toUpperCase()));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

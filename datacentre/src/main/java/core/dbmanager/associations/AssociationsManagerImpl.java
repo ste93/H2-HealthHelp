@@ -1,7 +1,6 @@
 package core.dbmanager.associations;
 
 import core.dbmanager.URIrequest;
-import core.dbmanager.associations.AssociationsManager;
 import org.json.JSONObject;
 
 import javax.ws.rs.client.Invocation.Builder;
