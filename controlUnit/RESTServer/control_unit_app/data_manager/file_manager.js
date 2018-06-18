@@ -16,6 +16,14 @@ module.exports.writeJsonToFile = function(list, filename, callback){
     fs.writeFile(filename, json, 'utf8', callback);
 }
 
+module.exports.clearFile = function(filename){
+  fs.writeFile(filename, '[]', 'utf8', function(error) {
+      if(error) {
+          console.log(error);
+      }
+  });
+}
+
 module.exports.readJsonFromFile = function(filename, callback) {
     fs.readFile(filename, 'utf8', function readFileCallback(err, data){
         var obj = {}
