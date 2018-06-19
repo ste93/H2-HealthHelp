@@ -68,9 +68,7 @@ function addValue(idCode, type, message, res){
     var collection = _getCollection(idCode,type);
 
     var entireMessage = _sensorValueJsonFormat(message)
-    var messagetoInsert = JSON.parse("{"+entireMessage+"}");
-
-    console.log(messagetoInsert);
+    var messagetoInsert = JSON.parse(entireMessage)
 
     patients.findOne({"idCode": idCode}, function(err, response){
         if(response == null) {
@@ -224,10 +222,10 @@ function _sensorValueJsonFormat(message){
     var entireMessage  = mess[0].concat("\"output\": {").concat(mess[1]);
 
     var mess2  = entireMessage.split(",\"unit\":");
-    var x  = mess2[0].concat("},\"unit\"").concat(mess2[1]);
+    var x  = mess2[0].concat("},\"unit\":").concat(mess2[1]);
     
     console.log(x);
-    return x
+    return "{"+x+"}"
 }
 
 module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}

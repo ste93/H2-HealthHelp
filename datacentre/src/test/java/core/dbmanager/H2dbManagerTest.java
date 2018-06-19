@@ -6,8 +6,10 @@ import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
 import core.dbmanager.h2application.User;
 import core.dbmanager.h2application.UserBuilder;
+import core.pubsub.message.MessagesUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,8 +23,9 @@ import static org.junit.Assert.*;
  */
 public class H2dbManagerTest {
     private static H2dbManager H2manager = new H2dbManagerImpl();
+    private static MessagesUtils utils = new MessagesUtils();
 
-    @BeforeClass
+ /*   @BeforeClass
     public static void basicRegistration(){
         User patientUser = new UserBuilder()
                 .with(userBuilder -> {
@@ -52,7 +55,7 @@ public class H2dbManagerTest {
         H2manager.registration(patientUser);
         H2manager.registration(doctorUser);
 
-    }
+    }*/
      /**
      * Create a valid patient's account and login with it and get the patient's information.
      *
@@ -75,14 +78,17 @@ public class H2dbManagerTest {
                     userBuilder.role = UserRole.PATIENT.getRole();
                 })
                 .createUser();
-        /* -------------------  PATIENT LOGIN  -------------------- */
 
         // valid registration of patient
         assertTrue(H2manager.registration(patientUser));
         // doesn't register the new patient, because already inserted
         assertFalse(H2manager.registration(patientUser));
 
-        /* -----------------  PATIENT INFORMATION  ----------------- */
+        /* -------------------  PATIENT LOGIN  -------------------- */
+        //valid login
+        assertTrue(H2manager.login(idCode, "ciao", UserRole.PATIENT));
+        //invalid login
+        assertFalse(H2manager.login(idCode, "ciao12345", UserRole.PATIENT));
     }
 
     /**
@@ -107,14 +113,16 @@ public class H2dbManagerTest {
                 })
                 .createUser();
 
-        /* -----------------  DOCTOR LOGIN  ----------------- */
-
         // valid registration of doctor
         assertTrue(H2manager.registration(doctorUser));
         // doesn't register the new doctor, because already inserted
         assertFalse(H2manager.registration(doctorUser));
 
-        /* -----------------  DOCTOR INFORMATION  ----------------- */
+        /* -----------------  DOCTOR LOGIN  ----------------- */
+        //valid login
+        assertTrue(H2manager.login(idCode, "ciao", UserRole.PATIENT));
+        //invalid login
+        assertFalse(H2manager.login(idCode, "ciao12345", UserRole.PATIENT));
     }
 
     /**
@@ -149,35 +157,50 @@ public class H2dbManagerTest {
     public void SensorTypeValueTest() throws JSONException {
 
         /* -----------------  ADD A SENSOR VALUE  ----------------- */
-        String temperatureMessage = "\"patientId\": \"giulia.lucchi\",\n" +
-                "   \"value\": 37,\n" +
-                "   \"unit\": \"gradi\",\n" +
-                "   \"timestamp\": \"2018-01-01 09:00\",\n" +
-                "   \"output\": \n" +
-                "       \"level\": 1,\n" +
-                "       \"description\": \"temperatura più alta del solito\"";
+        String temperatureMessage = new JSONObject()
+                                        .put("patientId", "giulia.lucchi")
+                                        .put("value", 37)
+                                        .put("unit", "gradi")
+                                        .put("timestamp", "2018-01-01 09:00" )
+                                        .put("output", new JSONObject()
+                                                            .put("level", 2)
+                                                            .put("description", "temp altina"))
+                                        .toString();
 
-        String temperatureMessage1 = "\"patientId\": \"giulia.lucchi\",\n" +
-                "   \"value\": 37,\n" +
-                "   \"unit\": \"gradi\",\n" +
-                "   \"timestamp\": \"1994-01-01 09:00\",\n" +
-                "   \"output\": \n" +
-                "       \"level\": 1,\n" +
-                "       \"description\": \"temperatura più alta del solito\"";
 
-        String gyclemiaMessage= "\"patientId\": \"giulia.lucchi\",\n" +
-                "   \"value\": 130,\n" +
-                "   \"unit\": \"mg/dl\",\n" +
-                "   \"timestamp\": \"2018-01-01 09:00\",\n" +
-                "   \"output\": \n" +
-                "       \"level\": 2,\n" +
-                "       \"description\": \"glicemia alta\"";
+        String temperatureToInsert = utils.convertToFormatApi(temperatureMessage);
 
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.GLYCEMIA, gyclemiaMessage));
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureMessage));
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureMessage1));
+        String temperatureMessage1 = new JSONObject()
+                .put("patientId", "giulia.lucchi")
+                .put("value", 40)
+                .put("unit", "gradi")
+                .put("timestamp", "2018-01-01 09:00" )
+                .put("output", new JSONObject()
+                        .put("level", 3)
+                        .put("description", "temp altina"))
+                .toString();
+
+
+        String temperatureToInsert1 = utils.convertToFormatApi(temperatureMessage);
+
+        String glycemiaMessage = new JSONObject()
+                .put("patientId", "giulia.lucchi")
+                .put("value", 130)
+                .put("unit", "gradi")
+                .put("timestamp", "2018-01-01 09:00" )
+                .put("output", new JSONObject()
+                        .put("level", 2)
+                        .put("description", "glycemia altina"))
+                .toString();
+
+
+        String glycemiaToInsert = utils.convertToFormatApi(temperatureMessage);
+
+        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.GLYCEMIA, glycemiaToInsert));
+        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert));
+        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert1));
         // add a sensor type value to a not existing patient
-        assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, temperatureMessage));
+        assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, temperatureToInsert));
 
         /* -----------------  DELETE AND GET SENSOR VALUE  ----------------- */
         //delete all values
@@ -281,6 +304,5 @@ public class H2dbManagerTest {
         assertEquals(expectedMessage1, advices.get(0).toString());
 
     }
-
-
+    
 }

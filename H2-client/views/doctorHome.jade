@@ -1,14 +1,6 @@
 extends layout
 
 
-block scriptWebSocket
-  script(src='socket.io/socket.io.js')
-  //script(src="javascripts/")
-  script.
-    var webSocket = io();
-    webSocket.on('message', function(data) {
-      alert(data);
-    });
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor') H2 - Health Help

@@ -181,8 +181,8 @@ public class H2dbManagerImpl implements H2dbManager {
      */
     @Override
     public boolean deleteValues(String idPatient, SensorType sensorType, Optional<String> start, Optional<String> end) {
-
        Response response = this.sensorValueOnRange(idPatient,start,end,sensorType).delete();
+
        return response.getStatus()==200;
     }
 
