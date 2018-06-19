@@ -117,6 +117,7 @@ function analyse(sensorData, sensorInfo) {
       } else {
         level = 3;
         description = 'just start digging';
+        emergencyCount += 1;
         if (emergencyCount >= emergencyThreshold){
           emergencyManager.startEmergency() ;
           emergencyCount = 0;
@@ -134,6 +135,7 @@ function analyse(sensorData, sensorInfo) {
       } else {
         level = 3;
         description = 'just start digging';
+        emergencyCount += 1;
         if (emergencyCount >= emergencyThreshold){
           emergencyManager.startEmergency() ;
           emergencyCount = 0;
