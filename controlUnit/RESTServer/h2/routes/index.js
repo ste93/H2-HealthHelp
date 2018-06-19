@@ -40,15 +40,14 @@ router.get("/sensors/:sensorID/delete", sensorsController.delete);
 // Request for the patients management main page.
 router.get("/patients", patientsController.patientsHome);
 
+// Request of the form page to insert data for a new patient connected to the system.
+router.get("/patients/new", patientsController.newPatientForm);
+// Request to handle new patient creation procedure ( Invocked by defult when the form is submitted ).
+router.post("/patients/new", patientsController.addNew);
+
 // Request for a specific patient page.
 router.get("/patients/:patientID/", patientsController.details);
 router.get("/patients/:patientID/details", patientsController.details);
-
-// Request of the form page to insert data for a new patient connected to the system.
-router.get("/patients/new", patientsController.newPatientForm);
-
-// Request to handle new patient creation procedure ( Invocked by defult when the form is submitted ).
-router.post("/patients/new", patientsController.addNew);
 
 // Request to delete a previously connected sensor.
 router.get("/patients/:patientID/delete", patientsController.delete);
