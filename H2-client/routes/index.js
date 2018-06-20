@@ -5,9 +5,6 @@ var subNotificationLevel = require('./subNotificationLevel')
 
 var session = require('client-sessions');
 
-var httpServer = require('../bin/www').webSocketServer;
-
-var webSocket = require('socket.io')(httpServer);
 var userAuthentication = require('./userAuthentication');
 var pubSubAdvice = require('./pubSubAdvice');
 var pubSubHistory = require('./pubSubHistory');
@@ -16,7 +13,6 @@ var pubSubDrug = require('./pubSubDrug');
 
 var Client = require('node-rest-client').Client;
 
-//var webSocket = new webSocketServer({port : 9090});
 
 var client = new Client();
 
@@ -24,11 +20,15 @@ var userId;
 var patientId;
 var type;
 
+
 router.get('/', function (req, res) {
     var homeParameter = {
         title: 'H2 - Login'
       }
-
+    //   var webSocket = require('./external');
+    //   webSocket.setOnConnection();
+    //   //TODO
+      
     res.render('index', homeParameter);
 });
 
@@ -100,15 +100,11 @@ router.get("/doctor", function(req, res){
     var homeParameter = {
         title: "WELCOME " + (session.user).replace(".", " ")
     }
+    //TODO
+    var webSocket = require('./socket');
+    webSocket.setOnConnection(res, session.user, subNotificationLevel.receiveNotificationLevel2);
 
-    console.log("before websocket");
-    webSocket.on('connetion', function(connection) {
-        console.log("connected websocket");
-        function sendMessage(message) {
-            connection.send(message);
-        }
-        subNotificationLevel.receiveNotificationLevel2(res, session.user, sendMessage);    
-    });
+    //webSocket.setOnConnection();
     res.render("doctorHome", homeParameter);
 });
 

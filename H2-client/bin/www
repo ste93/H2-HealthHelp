@@ -3,6 +3,7 @@
 /**
  * Module dependencies.
  */
+var socketio = require('../routes/socket.js');
 
 var app = require('../app');
 var debug = require('debug')('restserver:server');
@@ -20,12 +21,13 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-
+socketio.initialization(server);
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-var webSocketServer = server.listen(port);
+server.listen(port);
+
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -89,4 +91,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-module.exports = {webSocketServer};
+module.exports = {server};
