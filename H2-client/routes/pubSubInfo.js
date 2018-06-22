@@ -38,7 +38,7 @@ function receiveInfo(res){
             ch.consume(q.queue, function(msg) {
                 console.log(" [x] %s", msg.content);
                 if(msg.content.toString() == "500"){
-                    var path = "/" + session.role;
+                    var path = "/" + session.role + "/" + session.user;
                     res.redirect(path);
                 } else {
                     var json = JSON.parse(msg.content.toString());           
@@ -50,7 +50,8 @@ function receiveInfo(res){
                         mail: json.mail,
                         cf : json.cf,
                         phones: json.phones,
-                        role: session.role
+                        role: session.role,
+                        user: session.user
                     }
                     res.render('infoPage', personalInfo);
                 }

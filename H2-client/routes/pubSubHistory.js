@@ -22,7 +22,7 @@ function requestHistory (type, patId, start, end, requester, res){
         ch.assertExchange(ex, 'topic', {durable: false});
         ch.publish(ex, key, new Buffer(message));
         console.log(" [x] Sent %s:'%s'", key, message);
-        var path = "/" + session.role + "/history";
+        var path = "/" + session.role + "/" + session.user + "/history";
         res.redirect(path);
     });
 }
@@ -43,12 +43,13 @@ function receiveHistory (res, idCode){
             ch.consume(q.queue, function(msg) {
                 console.log(" [x] %s", msg.content.toString());
                 if(msg.content.toString() == "[500]"){
-                    var path = "/" + session.role;
+                    var path = "/" + session.role + "/" + session.user;
                     res.redirect(path);
                 } else {
                     var message = msg.content;
                     var infoHistory = {
                         role: session.role,
+                        user: session.user,
                         title: 'Data History',
                         patient: 'patient: '+session.pat, 
                         type: "sensor type: "+session.type,

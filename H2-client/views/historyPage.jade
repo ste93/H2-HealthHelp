@@ -2,8 +2,8 @@ extends layout
 
 block nav
    .navbar-header
-            a.navbar-brand(href="/"+role) H2 - Health Help
-            a.navbar-brand(shref="/"+role+"/info") About
+            a.navbar-brand(href="/"+role+"/"+user) H2 - Health Help
+            a.navbar-brand(href="/"+role+"/"+user+"/info") About
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
@@ -30,4 +30,4 @@ block content
                 p level analyze: #{json[i].output.level}
                 p level description: #{json[i].output.description}
     
-    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back
+    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role+"/"+user) Back

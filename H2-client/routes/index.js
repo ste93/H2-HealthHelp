@@ -41,23 +41,29 @@ router.post('/', function (req, res) {
     function (data, response) {
         if(response.statusCode == 200){
             session.user = req.body.username;
-            console.log( "     "+session.user);
-            res.redirect("/"+req.body.role+"");
+            session.role = req.body.role;
+            var arr = session.user.replace(".", " ").split(/\d/, 1)[0].split(" ");
+            session.userFirstName = arr[0].charAt(0).toUpperCase() + arr[0].slice(1);
+            session.userSurname = arr[1].charAt(0).toUpperCase() + arr[1].slice(1);
+            //console.log( "     "+session.user);
+            res.redirect("/"+req.body.role+"/"+req.body.username);
         }else{
             res.redirect("/"); // pagine per errore
         } 
     });    
 });
 
-router.get("/patient", function(req, res) {
-    session.role = "patient";
+//PATIENT
+
+router.get("/patient/:patientID", function(req, res) {
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
-      }
+        user: session.user,
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
+    }
     res.render('patientHome', homeParameter);
 });
 
-router.post("/patient", function(req, res) {
+router.post("/patient/:patientID", function(req, res) {
     session.pat = session.user;
     if(req.body.startAdvice != undefined){
         pubSubAdvice.requestAdvices(session.user, req.body.startAdvice, req.body.end, res);
@@ -69,36 +75,38 @@ router.post("/patient", function(req, res) {
     }    
 });
 
-router.get("/patient/history", function(req, res) {
+router.get("/patient/:patientID/history", function(req, res) {
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
     }
     pubSubHistory.receiveHistory(res, session.user)
 });
 
-router.get("/patient/advice", function(req, res) {
+router.get("/patient/:patientID/advice", function(req, res) {
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
     }
     pubSubAdvice.receiveAdvices(res, session.user)
 });
 
-router.get("/patient/drug", function(req, res) {
+router.get("/patient/:patientID/drug", function(req, res) {
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
     }
     pubSubDrug.receiveDrugs(res, session.user)
 });
 
-router.get("/patient/info", function(req, res){
+router.get("/patient/:patientID/info", function(req, res){
     pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });
 
-router.get("/doctor", function(req, res){
-    session.role = "doctor";
+//DOCTOR
+
+router.get("/doctor/:doctorID", function(req, res){
     var homeParameter = {
-        title: "WELCOME " + (session.user).replace(".", " ")
+        user: session.user,
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
     }
     //TODO
     var webSocket = require('./socket');
@@ -108,7 +116,7 @@ router.get("/doctor", function(req, res){
     res.render("doctorHome", homeParameter);
 });
 
-router.post("/doctor", function(req, res){
+router.post("/doctor/:doctorID", function(req, res){
     if(req.body.text != undefined){
         pubSubAdvice.sendNewAdvice(req.body.pat, req.body.text, res);
     }else if(req.body.drug != undefined){
@@ -120,11 +128,14 @@ router.post("/doctor", function(req, res){
     }
 });
 
-router.get("/doctor/history", function(req, res){
+router.get("/doctor/:doctorID/history", function(req, res){
+    var homeParameter = {
+        title: "WELCOME " + session.userFirstName + " " + session.userSurname
+    }
     pubSubHistory.receiveHistory(res, session.user);
 });
 
-router.get("/doctor/info", function(req, res){
+router.get("/doctor/:doctorID/info", function(req, res){
     pubSubInfo.requestInfo(session.role, session.user, res);
     pubSubInfo.receiveInfo(res);
 });

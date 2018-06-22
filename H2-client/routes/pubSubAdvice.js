@@ -20,7 +20,7 @@ function requestAdvices(patId, start, end, res) {
         ch.assertExchange(ex, 'topic', {durable: false});
         ch.publish(ex, key, new Buffer(message));
         console.log(" [x] Sent %s:'%s'", key, message);
-        res.redirect("/patient/advice");
+        res.redirect("/patient/" + session.user + "/advice");
     });
 }
 
@@ -40,13 +40,14 @@ function receiveAdvices (res, idCode){
             ch.consume(q.queue, function(msg) {
                 console.log(" [x] %s", msg.content);
                 if(msg.content.toString() == "[500]"){
-                    var path = "/" + session.role;
+                    var path = "/" + session.role + "/" + session.user;
                     res.redirect(path);
                 } else {
                     var message = msg.content;
                     
                     var advices = {
                         role: session.role,
+                        user: session.user,
                         title: 'Advices',
                         patient: 'patient: ' + session.pat, 
                         values: "" + msg.content.toString(),
@@ -74,7 +75,7 @@ function sendNewAdvice(patientID,advice,res){
         ch.assertExchange(ex, 'topic', {durable: false});
         ch.publish(ex, key, new Buffer(message));
         console.log(" [x] Sent %s:'%s'", key, message);
-        res.redirect("/doctor");
+        res.redirect("/doctor/" + session.user);
     });   
 }
 

@@ -3,8 +3,8 @@ extends layout
 
 block nav
    .navbar-header
-            a.navbar-brand(href='/doctor') H2 - Health Help
-            a.navbar-brand(href='/doctor/info') About me
+            a.navbar-brand(href='/doctor/'+user) H2 - Health Help
+            a.navbar-brand(href='/doctor/'+user+'/info') About me
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar

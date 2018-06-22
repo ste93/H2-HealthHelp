@@ -2,8 +2,8 @@ extends layout
 
 block nav
    .navbar-header
-            a.navbar-brand(href="/"+role) H2 - Health Help
-            a.navbar-brand(href="/"+role+"/info") About
+            a.navbar-brand(href="/"+role+"/"+user) H2 - Health Help
+            a.navbar-brand(href="/"+role+"/"+user+"/info") About
             a.navbar-brand(href='/') Logout
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
@@ -28,4 +28,4 @@ block content
                 p patientId : #{json[i].patientId}
                 p advice : #{json[i].advice}
 
-    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role) Back
+    a.btn.btnbtn.btn-large.btn-pull-right(href="/"+role+"/"+user) Back
