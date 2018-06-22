@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class DrugRequestActor extends AbstractActor {
+public class  DrugRequestActor extends AbstractActor {
 
     private static final String QUEUE_NAME= "drugRequest.queue";
     private static final String EXCHANGE_NAME = "drugRequest";

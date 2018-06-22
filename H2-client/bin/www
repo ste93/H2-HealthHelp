@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 var socketio = require('../routes/socket.js');
+var subNotificationLevel = require('../routes/subNotificationLevel')
 
 var app = require('../app');
 var debug = require('debug')('restserver:server');
@@ -21,7 +22,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-socketio.initialization(server);
+socketio.initialization(server, subNotificationLevel.receiveNotificationLevel2);
 /**
  * Listen on provided port, on all network interfaces.
  */

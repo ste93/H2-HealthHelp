@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var app = express();
 var subNotificationLevel = require('./subNotificationLevel')
-
+var webSocket = require('./socket');
 var session = require('client-sessions');
 
 var userAuthentication = require('./userAuthentication');
@@ -28,6 +28,7 @@ router.get('/', function (req, res) {
     //   var webSocket = require('./external');
     //   webSocket.setOnConnection();
     //   //TODO
+
       
     res.render('index', homeParameter);
 });
@@ -109,9 +110,9 @@ router.get("/doctor/:doctorID", function(req, res){
         title: "WELCOME " + session.userFirstName + " " + session.userSurname
     }
     //TODO
-    var webSocket = require('./socket');
-    webSocket.setOnConnection(res, session.user, subNotificationLevel.receiveNotificationLevel2);
-
+    console.log("[INDEX.JS] get /doctor");
+    //webSocket.createSocket(res, session.user);
+    console.log("session.user: " +  session.user)
     //webSocket.setOnConnection();
     res.render("doctorHome", homeParameter);
 });

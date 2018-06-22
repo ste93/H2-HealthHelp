@@ -1,5 +1,9 @@
 extends layout
 
+block scriptWebSocket
+  script(src='socket.io/socket.io.js')
+  script(src='javascripts/webSocket.js')
+
 
 block nav
    .navbar-header
@@ -10,11 +14,8 @@ block nav
               span.icon-bar
               span.icon-bar
               span.icon-bar
-        
 
 block content
-
-
   #banner.page-header
     .row    
       .col-lg-6

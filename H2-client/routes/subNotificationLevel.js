@@ -1,12 +1,13 @@
 var amqp = require('amqplib/callback_api');
 var session = require('client-sessions');
 var connection;
+var webSocket = require('./socket');
 
 amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
     connection = conn;
 });
 
-function receiveNotificationLevel2 (res, idCode, sendMessage){
+function receiveNotificationLevel2 (res, idCode){
     var ex = 'level';
     var args = process.argv.slice(2);
     var queue = "level2.queue";
@@ -15,12 +16,13 @@ function receiveNotificationLevel2 (res, idCode, sendMessage){
         ch.assertExchange(ex, 'topic', {durable: false});
     
         ch.assertQueue('level2.queue', {exclusive: false}, function(err, q) {
-            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C" + q.queue);
             ch.bindQueue(q.queue, ex, key);
     
             ch.consume(q.queue, function(msg) {
+                console.log("routing key : " + key)
                 console.log(" [x] %s", msg.content);
-                sendMessage(msg.content);
+                webSocket.sendMessagesToUser(idCode, msg.content);
             }, {noAck: true});
         });
     });  
@@ -42,11 +44,7 @@ function receiveNotificationLevel3 (res, idCode){
             ch.consume(q.queue, function(msg) {
                 console.log(" [x] %s", msg.content);
                 
-
             //TODO (notifica)
-
-
-
             }, {noAck: true});
         });
     });  
