@@ -1,14 +1,14 @@
-#include <U8g2lib.h>
-
-//U8g2 Contructor
-U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 5, /* data=*/ 4, /* reset=*/ 16);
-u8g2_uint_t offset;     // current offset for the scrolling text
-u8g2_uint_t width;      // pixel width of the scrolling text (must be lesser than 128 unless U8G2_16BIT is defined
-
+/**
+ * begins the u82g display, the display built-in in wifi kit 8
+ */
 void setupDisplay() {
 	  u8g2.begin();
 }
 
+/**
+ * write the text on the display
+ * @param text a string containing the text to be written
+ */
 void drawTextCentered (const char *text) {
   u8g2.setFont(u8g2_font_logisoso32_tf); // set the target font to calculate the pixel width
   width = u8g2.getUTF8Width(text);    // calculate the pixel width of the text
