@@ -18,11 +18,11 @@ public class MainActor extends AbstractActor {
         /* Create Subscriber Actor */
         final ActorRef patientDataReceiverActor = getContext().actorOf(Props.create(PatientDataReceiverActor.class), "patientDataReceiver");
         final ActorRef adviceReceiverActor = getContext().actorOf(Props.create(AdviceReceiverActor.class), "adviceReceiver");
-        final ActorRef requestReceiverActor = getContext().actorOf(Props.create(RequestReceiverActor.class), "requestReceiver");
+        final ActorRef requestReceiverActor = getContext().actorOf(Props.create(PatientDataRequestActor.class), "requestReceiver");
         final ActorRef adviceRequestActor = getContext().actorOf(Props.create(AdviceRequestActor.class), "adviceRequester");
         final ActorRef drugReceiverActor = getContext().actorOf(Props.create(DrugReceiverActor.class), "drugReceiverActor");
         final ActorRef drugRequesterActor = getContext().actorOf(Props.create(DrugRequestActor.class), "drugRequesterActor");
-        final ActorRef infoReceiveActor = getContext().actorOf(Props.create(InfoReceiverActor.class), "infoReceiveActor");
+        final ActorRef infoReceiveActor = getContext().actorOf(Props.create(InfoRequestActor.class), "infoReceiveActor");
         
 
         /* Create Publisher Actor */

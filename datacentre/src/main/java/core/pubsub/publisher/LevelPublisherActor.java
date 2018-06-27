@@ -6,7 +6,7 @@ import core.dbmanager.associations.PatientManagerImpl;
 import core.pubsub.core.TopicPublisher;
 import core.pubsub.message.ValueMessage;
 import org.json.JSONArray;
-import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.stream.IntStream;
 
@@ -35,22 +35,19 @@ public class LevelPublisherActor extends AbstractActor{
     public Receive createReceive() {
 
         return receiveBuilder().match(ValueMessage.class, message -> {
-            //JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
-               // IntStream.range(0, doctors.length()).forEach(x -> {
-                    try {
-                        if(message.getLevel() == 2){
-                            this.publisher.publishMessage(message.getValue(), "doctor."+/*doctors.get(x)*/"mario.rossi.receive.alert");
-                        }else{
-                            //this.publisher.publishMessage(message.getValue(), "doctor."+doctors.get(x)+".receive.emergency");
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
+            IntStream.range(0, doctors.length()).forEach(x -> {
+                try {
+                    String idDoctor = ((JSONObject) doctors.get(x)).getString("idDoctor");
+                    if(message.getLevel() == 2){
+                        this.publisher.publishMessage(message.getValue(), "doctor."+ idDoctor + ".receive.alert");
+                    }else{
+                        this.publisher.publishMessage(message.getValue(), "doctor."+ idDoctor + ".receive.emergency");
                     }
-                //}
-                    //);
-
-
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }).build();
     }
 }

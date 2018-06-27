@@ -25,6 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io-client/dist/'));
 
+app.use('/doctor/socket.io', express.static(__dirname + '/node_modules/socket.io-client/dist/'));
+
 // catch 404 and forward to error handler
 
 app.use(function(req, res, next) {

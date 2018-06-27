@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by lucch on 08/06/2018.
  */
-public class InfoReceiverActor extends AbstractActor {
+public class InfoRequestActor extends AbstractActor {
 
     private static final String QUEUE_NAME= "info.queue";
     private static final String EXCHANGE_NAME = "info";

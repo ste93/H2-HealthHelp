@@ -22,7 +22,7 @@ function receiveNotificationLevel2 (res, idCode){
             ch.consume(q.queue, function(msg) {
                 console.log("routing key : " + key)
                 console.log(" [x] %s", msg.content);
-                webSocket.sendMessagesToUser(idCode, msg.content);
+                webSocket.sendMessagesToUser(idCode, msg.content.toString());
             }, {noAck: true});
         });
     });  

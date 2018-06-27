@@ -1,8 +1,17 @@
 extends layout
 
 block scriptWebSocket
+  span(id="user", visible=false)=user
   script(src='socket.io/socket.io.js')
-  script(src='javascripts/webSocket.js')
+  //script(src='javascripts/webSocket.js')
+  script.
+    var webSocket = io();
+    webSocket.send(document.getElementById("user").innerHTML)
+    var json;
+    webSocket.on('message', function(data) {
+      console.log(JSON.parse(data).message)
+      window.alert(data)
+    });
 
 
 block nav
@@ -32,7 +41,7 @@ block content
           form.form-signin(action="", method="post", name="getHistory")
             div.input
                 span.label Patient id
-                textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+                input(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
             div.input
                 span.label Type
                 textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature")

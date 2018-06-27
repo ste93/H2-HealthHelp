@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by lucch on 05/06/2018.
  */
-public class RequestReceiverActor extends AbstractActor {
+public class PatientDataRequestActor extends AbstractActor {
 
     private static final String QUEUE_NAME= "history.queue";
     private static final String EXCHANGE_NAME = "historyRequest";
@@ -54,7 +54,7 @@ public class RequestReceiverActor extends AbstractActor {
             }
         };
         subscribe.setConsumer(consumer);
-        System.out.println(" -----> RequestReceiverActor STARTED.");
+        System.out.println(" -----> PatientDataRequestActor STARTED.");
     }
 
     @Override
