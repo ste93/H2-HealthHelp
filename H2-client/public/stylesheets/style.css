@@ -18,3 +18,7 @@
   position: relative;
   display: inline-block;
 }
+.modalBodyContent {
+  height: 60vh;
+  overflow-y: auto;
+}

@@ -20,12 +20,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.static(path.join(__dirname + '/public')));
+//app.use("/public", express.static(path.join(__dirname, 'public')));
+console.log("dirname" + path.join(__dirname ,'/public'))
 app.use('/', indexRouter);
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io-client/dist/'));
-
-app.use('/doctor/socket.io', express.static(__dirname + '/node_modules/socket.io-client/dist/'));
 
 // catch 404 and forward to error handler
 

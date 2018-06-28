@@ -1,24 +1,34 @@
 extends layout
 
 block scriptWebSocket
-  span(id="user", visible=false)=user
-  script(src='socket.io/socket.io.js')
-  //script(src='javascripts/webSocket.js')
-  script.
-    var webSocket = io();
-    webSocket.send(document.getElementById("user").innerHTML)
-    var json;
-    webSocket.on('message', function(data) {
-      console.log(JSON.parse(data).message)
-      window.alert(data)
-    });
+  div(id="user", visible=false)=user
+  script(src='../socket.io/socket.io.js')
+  script(src='../javascripts/webSocket.js')
 
+
+block notifications
+  #doctorModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          //button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+          h4.modal-title Notifications
+        .modal-body
+          div(class="modalBodyContent")
+            p emergency
+            div(id="emergencyNotifications")
+            p alert
+            div(id="alertNotifications")
+        .modal-footer
+          button.btn.btn-default(type="button", data-dismiss="modal") Close
+          button.btn.btn-primary(type="button", data-dismiss="modal") Save Changes
 
 block nav
    .navbar-header
             a.navbar-brand(href='/doctor/'+user) H2 - Health Help
             a.navbar-brand(href='/doctor/'+user+'/info') About me
             a.navbar-brand(href='/') Logout
+            a.navbar-brand(href='#doctorModal', data-toggle="modal") Notifications
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
               span.icon-bar
@@ -82,6 +92,7 @@ block content
                 textarea(type="text", name="drug", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
             div.actions
               button.btn.btn-large.btn-primary(type="submit") Prescribe Drug
+
 
   
   
