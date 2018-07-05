@@ -4,6 +4,7 @@ import akka.actor.AbstractActor;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
 import core.pubsub.core.TopicPublisher;
+import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.AdviceRequestMessage;
 import org.json.JSONArray;
 
@@ -21,7 +22,7 @@ public class MultiAdvicePublisherActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
 
     }
 

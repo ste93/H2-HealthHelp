@@ -8,10 +8,10 @@ import com.rabbitmq.client.Envelope;
 import core.SensorType;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
-import core.pubsub.core.TopicSubscribe;
+import core.pubsub.core.TopicSubscriber;
+import core.pubsub.core.TopicSubscriberImpl;
 import core.pubsub.message.MessagesUtils;
 import core.pubsub.message.ValueMessage;
-import core.pubsub.publisher.LevelPublisherActor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +41,7 @@ public class PatientDataReceiverActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS, HOST_IP, PORT);
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

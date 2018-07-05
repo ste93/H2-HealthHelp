@@ -6,7 +6,8 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import core.pubsub.core.TopicSubscribe;
+import core.pubsub.core.TopicSubscriber;
+import core.pubsub.core.TopicSubscriberImpl;
 import core.pubsub.message.AdviceMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,9 +32,9 @@ public class AdviceReceiverActor extends AbstractActor {
     public void preStart() throws Exception {
         super.preStart();
 
-        TopicSubscribe subscribe = new TopicSubscribe(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP, PORT);
+        TopicSubscriber subscriber = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP, PORT);
 
-        Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
+        Consumer consumer = new DefaultConsumer(subscriber.getChannel()) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
@@ -53,7 +54,7 @@ public class AdviceReceiverActor extends AbstractActor {
                 }
             }
         };
-        subscribe.setConsumer(consumer);
+        subscriber.setConsumer(consumer);
         System.out.println(" -----> AdviceReceiver STARTED.");
     }
 

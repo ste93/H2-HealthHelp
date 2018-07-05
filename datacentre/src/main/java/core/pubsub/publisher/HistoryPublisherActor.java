@@ -2,10 +2,10 @@ package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
 import core.SensorType;
-import core.UserRole;
 import core.dbmanager.h2application.H2dbManager;
 import core.dbmanager.h2application.H2dbManagerImpl;
 import core.pubsub.core.TopicPublisher;
+import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.HistoryMessage;
 import org.json.JSONArray;
 
@@ -26,14 +26,14 @@ public class HistoryPublisherActor extends AbstractActor{
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(HistoryMessage.class, message -> {
-                    JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
-                    publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
+            JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
+            publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
         }).build();
     }
 }

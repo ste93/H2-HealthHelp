@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-public class TopicSubscribe {
+public class TopicSubscriberImpl implements TopicSubscriber {
 
     private String exchangeName;
     private String queueName;
@@ -16,7 +16,7 @@ public class TopicSubscribe {
     private Channel channel;
     private Consumer consumer;
 
-    public TopicSubscribe(String exchangeName, String queueName, List<String> topicBindKey, String hostIP, int port) throws IOException, TimeoutException {
+    public TopicSubscriberImpl(String exchangeName, String queueName, List<String> topicBindKey, String hostIP, int port) throws IOException, TimeoutException {
         factory = new ConnectionFactory();
         factory.setHost(hostIP);
         factory.setUsername("admin");
@@ -29,10 +29,12 @@ public class TopicSubscribe {
         channel = connection.createChannel();
     }
 
+    @Override
     public Channel getChannel() {
         return channel;
     }
 
+    @Override
     public void setConsumer(Consumer consumer) {
         this.consumer = consumer;
         try {

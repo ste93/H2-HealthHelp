@@ -2,6 +2,7 @@ package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
 import core.pubsub.core.TopicPublisher;
+import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.UserMessage;
 
 /**
@@ -19,7 +20,7 @@ public class InfoPublisherActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
     }
 
     @Override

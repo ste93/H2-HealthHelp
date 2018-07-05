@@ -4,6 +4,7 @@ import akka.actor.AbstractActor;
 import core.dbmanager.associations.PatientManager;
 import core.dbmanager.associations.PatientManagerImpl;
 import core.pubsub.core.TopicPublisher;
+import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.ValueMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ public class LevelPublisherActor extends AbstractActor{
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisher(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
 
     }
 
