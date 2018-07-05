@@ -1,10 +1,31 @@
 extends layout
 
+block scriptWebSocket
+  script(src='../socket.io/socket.io.js')
+  script(src='../javascripts/htmlManagement.js')
+  script(src='../javascripts/patientWebSocket.js')
+
+block notifications
+  #patientModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          //button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+          h4.modal-title Notifications
+        .modal-body
+          div(class="modalBodyContent")
+            p advices
+            div(id="adviceNotification")
+        .modal-footer
+          button.btn.btn-default(type="button", data-dismiss="modal") Close
+
+
 block nav
   .navbar-header
             a.navbar-brand(href='/patient/'+user) H2 - Health Help
             a.navbar-brand(href='/patient/'+user+'/info') About
             a.navbar-brand(href='/') Logout
+            a.navbar-brand(href='#patientModal', data-toggle="modal") Notifications
             button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
               span.icon-bar
               span.icon-bar

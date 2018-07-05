@@ -1,9 +1,9 @@
 extends layout
 
 block scriptWebSocket
-  div(id="user", visible=false)=user
   script(src='../socket.io/socket.io.js')
-  script(src='../javascripts/webSocket.js')
+  script(src='../javascripts/htmlManagement.js')
+  script(src='../javascripts/doctorWebSocket.js')
 
 
 block notifications
@@ -21,7 +21,6 @@ block notifications
             div(id="alertNotifications")
         .modal-footer
           button.btn.btn-default(type="button", data-dismiss="modal") Close
-          button.btn.btn-primary(type="button", data-dismiss="modal") Save Changes
 
 block nav
    .navbar-header

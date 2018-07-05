@@ -3,12 +3,14 @@
 /**
  * Module dependencies.
  */
-var socketio = require('../routes/socket.js');
-var subNotificationLevel = require('../routes/subNotificationLevel')
+var socket = require('../routes/socket.js');
+//var subNotificationLevel = require('../routes/subNotificationLevel')
 
 var app = require('../app');
 var debug = require('debug')('restserver:server');
 var http = require('http');
+var subNotificationLevel = require('./../routes/subNotificationLevel')
+var subNotificationAdvice = require('./../routes/subNotificationAdvice')
 
 /**
  * Get port from environment and store in Express.
@@ -22,7 +24,11 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-socketio.initialization(server, subNotificationLevel.receiveNotificationLevel2);
+socket.setNotificationAdviceCallback(subNotificationAdvice.receiveNotificationAdvice)
+socket.setNotificationLevelCallback2(subNotificationLevel.receiveNotificationLevel2)
+socket.setNotificationLevelCallback3(subNotificationLevel.receiveNotificationLevel3)
+socket.initialization(server)
+
 /**
  * Listen on provided port, on all network interfaces.
  */

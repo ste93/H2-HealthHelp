@@ -7,11 +7,12 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='/jquery/jquery.min.js')
     script(src='/bootstrap/js/bootstrap.min.js')
+    block scriptWebSocket
+
 
 
   body
     block notifications
-    block scriptWebSocket
     .navbar.navbar-default.navbar-fixed-top
       .container
         block nav

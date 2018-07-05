@@ -1,55 +1,64 @@
-var amqp = require('amqplib/callback_api');
-var session = require('client-sessions');
-var connection;
+//var session = require('client-sessions');
 var webSocket = require('./socket');
-
-amqp.connect('amqp://admin:exchange@213.209.230.94:8088', function(err, conn) {
-    connection = conn;
-});
-
-function receiveNotificationLevel2 (res, idCode){
-    var ex = 'level';
-    var args = process.argv.slice(2);
-    var queue = "level2.queue";
-    var key = (args.length > 0) ? args[0] : "doctor."+idCode+".receive.alert";
-    connection.createChannel(function(err, ch) {
-        ch.assertExchange(ex, 'topic', {durable: false});
-    
-        ch.assertQueue('level2.queue', {exclusive: false}, function(err, q) {
-            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C" + q.queue);
-            ch.bindQueue(q.queue, ex, key);
-    
-            ch.consume(q.queue, function(msg) {
-                console.log("routing key : " + key)
-                console.log(" [x] %s", msg.content);
-                webSocket.sendMessagesToUser(idCode, msg.content.toString());
-            }, {noAck: true});
-        });
-    });  
-}
-
-function receiveNotificationLevel3 (res, idCode){
-    var ex = 'level';
-    var args = process.argv.slice(2);
-    var queue = "level3.queue";
-    var key = (args.length > 0) ? args[0] : "doctor."+idCode+".receive.emergency";
-    console.log(key);
-    connection.createChannel(function(err, ch) {
-        ch.assertExchange(ex, 'topic', {durable: false});
-    
-        ch.assertQueue('level3.queue', {exclusive: false}, function(err, q) {
-            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-            ch.bindQueue(q.queue, ex, key);
-    
-            ch.consume(q.queue, function(msg) {
-                console.log(" [x] %s", msg.content);
-                
-            //TODO (notifica)
-            }, {noAck: true});
-        });
-    });  
-}
-
-
-
+var constants = require('./constants')
+var rabbitMQLibrary = require('./rabbitmqLibrary');
 module.exports = {receiveNotificationLevel2, receiveNotificationLevel3};
+
+function receiveNotificationLevel2(idCode) {
+    rabbitMQLibrary.subscribeToServer(constants.notificationLevelExchangeName,
+                                    constants.exchangeTypeConstant,
+                                    constants.notificationLevel2QueueName,
+                                    "doctor."+idCode+".receive.alert",
+                                    false,
+                                    function(message) {
+                                        webSocket.sendMessageToUsers(idCode, message.content.toString(), constants.doctorRoleConstant);
+                                    }
+                                );
+
+}
+
+
+function receiveNotificationLevel3(idCode) {
+    rabbitMQLibrary.subscribeToServer(constants.notificationLevelExchangeName,
+                                    constants.exchangeTypeConstant,
+                                    constants.notificationLevel3QueueName,
+                                    "doctor."+idCode+".receive.emergency",
+                                    false,
+                                    function(message) {
+                                        webSocket.sendMessageToUsers(idCode, message.content.toString(), constants.doctorRoleConstant);
+                                    }
+                                );
+
+}
+
+// function receiveNotification (idCode, level){
+//     if(!connection) {
+//         amqp.connect(constants.amqpAddress, function(err, conn) {
+//             connection = conn;
+//             receiveNotification(idCode, level);
+//         });
+//     } else {
+//         var exchangeName = 'level';
+//         var queue;
+//         var routingKey;
+//         if (level == 2) {
+//             queue = "level2.queue";
+//             routingKey = "doctor."+idCode+".receive.alert";    
+//         } else {
+//             queue = "level3.queue";
+//             routingKey = "doctor."+idCode+".receive.emergency";    
+//         }
+//         connection.createChannel(function(err, ch) {
+//             ch.assertExchange(exchangeName, 'topic', {durable: false});
+//             ch.assertQueue(queue, {exclusive: false}, function(err, q) {
+//                 ch.bindQueue(q.queue, exchangeName, routingKey);
+//                 ch.consume(q.queue, function(message) {
+//                     webSocket.sendMessagesToUser(idCode, message.content.toString());
+//                 }, {noAck: true});
+//             });
+//         });  
+//     }
+// }
+
+
+
