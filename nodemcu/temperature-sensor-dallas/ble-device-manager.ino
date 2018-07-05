@@ -13,5 +13,6 @@ void setupBluetooth(int baudRate) {
  * @param text the address of the array with the text to write
  */
 void sendDataOverBLE(const char *text) {
+
 	  BLEdevice.write(text);
 }

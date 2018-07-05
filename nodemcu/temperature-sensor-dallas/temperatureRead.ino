@@ -26,8 +26,10 @@ void processAndSendTemperature(){
     isValid = true;
     if (readTemperaturesCounter > getNumValuesForAverage()) {
       float average = mediumValue();
-      dtostrf(average, 3, 1, temperatureValuetext);
+      char temperatureValuetext[4] = "";
+      dtostrf(average, 6, 1, temperatureValuetext);
       drawTextCentered (temperatureValuetext);
+ //     BLEdevice.write(temperatureValuetext);
       sendDataOverBLE(temperatureValuetext);  
       delay(1000);
       readTemperaturesCounter = 0;
