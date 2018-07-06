@@ -8,51 +8,47 @@
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');
 
-/** Returns all sensor types related to a specific patient
- * 
- * @throws 500 - Internal Server Error
- * 
- * @returns a JSON with a list of sensors related to a specific patient
- * 
- * @param {String} idCode - patient identifier
- * @param {Response} res - response of RESTful request
- */
-function getSensorTypes(idCode, res){   
-    patients.findOne({"idCode": idCode},{"_id":0,"sensors":1}, function(err, sensor){
-        if (err){
-            res.send(500);
-        } else {
-            res.json(sensor);
-        }
-    });
+/** Callback to add a sensor data related to a secific patient. */
+module.exports.addValue = function(req, res, next){
+    var idCode = req.param('idCode');
+    var type = req.param('type');
+    var message = req.param('message');
+
+    console.log(message);
+   
+    _addValue(idCode, type, message, res);
+};
+
+/** Callback to delete a particular sensor data or a range of sensor data. */
+module.exports.deleteValue = function(req, res, next){
+    var idCode = req.param('idCode');
+    var type = req.param('type');
+    var start = req.param('start');
+    var end = req.param('end');
+    
+    if(start == undefined){
+        _deleteAllValues(idCode, type, res);
+    }else{
+        _deleteAllValuesOnRange(idCode, type, start, end, res);
+    }
+    
 }
 
-/** Adds a new sensor types related to a specific patient
- *  and create a related collection to save all sensor's values
- * 
- * @throws 200 - OK
- *         500 - Internal Server Error
- * 
- * @param {String} idCode - patient identifier
- * @param {String} type - sensor type to add
- * @param {Response} res - response of RESTful request
- */
-function addSensorType(idCode, type, res){
-    patients.findOne({"sensors": type}, function(err, response){
-        if(response == null) {
-            console.log("sensor type created");
-            patients.update({"idCode": idCode},{ $push: { "sensors": [type] }},function(err, sensor){
-                if(err){
-                    res.send(500);
-                } 
-                res.send(200);
-            });
-        } else {
-            console.log("already present");
-            res.send(200);
-        }
-    });
-}
+/** Callback to get a particular sensor data or a range of sensor data. */
+module.exports.getValues = function(req, res, next){
+    var idCode = req.param('idCode');
+    var type = req.param('type');
+    var start = req.param('start');
+    var end = req.param('end');
+    
+    if(start == undefined){
+        _getAllValuesOfSpecificSensor(idCode, type, res);
+    }else{
+        _getAllValuesOnRange(idCode, type, start, end, res);
+    }
+    
+};
+
 
 /** Adds a new value of a particular sensor related to a patient
  * 
@@ -64,7 +60,7 @@ function addSensorType(idCode, type, res){
  * @param {String} message - message containing the value and other informations correlated to it
  * @param {Response} res - response of RESTful request
  */
-function addValue(idCode, type, message, res){
+function _addValue(idCode, type, message, res){
     var collection = _getCollection(idCode,type);
 
     var entireMessage = _sensorValueJsonFormat(message)
@@ -95,7 +91,7 @@ function addValue(idCode, type, message, res){
  * @param {String} type - sensor type of values to cancel
  * @param {Response} res - response of RESTful request
  */
-function deleteAllValues(idCode, type, res){
+function _deleteAllValues(idCode, type, res){
     var collection = _getCollection(idCode,type);
 
     patients.findOne({"sensors": type}, function(err, response){
@@ -125,7 +121,7 @@ function deleteAllValues(idCode, type, res){
  * @param {String} end - start date to get the values
  * @param {Response} res - response of RESTful request
  */
-function deleteAllValuesOnRange(idCode, type, start, end, res){
+function _deleteAllValuesOnRange(idCode, type, start, end, res){
     var collection = _getCollection(idCode,type);
     
     var enddate;
@@ -158,7 +154,7 @@ function deleteAllValuesOnRange(idCode, type, start, end, res){
  * @param {String} type - sensor type of values to return
  * @param {Response} res - response of RESTful request
  */
-function getAllValuesOfSpecificSensor(idCode, type, res){
+function _getAllValuesOfSpecificSensor(idCode, type, res){
     var collection = _getCollection(idCode,type);
     
     collection.find({},{"_id":0, "patientId":0},function(err, value){
@@ -181,7 +177,7 @@ function getAllValuesOfSpecificSensor(idCode, type, res){
 * @param {String} end - start date to get the values
 * @param {Response} res - response of RESTful request
 */
-function getAllValuesOnRange(idCode, type, start, end, res){
+function _getAllValuesOnRange(idCode, type, start, end, res){
    var collection = _getCollection(idCode,type);
 
    var enddate;
@@ -228,4 +224,3 @@ function _sensorValueJsonFormat(message){
     return "{"+x+"}"
 }
 
-module.exports = {getSensorTypes, addSensorType, addValue, deleteAllValues, deleteAllValuesOnRange, getAllValuesOfSpecificSensor, getAllValuesOnRange}
