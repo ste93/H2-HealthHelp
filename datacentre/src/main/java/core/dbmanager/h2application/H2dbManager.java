@@ -36,6 +36,8 @@ public interface H2dbManager {
      */
     boolean login(final String idCode, final String password, final UserRole role);
 
+    boolean deleteUser(final String idCode, final UserRole role);
+
     /**
      * Gets patient or doctor information.
      *

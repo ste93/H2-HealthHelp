@@ -72,6 +72,26 @@ public class H2dbManagerImpl implements H2dbManager {
         return response.getStatus()==200;
     }
 
+    @Override
+    public boolean deleteUser(final String idCode, final UserRole role){
+        int response;
+
+        if(role.equals(UserRole.DOCTOR)) {
+            response = H2_DOCTORS.queryParam("idCode", idCode)
+                    .request()
+                    .delete()
+                    .getStatus();
+
+        }else{
+            response = H2_PATIENTS.queryParam("idCode", idCode)
+                    .request()
+                    .delete()
+                    .getStatus();
+        }
+
+        return response==200;
+    }
+
     /**
      * Gets patient or doctor information.
      *
