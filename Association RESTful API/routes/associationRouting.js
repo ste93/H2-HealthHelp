@@ -13,7 +13,7 @@ require('../database');
 /** files .js that include the callback of request*/
 var patientOperation = require('./patientOperation');
 var doctorOperation = require('./doctorOperation');
-var asssociationOperation = require('./associationOperation');
+var associationOperation = require('./associationOperation');
 
 /** GET home page. */
 router.get('/', function(req, res, next) {});
@@ -27,10 +27,7 @@ router.get('/', function(req, res, next) {});
  * @param {String} id - patient id
  * 
  */
-router.get('/patients', function(req, res, next){
-    var id = req.param('_id');
-    patientOperation.findPatient(id, res);
-});
+router.get('/patients', patientOperation.findPatient);
 
 /** POST request to insert a new patient
  *  
@@ -43,14 +40,7 @@ router.get('/patients', function(req, res, next){
  * @param {String} cf - patient's CF
  * 
  */
-router.post('/patients', function(req,res,next){
-    var id = req.param('_id');
-    var name = req.param('name');
-    var surname = req.param('surname');
-    var cf = req.param('cf');
-    
-    patientOperation.insertPatient(id, name, surname, cf, res);
-});
+router.post('/patients', patientOperation.insertPatient);
 
 /** DELETE request to remove a patient and all his associations with doctors
  *  
@@ -60,10 +50,7 @@ router.post('/patients', function(req,res,next){
  * @param {String} id - patient identifier
  * 
  */
-router.delete('/patients', function(req, res, next){
-    var id = req.param('_id');
-    patientOperation.removePatient(id, res);
-})
+router.delete('/patients', patientOperation.removePatient);
 
 /** GET request to return doctors's informations
  *  
@@ -74,10 +61,7 @@ router.delete('/patients', function(req, res, next){
  * @param {String} id - doctor identifier
  * 
  */
-router.get('/doctors', function(req, res, next){
-    var id = req.param('_id');
-    doctorOperation.findDoctor(id, res);
-});
+router.get('/doctors', doctorOperation.findDoctor);
   
 /** POST request to insert a new doctor
  *  
@@ -90,13 +74,7 @@ router.get('/doctors', function(req, res, next){
  * @param {String} cf - doctor's CF
  * 
  */
-router.post('/doctors', function(req,res,next){
-    var id = req.param('_id');
-    var name = req.param('name');
-    var surname = req.param('surname');
-    var cf = req.param('cf');
-    doctorOperation.insertDoctor(id, name, surname, cf, res);
-});
+router.post('/doctors', doctorOperation.insertDoctor);
  
 /** DELETE request to remove a doctor and all his associations with patients
  *  
@@ -106,10 +84,7 @@ router.post('/doctors', function(req,res,next){
  * @param {String} id - doctor identifier
  * 
  */
-router.delete('/doctors', function(req, res, next){
-    var id = req.param('_id');
-    doctorOperation.removeDoctor(id, res);
-});
+router.delete('/doctors', doctorOperation.removeDoctor);
 
 
 /** POST request to insert a new medical association of doctor and patient
@@ -121,12 +96,7 @@ router.delete('/doctors', function(req, res, next){
  * @param {String} idDoctor - doctor identifier
  * 
  */
-router.post('/relationship', function(req, res, next){
-    var idPatient = req.param('idPatient');
-    var idDoctor = req.param('idDoctor');
-
-    asssociationOperation.insertAssociation(idPatient, idDoctor, res);
-});
+router.post('/relationship', associationOperation.insertAssociation);
 
 /** GET request to find the association between specific doctor and patient
  *  or to find all doctor's or patient's associations
@@ -139,18 +109,7 @@ router.post('/relationship', function(req, res, next){
  * @param {String} idDoctor - doctor identifier
  * 
  */
-router.get('/relationship', function(req, res, next){
-    var idPatient = req.param('idPatient');
-    var idDoctor = req.param('idDoctor');
-
-    if(idPatient == undefined){
-        asssociationOperation.getPatients(idDoctor, res);
-    } else if(idDoctor == undefined){
-        asssociationOperation.getDoctors(idPatient, res);
-    } else {
-       asssociationOperation.getOneAssociation(idPatient, idDoctor, res);
-    }
-});
+router.get('/relationship', associationOperation.getAssociations);
 
 /** DELETE request to remove an association between specific doctor and patient
  *   
@@ -161,10 +120,6 @@ router.get('/relationship', function(req, res, next){
  * @param {String} idDoctor - doctor identifier
  * 
  */
-router.delete('/relationship', function(req, res, next){
-    var idPatient = req.param('idPatient');
-    var idDoctor = req.param('idDoctor');
-    asssociationOperation.removeAssociation(idPatient, idDoctor, res);
-});
+router.delete('/relationship', associationOperation.removeAssociation);
 
 module.exports = router;

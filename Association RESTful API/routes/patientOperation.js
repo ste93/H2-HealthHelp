@@ -19,7 +19,8 @@ var associations = require('../models/patientDoctor');
  * @param {Response} res - response of RESTful request
  * 
  */
-function findPatient(id, res){
+module.exports.findPatient =  function(req, res){
+    var id = req.param('_id');
     patients.findOne({"_id": id },function(err, pat) {
         if(pat == null) {
             res.send(404);
@@ -43,13 +44,19 @@ function findPatient(id, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function insertPatient(id, name, surname, cf, res){
+module.exports.insertPatient = function(req, res){
+    var id = req.param('_id');
+    var name = req.param('name');
+    var surname = req.param('surname');
+    var cf = req.param('cf');
+
     var patient = { 
         "_id" : id,
         "name" : name,
         "surname":surname,
         "cf" : cf
     }; 
+
     patients.create(patient, function(err, pat) {
         if (err){
             res.send(400);
@@ -68,7 +75,8 @@ function insertPatient(id, name, surname, cf, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function removePatient(id, res){
+module.exports.removePatient = function(req, res){
+    var id = req.param('_id');
     patients.findByIdAndRemove({"_id": id}, function(err, pat){
         if(pat == null) {
             res.send(404);
@@ -82,5 +90,3 @@ function removePatient(id, res){
         }
     });
 }
-
-module.exports = {findPatient, insertPatient, removePatient};

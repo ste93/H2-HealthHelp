@@ -19,7 +19,10 @@ var associations = require('../models/patientDoctor');
  * @param {Response} res - response of RESTful request
  * 
  */
-function insertAssociation(idPatient, idDoctor, res){
+module.exports.insertAssociation = function(req, res){
+    var idPatient = req.param('idPatient');
+    var idDoctor = req.param('idDoctor');
+
     var association = { 
         "idPatient": idPatient,
         "idDoctor": idDoctor
@@ -55,6 +58,19 @@ function insertAssociation(idPatient, idDoctor, res){
     
 }
 
+module.exports.getAssociations = function(req, res){
+    var idPatient = req.param('idPatient');
+    var idDoctor = req.param('idDoctor');
+
+    if(idPatient == undefined){
+       _getPatients(idDoctor, res);
+    } else if(idDoctor == undefined){
+       _getDoctors(idPatient, res);
+    } else {
+       _getOneAssociation(idPatient, idDoctor, res);
+    }
+}
+
 /** Finds the association between a specific doctor and patient
  *  
  * @throws 400 - BAD REQUEST
@@ -66,7 +82,7 @@ function insertAssociation(idPatient, idDoctor, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function getOneAssociation(idPatient, idDoctor, res){
+function _getOneAssociation(idPatient, idDoctor, res){
     var association = { 
         "idPatient" : idPatient,
         "idDoctor": idDoctor
@@ -93,7 +109,7 @@ function getOneAssociation(idPatient, idDoctor, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function getPatients(idDoctor, res){
+function _getPatients(idDoctor, res){
     doctors.findOne({"_id": idDoctor},function(err, doc) {
         if(doc != null) {
             associations.find({"idDoctor": idDoctor},{"_id":0, "idPatient":1},function(err, pat) {
@@ -119,7 +135,7 @@ function getPatients(idDoctor, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function getDoctors(idPatient, res){
+function _getDoctors(idPatient, res){
     patients.findOne({"_id": idPatient },function(err, pat) {
         if(pat != null) {
             associations.find({"idPatient": idPatient},{"_id":0, "idDoctor":1},function(err, doc) {
@@ -145,7 +161,10 @@ function getDoctors(idPatient, res){
  * @param {Response} res - response of RESTful request
  * 
  */
-function removeAssociation(idPatient, idDoctor, res){
+module.exports.removeAssociation = function (req, res){
+    var idPatient = req.param('idPatient');
+    var idDoctor = req.param('idDoctor');
+
     associations.findOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, ass) {
         if(ass == null) {
             res.send(404);
@@ -162,5 +181,3 @@ function removeAssociation(idPatient, idDoctor, res){
         }
      });
 }
-
-module.exports = {insertAssociation, getDoctors, getOneAssociation, getPatients, removeAssociation}

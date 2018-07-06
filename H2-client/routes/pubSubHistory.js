@@ -14,7 +14,7 @@ function requestHistory (type, patId, start, end, requester, res){
     + '"}';
     rabbitMQLibrary.publishToServer(
         constants.datacentreHistoryRequestExchangeName,
-        constants.drugRequestExchangeName,
+        constants.exchangeTypeConstant,
         constants.datacentreHistoryRequestRoutingKey,
         false,
         message, 

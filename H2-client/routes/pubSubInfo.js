@@ -1,3 +1,4 @@
+
 var session = require('client-sessions');
 var constants = require('./constants')
 var rabbitMQLibrary = require('./rabbitmqLibrary');
@@ -25,6 +26,7 @@ function requestInfo(role, id, res){
 }
 
 function receiveInfo(res){
+    console.log("subscribe to server")
     rabbitMQLibrary.subscribeToServer(
         constants.datacentreReceiveInfoExchangeName,
         constants.exchangeTypeConstant,
@@ -34,10 +36,12 @@ function receiveInfo(res){
         function(msg) {
             console.log(" [x] %s", msg.content);
             if(msg.content.toString() == "500"){
+                console.log("500")
                 var path = "/" + session.role + "/" + session.user;
                 res.redirect(path);
             } else {
-                var json = JSON.parse(msg.content.toString());           
+                var json = JSON.parse(msg.content.toString()); 
+                console.log("json.parse")          
                 var personalInfo = {
                     title: 'Personal Information',
                     id : json.idCode,
@@ -49,6 +53,7 @@ function receiveInfo(res){
                     role: session.role,
                     user: session.user
                 }
+                console.log("INFO: " + personalInfo);
                 res.render('infoPage', personalInfo);
             }
         });
@@ -63,7 +68,7 @@ function receiveInfo(res){
     //         ch.bindQueue(q.queue, ex, key);
     
     //         ch.consume(q.queue, function(msg) {
-    //             console.log(" [x] %s", msg.content);
+    //             console.log(" [x] %s", msg.content);doctor/mario.rossi/info
     //             if(msg.content.toString() == "500"){
     //                 var path = "/" + session.role + "/" + session.user;
     //                 res.redirect(path);
