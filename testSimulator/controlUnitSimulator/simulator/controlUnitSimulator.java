@@ -6,6 +6,10 @@ import java.awt.*;
 import controlUnitSimulator.simulator.core.ControlUnit;
 import controlUnitSimulator.simulator.dbmanager.associations.DoctorManager;
 import controlUnitSimulator.simulator.dbmanager.associations.DoctorManagerImpl;
+import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManager;
+import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManagerImpl;
+import controlUnitSimulator.simulator.dbmanager.h2application.User;
+import controlUnitSimulator.simulator.dbmanager.h2application.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +34,13 @@ public class controlUnitSimulator {
 
     private static DoctorManager doctorManager;
     private static List<String> doctorList;
+    private static H2dbManager h2dbManager;
 
     public static void main(String[] args) {
 
         doctorManager = new DoctorManagerImpl();
         doctorList = new ArrayList<>();
+        h2dbManager = new H2dbManagerImpl();
 
         ////// GUI ///////////////////////////////////////////////
         JFrame frame = new JFrame("H2 Test Simulator GUI");
@@ -106,6 +112,8 @@ public class controlUnitSimulator {
                 System.out.println("Creating doctor : " + doctorID);
                 doctorManager.createNewUser(doctorID, "doctor", "test", "TESTTESTTEST");
                 doctorList.add(doctorID);
+                //register the new user to H2 DB
+                h2dbManager.registration(new User(doctorID,"test", "test", "doctor" + i, "TESTTESTTEST", "123456789", "test@test.com", UserRole.DOCTOR.getRole()));
                 ControlUnit cu = new ControlUnit(patientPerControlUnit, i * patientPerControlUnit, doctorID);
                 cu.setName("Control Unit " + i);
                 controlUnitList.add(cu);
@@ -166,15 +174,10 @@ public class controlUnitSimulator {
             System.out.println("[MAIN] Thread " + cu.getName() + " terminated ");
         }
 
-        //TODO : stop after all the clear is done.
-        /*try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
         System.out.println("[MAIN] Deleting Test Doctor");
         for (String doctor : doctorList) {
             doctorManager.deleteUser(doctor);
+            h2dbManager.deleteUser(doctor, UserRole.DOCTOR);
         }
         System.out.println("[MAIN] Deletion Completed");
 

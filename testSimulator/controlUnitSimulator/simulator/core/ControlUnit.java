@@ -5,6 +5,10 @@ import controlUnitSimulator.simulator.dbmanager.associations.AssociationsManager
 import controlUnitSimulator.simulator.dbmanager.associations.AssociationsManagerImpl;
 import controlUnitSimulator.simulator.dbmanager.associations.PatientManager;
 import controlUnitSimulator.simulator.dbmanager.associations.PatientManagerImpl;
+import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManager;
+import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManagerImpl;
+import controlUnitSimulator.simulator.dbmanager.h2application.User;
+import controlUnitSimulator.simulator.dbmanager.h2application.UserRole;
 import controlUnitSimulator.simulator.mqtt.PatientDataPublisher;
 
 import java.util.ArrayList;
@@ -18,6 +22,7 @@ public class ControlUnit extends Thread{
     private List<PatientDataPublisher> publisherList;
     private PatientManager patientManager;
     private AssociationsManager associationsManager;
+    private H2dbManager h2dbManager;
 
     private boolean run = false;
     private boolean stop = false;
@@ -29,11 +34,15 @@ public class ControlUnit extends Thread{
         this.publisherList = new ArrayList<>();
         this.patientManager = new PatientManagerImpl();
         this.associationsManager = new AssociationsManagerImpl();
+        this.h2dbManager = new H2dbManagerImpl();
 
         for (int i = countFrom; i < countFrom + patients; i ++){
             String patientId = "patient.test." + i;
             patientList.add(patientId);
             publisherList.add(new PatientDataPublisher(patientId));
+            // add patient to application db
+            h2dbManager.registration(new User(patientId,"test", "test", "patient" + i, "TESTTESTTEST", "123456789", "test@test.com", UserRole.PATIENT.getRole()));
+            // add patient to association
             patientManager.createNewUser(patientId, "patient" , "test" + i , "TSTTST12A34B345C");
             try {
                 associationsManager.createNewAssociation(patientId, this.associatedDoctorID);
@@ -131,6 +140,7 @@ public class ControlUnit extends Thread{
         System.out.println("[CONTROL UNIT] Association deleted");
         for (String patient : patientList){
             patientManager.deleteUser(patient);
+            h2dbManager.deleteUser(patient, UserRole.PATIENT);
         }
         System.out.println("[CONTROL UNIT] Patient deleted");
     }
