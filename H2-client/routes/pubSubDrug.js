@@ -7,6 +7,7 @@ function requestDrugs (patId, start, end, res){
     + '", "start":"' + start 
     + '", "end":"' + end
     + '"}';
+    console.log('PATID: ' + session.user);
     rabbitMQLibrary.publishToServer(constants.drugRequestExchangeName,
                                     constants.exchangeTypeConstant,
                                     constants.datacentreDrugRequestRoutingKey,

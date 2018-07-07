@@ -16,7 +16,7 @@ function requestAdvices(patId, start, end, res) {
     + '"}';
     rabbitMQLibrary.publishToServer(constants.adviceRequestExchangeName,
                                     constants.exchangeTypeConstant,
-                                    constants.adviceRoutingKey,
+                                    constants.adviceRequestRoutingKey,
                                     false, 
                                     message,
                                     function() {
