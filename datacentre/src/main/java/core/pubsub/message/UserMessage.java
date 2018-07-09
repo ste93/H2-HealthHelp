@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by lucch on 11/06/2018.
+ * Manages the request to get all personal information of a specific user.
+ *
+ * @author Giulia Lucchi
  */
 public class UserMessage {
     private String idCode;
@@ -47,6 +49,13 @@ public class UserMessage {
         return mail;
     }
 
+    /**
+     * Get of all information in the message to String format.
+     *
+     * @return String - entire message in format json.
+     *
+     * @throws JSONException
+     */
     public String toJson() throws JSONException {
         return new JSONObject().put("idCode", idCode)
                                 .put("name", name)

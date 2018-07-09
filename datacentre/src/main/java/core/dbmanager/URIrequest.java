@@ -1,6 +1,6 @@
 package core.dbmanager;
 
-/**Includes basic path to do a request on dbs' RESTful API.
+/**Includes basic root to do a request on dbs' RESTful API.
  *
  * @author Giulia Lucchi
  */

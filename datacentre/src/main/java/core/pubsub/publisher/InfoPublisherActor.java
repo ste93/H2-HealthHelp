@@ -6,7 +6,9 @@ import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.UserMessage;
 
 /**
- * Created by lucch on 11/06/2018.
+ * Sends the personal information to the requester.
+ *
+ * @author Giulia Lucchi
  */
 public class InfoPublisherActor extends AbstractActor {
 
@@ -26,7 +28,6 @@ public class InfoPublisherActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(UserMessage.class, userMessage -> {
-            //System.out.println("ARRIVATO IN INFO PUBLISHER");
             publisher.publishMessage(userMessage.toJson(), ROUTING_KEY);
         }).build();
     }

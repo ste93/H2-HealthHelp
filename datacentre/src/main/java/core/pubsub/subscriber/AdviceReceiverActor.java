@@ -17,7 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by lucch on 05/06/2018.
+ * Receives advices written by doctors for patients and sends them to advice publisher.
+ *
+ * @author Giulia Lucchi
  */
 public class AdviceReceiverActor extends AbstractActor {
 
@@ -41,21 +43,22 @@ public class AdviceReceiverActor extends AbstractActor {
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
                 JSONObject json;
                 try {
+
                     json = new JSONObject(message);
-                    //System.out.println("arriato  "+ json);
                     String patientId = json.getString("patientId");
                     String doctorId = json.getString("doctorId");
                     String advice = json.getString("advice");
                     String timestamp =  json.getString("timestamp");
+
                     AdviceMessage adviceMessage = new AdviceMessage(patientId, doctorId, advice, timestamp);
                     getContext().actorSelection("/user/app/advicePublisherActor").tell(adviceMessage, ActorRef.noSender());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
         subscriber.setConsumer(consumer);
-        System.out.println(" -----> AdviceReceiver STARTED.");
     }
 
     @Override

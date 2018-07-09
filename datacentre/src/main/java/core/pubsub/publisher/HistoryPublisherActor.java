@@ -2,8 +2,8 @@ package core.pubsub.publisher;
 
 import akka.actor.AbstractActor;
 import core.SensorType;
-import core.dbmanager.h2application.H2dbManager;
-import core.dbmanager.h2application.H2dbManagerImpl;
+import core.dbmanager.h2dbManager.DataSensorManager;
+import core.dbmanager.h2dbManager.DataSensorManagerImpl;
 import core.pubsub.core.TopicPublisher;
 import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.HistoryMessage;
@@ -12,7 +12,9 @@ import org.json.JSONArray;
 import java.util.Optional;
 
 /**
- * Created by lucch on 05/06/2018.
+ * Sends the patient's clinical history to the requester
+ *
+ * @author Giulia Lucchi
  */
 public class HistoryPublisherActor extends AbstractActor{
 
@@ -20,7 +22,7 @@ public class HistoryPublisherActor extends AbstractActor{
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-    private H2dbManager h2dbManage = new H2dbManagerImpl();
+    private DataSensorManager dataSensorManager = new DataSensorManagerImpl();
     TopicPublisher publisher;
 
     @Override
@@ -32,7 +34,9 @@ public class HistoryPublisherActor extends AbstractActor{
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(HistoryMessage.class, message -> {
-            JSONArray values = h2dbManage.getValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
+
+            JSONArray values = dataSensorManager.getSensorValues(message.getPatientId(), SensorType.valueOf(message.getType().toUpperCase()), Optional.of(message.getStart()), Optional.of(message.getEnd()));
+
             publisher.publishMessage(values.toString(), message.getRequesterRole()+"."+message.getRequesterId()+".receive.history");
         }).build();
     }

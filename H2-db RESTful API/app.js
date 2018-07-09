@@ -13,7 +13,7 @@ var app = express();
 
 
 /** Set the directory of views in jade format*/
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './app_server/views'));
 app.set('view engine', 'jade');
 
 app.use(bodyparser.json());

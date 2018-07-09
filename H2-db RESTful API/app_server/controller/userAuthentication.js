@@ -76,7 +76,6 @@ module.exports.login = function(req, res){
         res.send(401);
         console.log("Not Authorized to enter in this software.");  
     } else {
-        //console.log(users);
         users.findOne({"idCode": idCode, "password": password},{"_id":0, "password":0, "phone":0, "mail":0, "cf":0}, function(err, user){
             if(err){
                 //console.log('user login error - %s', err);

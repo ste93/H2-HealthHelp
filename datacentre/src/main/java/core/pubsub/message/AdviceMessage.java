@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by lucch on 05/06/2018.
+ * Manages the advice to send from the doctor.
+ *
+ * @author Giulia Lucchi
  */
 public class AdviceMessage {
 
@@ -36,6 +38,11 @@ public class AdviceMessage {
         return timestamp;
     }
 
+    /**
+     * Get of all information in the message to JSONOjbet format.
+     *
+     * @return JSONObject completed advice.
+     */
     public String getMessage() throws JSONException {
         return new JSONObject()
                     .put("patientId", patientId)

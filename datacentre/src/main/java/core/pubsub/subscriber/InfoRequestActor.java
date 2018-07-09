@@ -7,8 +7,10 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import core.UserRole;
-import core.dbmanager.h2application.H2dbManager;
-import core.dbmanager.h2application.H2dbManagerImpl;
+import core.dbmanager.h2dbManager.DataSensorManager;
+import core.dbmanager.h2dbManager.DataSensorManagerImpl;
+import core.dbmanager.h2dbManager.UserManager;
+import core.dbmanager.h2dbManager.UserManagerImpl;
 import core.pubsub.core.TopicSubscriber;
 import core.pubsub.core.TopicSubscriberImpl;
 import core.pubsub.message.UserMessage;
@@ -19,7 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by lucch on 08/06/2018.
+ * Receives request to visualized personal information related to a requester and
+ *  sends them to info publisher.
+ *
+ * @author Giulia Lucchi
  */
 public class InfoRequestActor extends AbstractActor {
 
@@ -30,7 +35,7 @@ public class InfoRequestActor extends AbstractActor {
     private static final String HOST_IP = "213.209.230.94";
     private static final int PORT = 8088;
 
-    private static final H2dbManager H2manager = new H2dbManagerImpl();
+    private static final UserManager userManager = new UserManagerImpl();
 
     @Override
     public void preStart() throws Exception {
@@ -43,20 +48,24 @@ public class InfoRequestActor extends AbstractActor {
                 if (envelope.getRoutingKey().equals(ROUTING_KEY_INFO.get(0))) {
                     String message = new String(body, "UTF-8");
                     System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
                     JSONObject json;
                     try {
                         json = new JSONObject(message);
                         UserRole role = UserRole.valueOf(json.getString("role").toUpperCase());
                         String idCode = json.getString("id");
-                        JSONObject response = H2manager.getUserInformation(role, idCode);
+
+                        JSONObject response = userManager.getUserInformation(role, idCode);
                         String id = response.getString("idCode");
                         String name = response.getString("name");
                         String surname = response.getString("surname");
                         String cf = response.getString("cf");
                         String mail = response.getString("mail");
                         String phones = response.getString("phone");
+
                         UserMessage info = new UserMessage(id, name, surname, cf, phones, mail);
                         getContext().actorSelection("/user/app/infoPublisherActor").tell(info, ActorRef.noSender());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -64,7 +73,6 @@ public class InfoRequestActor extends AbstractActor {
             }
         };
         subscribe.setConsumer(consumer);
-        System.out.println(" -----> InfoReceierActor STARTED");
     }
 
     @Override

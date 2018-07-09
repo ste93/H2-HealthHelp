@@ -2,10 +2,7 @@ package core.dbmanager;
 
 import core.SensorType;
 import core.UserRole;
-import core.dbmanager.h2application.H2dbManager;
-import core.dbmanager.h2application.H2dbManagerImpl;
-import core.dbmanager.h2application.User;
-import core.dbmanager.h2application.UserBuilder;
+import core.dbmanager.h2dbManager.*;
 import core.pubsub.message.MessagesUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,15 +14,19 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-/** Testing of function's H2dbManager
+/** Testing of function's DataSensorManager
  *
  * @author Giulia Lucchi
  */
 public class H2dbManagerTest {
-    private static H2dbManager H2manager = new H2dbManagerImpl();
+    private static DataSensorManager dataSensorManager = new DataSensorManagerImpl();
+    private static AdviceManager adviceManager = new AdviceManagerImpl();
+    private static DrugManager drugManager = new DrugManagerImpl();
+    private static UserManager userManager = new UserManagerImpl();
+
     private static MessagesUtils utils = new MessagesUtils();
 
- /*   @BeforeClass
+    @BeforeClass
     public static void basicRegistration(){
         User patientUser = new UserBuilder()
                 .with(userBuilder -> {
@@ -52,10 +53,10 @@ public class H2dbManagerTest {
                     userBuilder.role = UserRole.DOCTOR.getRole();
                 })
                 .createUser();
-        H2manager.registration(patientUser);
-        H2manager.registration(doctorUser);
+        userManager.registration(patientUser);
+        userManager.registration(doctorUser);
 
-    }*/
+    }
      /**
      * Create a valid patient's account and login with it and get the patient's information.
      *
@@ -80,15 +81,16 @@ public class H2dbManagerTest {
                 .createUser();
 
         // valid registration of patient
-        assertTrue(H2manager.registration(patientUser));
+        assertTrue(userManager.registration(patientUser));
         // doesn't register the new patient, because already inserted
-        assertFalse(H2manager.registration(patientUser));
+        assertFalse(userManager.registration(patientUser));
 
         /* -------------------  PATIENT LOGIN  -------------------- */
         //valid login
-        assertTrue(H2manager.login(idCode, "ciao", UserRole.PATIENT));
+        assertTrue(userManager.login(idCode, "ciao", UserRole.PATIENT));
         //invalid login
-        assertFalse(H2manager.login(idCode, "ciao12345", UserRole.PATIENT));
+        assertFalse(userManager.login(idCode, "ciao12345", UserRole.PATIENT));
+
     }
 
     /**
@@ -114,40 +116,33 @@ public class H2dbManagerTest {
                 .createUser();
 
         // valid registration of doctor
-        assertTrue(H2manager.registration(doctorUser));
+        assertTrue(userManager.registration(doctorUser));
         // doesn't register the new doctor, because already inserted
-        assertFalse(H2manager.registration(doctorUser));
+        assertFalse(userManager.registration(doctorUser));
 
         /* -----------------  DOCTOR LOGIN  ----------------- */
         //valid login
-        assertTrue(H2manager.login(idCode, "ciao", UserRole.PATIENT));
+        assertTrue(userManager.login(idCode, "ciao", UserRole.DOCTOR));
         //invalid login
-        assertFalse(H2manager.login(idCode, "ciao12345", UserRole.PATIENT));
+        assertFalse(userManager.login(idCode, "ciao12345", UserRole.DOCTOR));
     }
 
     /**
      * Tests get, put of sensors' types.
      */
     @Test
-    public void SensoTypeAndValueTest(){
+    public void SensoTypeAndValueTest() throws JSONException {
 
        /* -----------------  ADD A SENSORS TYPE  ----------------- */
+       try {
+           // Add new sensor type and after check insert of sensor type and get() operation
+           assertTrue(dataSensorManager.addNewSensorType("giulia.lucchi", SensorType.GLYCEMIA));
+           assertTrue(dataSensorManager.addNewSensorType("giulia.lucchi", SensorType.TEMPERATURE));
+           assertTrue(dataSensorManager.addNewSensorType("giulia.lucchi", SensorType.PRESSURE));
 
-       // Add new sensor type
-       assertTrue(H2manager.addNewSensorType("giulia.lucchi", SensorType.GLYCEMIA));
-       assertTrue(H2manager.addNewSensorType("giulia.lucchi", SensorType.TEMPERATURE));
-       assertTrue(H2manager.addNewSensorType("giulia.lucchi", SensorType.PRESSURE));
-
-       //Check insert of sensor type and get() operation
-       JSONArray expectedArray = new JSONArray().put("glycemia").put("temperature").put("pressure");
-        try {
-            assertEquals(expectedArray.get(0) ,H2manager.getSensorsType("giulia.lucchi").get(0));
-            assertEquals(expectedArray.get(1) ,H2manager.getSensorsType("giulia.lucchi").get(1));
-            assertEquals(expectedArray.get(2) ,H2manager.getSensorsType("giulia.lucchi").get(2));
-        } catch (Exception e) {
-            assertEquals("500",e.getMessage());
-        }
-
+       } catch (Exception e) {
+           e.getMessage();
+       }
     }
 
     /**
@@ -181,7 +176,7 @@ public class H2dbManagerTest {
                 .toString();
 
 
-        String temperatureToInsert1 = utils.convertToFormatApi(temperatureMessage);
+        String temperatureToInsert1 = utils.convertToFormatApi(temperatureMessage1);
 
         String glycemiaMessage = new JSONObject()
                 .put("patientId", "giulia.lucchi")
@@ -194,26 +189,26 @@ public class H2dbManagerTest {
                 .toString();
 
 
-        String glycemiaToInsert = utils.convertToFormatApi(temperatureMessage);
+        String glycemiaToInsert = utils.convertToFormatApi(glycemiaMessage);
 
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.GLYCEMIA, glycemiaToInsert));
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert));
-        assertTrue(H2manager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert1));
+        assertTrue(dataSensorManager.addSensorValue("giulia.lucchi", SensorType.GLYCEMIA, glycemiaToInsert));
+        assertTrue(dataSensorManager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert));
+        assertTrue(dataSensorManager.addSensorValue("giulia.lucchi", SensorType.TEMPERATURE, temperatureToInsert1));
         // add a sensor type value to a not existing patient
-        assertFalse(H2manager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, temperatureToInsert));
+        assertFalse(dataSensorManager.addSensorValue("federico.fedeli", SensorType.TEMPERATURE, temperatureToInsert));
 
         /* -----------------  DELETE AND GET SENSOR VALUE  ----------------- */
         //delete all values
-        assertTrue(H2manager.deleteValues("giulia.lucchi", SensorType.GLYCEMIA, Optional.empty(), Optional.empty()));
+        assertTrue(dataSensorManager.deleteValues("giulia.lucchi", SensorType.GLYCEMIA, Optional.empty(), Optional.empty()));
         //delete on range
-        assertTrue(H2manager.deleteValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1993-01-01 09:00"), Optional.of("1996-01-01 11:00")));
+        assertTrue(dataSensorManager.deleteValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1993-01-01 09:00"), Optional.of("1996-01-01 11:00")));
 
         //checks removing with a get sensor values
         JSONArray sensors = null;
         try {
-            sensors= H2manager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1993-01-01 09:00"), Optional.of("2000-01-01 11:00"));
+            sensors= dataSensorManager.getSensorValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("1993-01-01 09:00"), Optional.of("2000-01-01 11:00"));
         } catch (Exception e) {
-            assertEquals("500",e.getMessage());
+            assertEquals("500",(new JSONArray(e.getMessage())).getString(0));
         }
 
         assertEquals("[]", sensors.toString());
@@ -221,8 +216,8 @@ public class H2dbManagerTest {
         //check remaining value in sensors
         JSONArray remainingfrom2000 = null;
         try {
-            sensors= H2manager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.empty(), Optional.empty());
-            remainingfrom2000 = H2manager.getValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("2000-01-01 00:00"), Optional.empty());
+            sensors= dataSensorManager.getSensorValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.empty(), Optional.empty());
+            remainingfrom2000 = dataSensorManager.getSensorValues("giulia.lucchi", SensorType.TEMPERATURE, Optional.of("2000-01-01 00:00"), Optional.empty());
         } catch (Exception e) {
             assertEquals("500", e.getMessage());
         }
@@ -235,21 +230,21 @@ public class H2dbManagerTest {
         String message1 = "\"doctorId\":\"mario.rossi\", \"drugName\":\"okii\", \"timestamp\":\"2018-01-01 11:00\"" ;
 
         /* -----------------  ADD DRUGS  ----------------- */
-        assertTrue(H2manager.addDrug("giulia.lucchi", message));
-        assertTrue(H2manager.addDrug("giulia.lucchi", message1));
+        assertTrue(drugManager.addDrug("giulia.lucchi", message));
+        assertTrue(drugManager.addDrug("giulia.lucchi", message1));
 
         /* -----------------  GET DRUGS  ----------------- */
         //check adding and get all drugs
         try {
-            assertTrue(H2manager.getDrugs("giulia.lucchi", Optional.empty(), Optional.empty()).length() >= 2);
+            assertTrue(drugManager.getDrugs("giulia.lucchi", Optional.empty(), Optional.empty()).length() >= 2);
         } catch (Exception e) {
-            assertEquals("500", e.getMessage());
+            assertEquals("500",(new JSONObject(e.getMessage())).getString("code"));
         }
 
         //check on range
         JSONArray drugs = null;
         try {
-            drugs = H2manager.getDrugs("giulia.lucchi",Optional.of("1993-01-01 11:00"), Optional.of("2000-01-01 11:00"));
+            drugs = drugManager.getDrugs("giulia.lucchi",Optional.of("1993-01-01 11:00"), Optional.of("2000-01-01 11:00"));
         } catch (Exception e) {
             assertEquals("500", e.getMessage());
         };
@@ -258,7 +253,7 @@ public class H2dbManagerTest {
 
         //from year 2000 to today year
         try {
-            drugs = H2manager.getDrugs("giulia.lucchi",Optional.of("2000-01-01 11:00"), Optional.empty());
+            drugs = drugManager.getDrugs("giulia.lucchi",Optional.of("2000-01-01 11:00"), Optional.empty());
         } catch (Exception e) {
             assertEquals("500", e.getMessage());
         }
@@ -273,32 +268,32 @@ public class H2dbManagerTest {
         String message ="\"patientId\":\"giulia.lucchi\",\"doctorId\":\"mario.rossi\",\"advice\":\"inizia a prendere l'OKII\",\"timestamp\":\"1994-01-01 11:00\"";
         String message1 ="\"patientId\":\"giulia.lucchi\",\"doctorId\":\"mario.rossi\",\"advice\":\"inizia a prendere l'OKII\",\"timestamp\":\"2018-01-01 11:00\"";
         /* -----------------  ADD ADVICE  ----------------- */
-        assertTrue(H2manager.addAdvice(message));
-        assertTrue(H2manager.addAdvice(message1));
+        assertTrue(adviceManager.addAdvice(message));
+        assertTrue(adviceManager.addAdvice(message1));
 
         /* -----------------  GET ADVICE  ----------------- */
         //check adding and get all advices
         try {
-            assertTrue(H2manager.getAdvices("giulia.lucchi", Optional.empty(), Optional.empty()).length() >= 2);
+            assertTrue(adviceManager.getAdvices("giulia.lucchi", Optional.empty(), Optional.empty()).length() >= 2);
         } catch (Exception e) {
-            assertEquals("500", e.getMessage());
+            assertEquals("500",(new JSONObject(e.getMessage())).getString("code"));
         }
 
         //check on range
         JSONArray advices = null;
         try {
-            advices = H2manager.getAdvices("giulia.lucchi",Optional.of("1993-01-01 11:00"), Optional.of("2000-01-01 11:00"));
+            advices = adviceManager.getAdvices("giulia.lucchi",Optional.of("1993-01-01 11:00"), Optional.of("2000-01-01 11:00"));
         } catch (Exception e) {
-           assertEquals("500", e.getMessage());
+            assertEquals("500",(new JSONObject(e.getMessage())).getString("code"));
         };
         String expectedMessage = "{\"doctorId\":\"mario.rossi\",\"advice\":\"inizia a prendere l'OKII\",\"timestamp\":\"1994-01-01T10:00:00.000Z\"}";
         assertEquals(expectedMessage, advices.get(0).toString());
 
         //from year 2000 to today year
         try {
-            advices = H2manager.getAdvices("giulia.lucchi",Optional.of("2000-01-01 11:00"), Optional.empty());
+            advices = adviceManager.getAdvices("giulia.lucchi",Optional.of("2000-01-01 11:00"), Optional.empty());
         } catch (Exception e) {
-            assertEquals("500", e.getMessage());
+            assertEquals("500",(new JSONObject(e.getMessage())).getString("code"));
         }
         String expectedMessage1 = "{\"doctorId\":\"mario.rossi\",\"advice\":\"inizia a prendere l'OKII\",\"timestamp\":\"2018-01-01T10:00:00.000Z\"}";
         assertEquals(expectedMessage1, advices.get(0).toString());

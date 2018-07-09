@@ -17,7 +17,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by lucch on 05/06/2018.
+ * Receive request to visualized personal sensor values by patient and
+ * sends them to history publisher.
+ *
+ * @author Giulia Lucchi
  */
 public class PatientDataRequestActor extends AbstractActor {
 
@@ -38,24 +41,28 @@ public class PatientDataRequestActor extends AbstractActor {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
                 JSONObject json;
                 try {
+
                     json = new JSONObject(message);
                     String patientId = json.getString("patientId");
                     String type = json.getString("type");
                     String start = json.getString("start");
                     String end =  json.getString("end");
+
                     String requesterRole =  json.getString("requesterRole");
                     String requesterId = json.getString("requesterId");
+
                     HistoryMessage historyMessage = new HistoryMessage(patientId, type, start, end, requesterRole, requesterId);
                     getContext().actorSelection("/user/app/historyPublisherActor").tell(historyMessage, ActorRef.noSender());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
         subscribe.setConsumer(consumer);
-        System.out.println(" -----> PatientDataRequestActor STARTED.");
     }
 
     @Override

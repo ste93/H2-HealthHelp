@@ -17,6 +17,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ *  Receives request to visualized personal drugs by patient and
+ *  sends them to multi drug publisher.
+ *
+ *  @author Giulia Lucchi
+ *  @author Margherita Pecorelli
+ */
 public class  DrugRequestActor extends AbstractActor {
 
     private static final String QUEUE_NAME= "drugRequest.queue";
@@ -38,21 +45,23 @@ public class  DrugRequestActor extends AbstractActor {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
                 JSONObject json;
                 try {
                     json = new JSONObject(message);
                     String patientId = json.getString("patientId");
                     String start = json.getString("start");
                     String end =  json.getString("end");
+
                     DrugRequestMessage drugRequest = new DrugRequestMessage(patientId, start, end);
                     getContext().actorSelection("/user/app/multiDrugPublisherActor").tell(drugRequest, ActorRef.noSender() );
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
         subscribe.setConsumer(consumer);
-        System.out.println(" -----> DrugReceiver STARTED.");
     }
 
     @Override

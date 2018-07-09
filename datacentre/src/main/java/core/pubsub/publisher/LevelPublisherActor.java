@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.util.stream.IntStream;
 
 /**
- * Actor that manages the emergency, derived from sensor data values.emergency
+ * Sends the emergency (level 3) or alert (level 2) to the patient's doctors.
  *
  * @author Giulia Lucchi
  */
@@ -29,7 +29,6 @@ public class LevelPublisherActor extends AbstractActor{
     public void preStart() throws Exception {
         super.preStart();
         this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
-
     }
 
     @Override
@@ -37,6 +36,7 @@ public class LevelPublisherActor extends AbstractActor{
 
         return receiveBuilder().match(ValueMessage.class, message -> {
             JSONArray doctors = patientManager.getPatientAssociations(message.getPatientId());
+
             IntStream.range(0, doctors.length()).forEach(x -> {
                 try {
                     String idDoctor = ((JSONObject) doctors.get(x)).getString("idDoctor");
@@ -49,6 +49,7 @@ public class LevelPublisherActor extends AbstractActor{
                     e.printStackTrace();
                 }
             });
+
         }).build();
     }
 }

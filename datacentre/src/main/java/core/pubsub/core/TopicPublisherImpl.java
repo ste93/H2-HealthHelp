@@ -8,6 +8,9 @@ import java.util.concurrent.TimeoutException;
 /**
  * Base subscriber class for publish/subscribe communication.
  * It handle the basic configuration for RabbitMQ client and define a default behaviour.
+ *
+ * @author RabbitMQ documentation
+ *          modify by Manuel Bottazzi
  */
 public class TopicPublisherImpl implements TopicPublisher {
 
@@ -55,9 +58,7 @@ public class TopicPublisherImpl implements TopicPublisher {
     @Override
     public void publishMessage(String message, String routingKey){
         try {
-            //System.out.println("prima pusblish");
             channel.basicPublish(this.exchangeName, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-            //System.out.println("dopo pusblish");
         } catch (IOException e) {
             System.err.println("Error during message publishing");
             e.printStackTrace();

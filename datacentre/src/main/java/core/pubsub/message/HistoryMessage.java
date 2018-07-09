@@ -1,7 +1,9 @@
 package core.pubsub.message;
 
 /**
- * Created by lucch on 05/06/2018.
+ * Manages the request to get all sensor's values of a specific patient.
+ *
+ * @author Giulia Lucchi
  */
 public class HistoryMessage {
     private String patientId;

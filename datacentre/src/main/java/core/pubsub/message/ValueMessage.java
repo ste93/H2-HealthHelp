@@ -7,6 +7,12 @@ import org.json.JSONObject;
  *
  * @author Giulia Lucchi
  */
+
+/**
+ * Manages the value send by sensor to detect its level.
+ *
+ * @author Giulia Lucchi
+ */
 public class ValueMessage {
 
     private JSONObject value;

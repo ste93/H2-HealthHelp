@@ -5,8 +5,10 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import core.dbmanager.h2application.H2dbManager;
-import core.dbmanager.h2application.H2dbManagerImpl;
+import core.dbmanager.h2dbManager.DataSensorManager;
+import core.dbmanager.h2dbManager.DataSensorManagerImpl;
+import core.dbmanager.h2dbManager.DrugManager;
+import core.dbmanager.h2dbManager.DrugManagerImpl;
 import core.pubsub.core.TopicSubscriber;
 import core.pubsub.core.TopicSubscriberImpl;
 import core.pubsub.message.MessagesUtils;
@@ -18,7 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by lucch on 07/06/2018.
+ * Receives prescribed drugs written by doctors for patients and store in application Knowledge base.
+ *
+ * @author Giulia Lucchi
+ * @author Margherita Pecorelli
  */
 public class DrugReceiverActor extends AbstractActor {
 
@@ -30,7 +35,7 @@ public class DrugReceiverActor extends AbstractActor {
     private static final int PORT = 8088;
 
     private final MessagesUtils utils = new MessagesUtils();
-    private final H2dbManager H2dbmanager = new H2dbManagerImpl();
+    private final DrugManager drugManager = new DrugManagerImpl();
 
     @Override
     public void preStart() throws Exception {
@@ -42,21 +47,21 @@ public class DrugReceiverActor extends AbstractActor {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
                 JSONObject json;
                 try {
                     json = new JSONObject(message);
-                    //System.out.println("arrivato drug   "+ json);
                     String patientId = json.getString("patientId");
                     String prescribedDrug = json.getString("message");
                     String messageToInsert = utils.convertToFormatApi(prescribedDrug);
-                    H2dbmanager.addDrug(patientId, messageToInsert);
+
+                    drugManager.addDrug(patientId, messageToInsert);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
         subscribe.setConsumer(consumer);
-        System.out.println(" -----> DrugReceierActor STARTED");
     }
 
     @Override
