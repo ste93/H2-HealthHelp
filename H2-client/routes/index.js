@@ -15,13 +15,14 @@ var userId;
 var patientId;
 var type;
 
-//HOME
+/** Login page and Home page */
 
 router.get('/', userAuthentication.getHome);
 
 router.post('/', userAuthentication.login);
 
-//PATIENT
+
+/** Patient side */
 
 router.get("/patient/:patientID", patient.getHome);
 
@@ -35,7 +36,7 @@ router.get("/patient/:patientID/drug", patient.getDrugs);
 
 router.get("/patient/:patientID/info", patient.getInfo);
 
-//DOCTOR
+/** Doctor Side */
 
 router.get("/doctor/:doctorID", doctor.getHome);
 

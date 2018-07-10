@@ -7,13 +7,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var associationRouter = require('./routes/associationRouting');
+var indexRouter = require('./app_server/routes/index');
+var associationRouter = require('./app_server/routes/associationRouting');
 
 var app = express();
 
 // dico all'app dove sono le view
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './app_server/views'));
 // e in che formato sono
 app.set('view engine', 'jade');
 

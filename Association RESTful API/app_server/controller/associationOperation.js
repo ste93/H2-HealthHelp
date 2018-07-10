@@ -13,11 +13,6 @@ var associations = require('../models/patientDoctor');
  * @throws 200 - OK
  *         400 - BAD REQUEST (missing or wrong parameters)
  *         404 - NOT FOUND (patient or doctor not found)
- * 
- * @param {String} idPatient - patient identifier
- * @param {String} idDoctor - doctor identifier
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.insertAssociation = function(req, res){
     var idPatient = req.param('idPatient');
@@ -58,6 +53,13 @@ module.exports.insertAssociation = function(req, res){
     
 }
 
+/** Get a specific association or a doctor's or patient's list
+ *  respectively related to patient or doctor.
+ *  
+ * @throws 200 - OK
+ *         400 - BAD REQUEST (missing or wrong parameters)
+ *         404 - NOT FOUND (patient or doctor not found)
+ */
 module.exports.getAssociations = function(req, res){
     var idPatient = req.param('idPatient');
     var idDoctor = req.param('idDoctor');
@@ -69,6 +71,33 @@ module.exports.getAssociations = function(req, res){
     } else {
        _getOneAssociation(idPatient, idDoctor, res);
     }
+}
+
+
+/** Removes an association between specific doctor and patient
+ *   
+ * @throws 200 - OK
+ *         400 - BAD REQUEST              * 
+ */
+module.exports.removeAssociation = function (req, res){
+    var idPatient = req.param('idPatient');
+    var idDoctor = req.param('idDoctor');
+
+    associations.findOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, ass) {
+        if(ass == null) {
+            res.send(404);
+        } else if (err){
+            res.send(400);
+        } else {
+            associations.deleteOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, assoc) {
+                if (err){
+                    res.send(400);
+                } else {
+                    res.send(200);
+                }
+             });
+        }
+     });
 }
 
 /** Finds the association between a specific doctor and patient
@@ -149,35 +178,4 @@ function _getDoctors(idPatient, res){
             res.send(404);
         }
     });
-}
-
-/** Removes an association between specific doctor and patient
- *   
- * @throws 200 - OK
- *         400 - BAD REQUEST             
- * 
- * @param {String} idPatient - patient identifier
- * @param {String} idDoctor - doctor identifier
- * @param {Response} res - response of RESTful request
- * 
- */
-module.exports.removeAssociation = function (req, res){
-    var idPatient = req.param('idPatient');
-    var idDoctor = req.param('idDoctor');
-
-    associations.findOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, ass) {
-        if(ass == null) {
-            res.send(404);
-        } else if (err){
-            res.send(400);
-        } else {
-            associations.deleteOne({"idPatient" : idPatient,"idDoctor": idDoctor},function(err, assoc) {
-                if (err){
-                    res.send(400);
-                } else {
-                    res.send(200);
-                }
-             });
-        }
-     });
 }

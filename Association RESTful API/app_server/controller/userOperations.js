@@ -14,13 +14,6 @@ var users;
 /** Returns user's informations
  *  
  * @throws 400 - BAD REQUEST
- * 
- * @returns a JSON with all user's informations
- * 
- * @param {String} id - user identifier
- * @param {String} role - user's role: patient or doctor
- * @param {Response} res - response of RESTful request
- * 
  */
 function findUser(id, role, res){
     setCollection(role);

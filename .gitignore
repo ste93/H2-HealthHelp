@@ -17,6 +17,7 @@ out/
 .gradle/
 */node_modules
 */package-lock.json
+node_modules
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

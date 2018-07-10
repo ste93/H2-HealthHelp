@@ -11,13 +11,7 @@ var associations = require('../models/patientDoctor');
 /** Returns doctor's informations
  *  
  * @throws 400 - BAD REQUEST
- *         404 - NOT FOUND
- * 
- * @returns a JSON with all doctor's informations
- * 
- * @param {String} id - doctor identifier
- * @param {Response} res - response of RESTful request
- * 
+ *         404 - NOT FOUND 
  */
 module.exports.findDoctor = function(req, res){
     var id = req.param('_id');
@@ -36,13 +30,6 @@ module.exports.findDoctor = function(req, res){
  *  
  * @throws 200 - OK
  *         400 - BAD REQUEST (missing or wrong parameters)   
- * 
- * @param {String} id - doctor identifier
- * @param {String} name - doctor's name
- * @param {String} surname - doctor's surname
- * @param {String} cf - doctor's CF
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.insertDoctor = function(req, res){
     var id = req.param('_id');
@@ -70,10 +57,6 @@ module.exports.insertDoctor = function(req, res){
  *  
  * @throws 200 - OK
  *         400 - BAD REQUEST (missing or wrong parameters)
- *             
- * @param {String} id - doctor identifier
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.removeDoctor = function(req, res){
     var id = req.param('_id');

@@ -7,17 +7,10 @@
 var patients = require('../models/patient');
 var associations = require('../models/patientDoctor');
 
-
 /** Returns patient's informations
  * 
  * @throws 400 - BAD REQUEST
  *         404 - NOT FOUND
- * 
- * @returns a JSON with all patient's informations
- * 
- * @param {String} id - patient id
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.findPatient =  function(req, res){
     var id = req.param('_id');
@@ -36,13 +29,6 @@ module.exports.findPatient =  function(req, res){
  * 
  * @throws 200 - OK
  *         400 - BAD REQUEST (missing or wrong parameters)   
- * 
- * @param {String} id - patient identifier
- * @param {String} name - patient's name
- * @param {String} surname - patient's surname
- * @param {String} cf - patient's CF
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.insertPatient = function(req, res){
     var id = req.param('_id');
@@ -70,10 +56,6 @@ module.exports.insertPatient = function(req, res){
  * 
  * @throws 200 - OK
  *         400 - BAD REQUEST (missing or wrong parameters)
- *             
- * @param {String} id - patient identifier
- * @param {Response} res - response of RESTful request
- * 
  */
 module.exports.removePatient = function(req, res){
     var id = req.param('_id');
