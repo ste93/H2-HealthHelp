@@ -16,9 +16,9 @@ import java.util.List;
 
 public class ControlUnit extends Thread{
 
-    private final String associatedDoctorID;
+    private static final int ASSOCIATION_AMOUNT = 3;
 
-    private List<String> patientList;
+    private List<Patient> patientList;
     private List<PatientDataPublisher> publisherList;
     private PatientManager patientManager;
     private AssociationsManager associationsManager;
@@ -27,9 +27,8 @@ public class ControlUnit extends Thread{
     private boolean run = false;
     private boolean stop = false;
 
-    public ControlUnit(int patients, int countFrom, String doctorID){
-        this.associatedDoctorID = doctorID;
-        System.out.println("[CONTROL UNIT] This control unit is associated with doctor : " + this.associatedDoctorID);
+    public ControlUnit(int patients, int countFrom, int lastDoctorIndex){
+
         this.patientList = new ArrayList<>();
         this.publisherList = new ArrayList<>();
         this.patientManager = new PatientManagerImpl();
@@ -38,17 +37,25 @@ public class ControlUnit extends Thread{
 
         for (int i = countFrom; i < countFrom + patients; i ++){
             String patientId = "patient.test." + i;
-            patientList.add(patientId);
+            Patient p = new Patient(patientId);
+
             publisherList.add(new PatientDataPublisher(patientId));
             // add patient to application db
             h2dbManager.registration(new User(patientId,"test", "test", "patient" + i, "TESTTESTTEST", "123456789", "test@test.com", UserRole.PATIENT.getRole()));
             // add patient to association
             patientManager.createNewUser(patientId, "patient" , "test" + i , "TSTTST12A34B345C");
             try {
-                associationsManager.createNewAssociation(patientId, this.associatedDoctorID);
+                for( int j = 0; j < ASSOCIATION_AMOUNT ; j++ ) {
+                    String doctorID = "test.doctor" + (int) (Math.random() * lastDoctorIndex);
+                    System.out.println("Associating with doctor " + doctorID);
+                    p.addDoctor(doctorID);
+                    associationsManager.createNewAssociation(patientId, doctorID);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            patientList.add(p);
             System.out.println("[CONTROL UNIT] Patient created : " + patientId);
         }
 
@@ -73,7 +80,7 @@ public class ControlUnit extends Thread{
                 }
 
                 try {
-                    Thread.sleep(((long)(Math.random() * 5000)) + 1000);
+                    Thread.sleep(((long)(Math.random() * 5000)) + 10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -99,15 +106,15 @@ public class ControlUnit extends Thread{
             description = "just start digging";
         }
 
-        String message =  "{\"type\" : " + "temperature" + ", " +
+        String message =  "{\"type\" : \"" + "temperature" + "\", " +
                 "\"message\" : { " +
-                    "\"patientID\" : " + patientId + "," +
-                    "\"value\" : " + value + "," +
+                    "\"patientId\" : \"" + patientId + "\"," +
+                    "\"value\" : \"" + value + "\"," +
                     "\"unit\" : \"celsius\" , " +
-                    "\"timestamp\" : " + "25/06/2018 17:30:00:132" + "," +
+                    "\"timestamp\" : \"" + "25/06/2018 17:30:00:132" + "\"," +
                     "\"output\" : {" +
-                        "\"level\" : " + level + "," +
-                        "\"description\" : " + description +
+                        "\"level\" : \"" + level + "\" ," +
+                        "\"description\" : \"" + description + "\"" +
                     "}" +
                 "}" +
                 "}";
@@ -130,17 +137,19 @@ public class ControlUnit extends Thread{
 
     private void clearDB() {
         System.out.println("[CONTROL UNIT] Cleaning up database !");
-        for (String patient : patientList){
+        for (Patient patient : patientList){
             try {
-                associationsManager.deleteAssociation(patient, this.associatedDoctorID);
+                for ( String doctor : patient.getAssociatedDoctor()) {
+                    associationsManager.deleteAssociation(patient.getPatientID(), doctor);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         System.out.println("[CONTROL UNIT] Association deleted");
-        for (String patient : patientList){
-            patientManager.deleteUser(patient);
-            h2dbManager.deleteUser(patient, UserRole.PATIENT);
+        for (Patient patient : patientList){
+            patientManager.deleteUser(patient.getPatientID());
+            h2dbManager.deleteUser(patient.getPatientID(), UserRole.PATIENT);
         }
         System.out.println("[CONTROL UNIT] Patient deleted");
     }

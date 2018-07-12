@@ -114,7 +114,7 @@ public class controlUnitSimulator {
                 doctorList.add(doctorID);
                 //register the new user to H2 DB
                 h2dbManager.registration(new User(doctorID,"test", "test", "doctor" + i, "TESTTESTTEST", "123456789", "test@test.com", UserRole.DOCTOR.getRole()));
-                ControlUnit cu = new ControlUnit(patientPerControlUnit, i * patientPerControlUnit, doctorID);
+                ControlUnit cu = new ControlUnit(patientPerControlUnit, i * patientPerControlUnit, i);
                 cu.setName("Control Unit " + i);
                 controlUnitList.add(cu);
                 doctorID = "test.doctor" + (i+1);
