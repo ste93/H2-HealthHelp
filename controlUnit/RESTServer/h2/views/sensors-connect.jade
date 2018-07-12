@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .row.page-header
+    .col-lg-12
+      h1 Sensors Connection Manager
+      | Connecting the sensor : #{id}
+  .row
+    .col-xs-12.col-md-6
+      form.form-horizontal(action="", method="post", role="form")
+
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for="name") Sensor Name
+          .col-xs-12.col-sm-10
+            input#name.form-control(name="name")
+
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for="dataType") Measured Value
+          .col-xs-12.col-sm-10
+            input#name.form-control(name="dataType")
+
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for="unit") Unit of measurement
+          .col-xs-12.col-sm-10
+            input#name.form-control(name="unit")
+
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for="patient") Patient
+          .col-xs-12.col-sm-4
+            select#rating.form-control.input-sm(name="patient")
+                each pat in patientList
+                  option #{pat.id}
+
+        button.btn.btn-default.pull-right Save sensor configuration
+  .col-xs-12.col-md-4

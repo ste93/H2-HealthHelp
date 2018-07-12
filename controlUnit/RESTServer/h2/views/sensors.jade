@@ -1,0 +1,41 @@
+extends layout
+
+block content
+
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+
+  .row
+    .col-xs-8.col-sm-8
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Near Sensors
+        .panel-body
+          .row.list-group
+            each ns in nearSensorsList
+              .col-xs-6.list-group-item
+                h4
+                  span #{ns.id}
+                  a.btn.btn-default.pull-right(href='/sensors/#{ns.id}/connectNew') Connect
+    .col-xs-12.col-sm-4
+      p.lead
+      | Sensor manager help you to connect and manage your sensors through
+      | the H2 framework to monitor your vital parameter with no effort.
+  .row
+    .col-xs-8.col-sm-8
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title My Sensors
+        .panel-body
+          .row.list-group
+            each sensor in sensorsList
+              .col-xs-6.list-group-item
+                h4
+                  a(href="/sensors/#{sensor.sensorId}/details") #{sensor.value.name}
+                  a.btn.btn-default.pull-right(href='/sensors/#{sensor.sensorId}/delete') Delete
+                  - //a.btn.btn-default.pull-right(onclick='#{action}') something
+                  a.btn.btn-default.pull-right(href='/sensors/#{sensor.sensorId}/connect') Use
+                p.list-item
+                  | Type: #{sensor.value.dataType} <br/>
