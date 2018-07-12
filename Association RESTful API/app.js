@@ -7,13 +7,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var associationRouter = require('./routes/associationRouting');
+var indexRouter = require('./app_server/routes/index');
+var associationRouter = require('./app_server/routes/associationRouting');
 
 var app = express();
 
 // dico all'app dove sono le view
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './app_server/views'));
 // e in che formato sono
 app.set('view engine', 'jade');
 
@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // definisco i namespace base per due tipologie di rotte: routes e users sono 'router' di rotte
 app.use('/', indexRouter);
-app.use('/database/association', associationRouter);
+app.use('/database/associations', associationRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

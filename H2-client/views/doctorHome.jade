@@ -1,0 +1,97 @@
+extends layout
+
+block scriptWebSocket
+  script(src='../socket.io/socket.io.js')
+  script(src='../javascripts/htmlManagement.js')
+  script(src='../javascripts/doctorWebSocket.js')
+
+
+block notifications
+  #doctorModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          //button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+          h4.modal-title Notifications
+        .modal-body
+          div(class="modalBodyContent")
+            p emergency
+            div(id="emergencyNotifications")
+            p alert
+            div(id="alertNotifications")
+        .modal-footer
+          button.btn.btn-default(type="button", data-dismiss="modal") Close
+
+block nav
+   .navbar-header
+            a.navbar-brand(href='/doctor/'+user) H2 - Health Help
+            a.navbar-brand(href='/doctor/'+user+'/info') About me
+            a.navbar-brand(href='/') Logout
+            a.navbar-brand(href='#doctorModal', data-toggle="modal") Notifications
+            button.navbar-toggle(type='button', data-toggle='collapse', datatarget='#navbar-main')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+
+block content
+  #banner.page-header
+    .row    
+      .col-lg-6
+        h1= title
+        h3= subtitle
+  .row
+    .col-xs-12.col-sm-8
+
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title History
+        
+        .panel-body
+          form.form-signin(action="", method="post", name="getHistory")
+            div.input
+                span.label Patient id
+                input(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+            div.input
+                span.label Type
+                textarea(type="text", name="type", cols="100", rows="1", placeholder= "i.e. temperature")
+            div.input
+                span.label Start
+                textarea(type="text", name="start", cols="100", rows="1", placeholder= "i.e. 2018-01-02 11:00")
+            div.input
+                span.label End
+                textarea(type="text", name="end", cols="100", rows="1", placeholder= "i.e. 2018-05-02 11:00")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") Get data history
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Advice
+
+        .panel-body
+          form.form-signin(action="", method="post", name="addAdvice")
+            div.input
+                span.label Patient id
+                textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+            div.input
+                span.label advice
+                textarea(type="text", name="text", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") Send Advice
+        
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Drug
+
+        .panel-body
+          form.form-signin(action="", method="post", name="addDrug")
+            div.input
+                span.label Patient id
+                textarea(type="text", name="pat", cols="100", rows="1", placeholder= "i.e. giulia.lucchi")
+            div.input
+                span.label Drug Name
+                textarea(type="text", name="drug", cols="100", rows="1", placeholder= "i.e. sarebbe meglio prendere l'okii")
+            div.actions
+              button.btn.btn-large.btn-primary(type="submit") Prescribe Drug
+
+
+  
+  

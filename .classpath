@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="android/sensor/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="android/sensor/app/src/main/java"/>
+	<classpathentry kind="src" path="android/sensor/app/src/test/java"/>
+	<classpathentry kind="src" path="datacentre/src/main/java"/>
+	<classpathentry kind="src" path="datacentre/src/test/java"/>
+	<classpathentry kind="lib" path="android/sensor/app/libs/sdk-v1.0.0.jar"/>
+	<classpathentry kind="lib" path="android/sensor/app/libs/ssensorextensionsdk-v1.1.7.jar"/>
+	<classpathentry kind="lib" path="android/sensor/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="datacentre/build/libs/H2-HealthHelp-0.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="datacentre/build/libs/H2-HealthHelp-0.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="datacentre/build/libs/H2-HealthHelp-0.0.1.jar"/>
+	<classpathentry kind="lib" path="datacentre/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="datacentre/build/classes/java/main"/>
+</classpath>

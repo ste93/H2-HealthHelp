@@ -6,14 +6,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var applicationRouter = require('./routes/H2routing');
+var indexRouter = require('./app_server/routes/index');
+var applicationRouter = require('./app_server/routes/H2routing');
 
 var app = express();
 
 
 /** Set the directory of views in jade format*/
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './app_server/views'));
 app.set('view engine', 'jade');
 
 app.use(bodyparser.json());
