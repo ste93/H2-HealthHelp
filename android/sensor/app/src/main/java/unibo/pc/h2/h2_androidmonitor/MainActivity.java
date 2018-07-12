@@ -3,12 +3,24 @@ package unibo.pc.h2.h2_androidmonitor;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.text.Layout;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -20,6 +32,12 @@ import com.samsung.android.sdk.sensorextension.SsensorEventListener;
 import com.samsung.android.sdk.sensorextension.SsensorExtension;
 import com.samsung.android.sdk.sensorextension.SsensorManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
+import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,8 +53,9 @@ public class MainActivity extends Activity {
     public static final String TAG = "H2-HeartBeatMonitor";
 
     //todo: il sensor id dovrà essere gestito in modo univoco.
-    private static final String sensorID = "AHB-42";
+    //private static final String sensorID = "AHB-42";
 
+    private String sensorID = null;
     SsensorManager SSensorManager = null;
     SsensorExtension SsensorExtension = null;
     Ssensor IRSensor = null;
@@ -49,12 +68,17 @@ public class MainActivity extends Activity {
     ToggleButton senseButton = null;
     ToggleButton emergencyButton = null;
     ToggleButton connectionConfButton = null;
+    Button configButton = null;
+
     private TextView beatLabel = null;
     private RealtimeUpdatesFragment chartFragment = null;
 
     private ConnectionTask tcpTask;
 
     boolean emergency;
+
+    String hostIp;
+    String hostPort;
 
     @TargetApi(23) @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +94,7 @@ public class MainActivity extends Activity {
         senseButton = (ToggleButton) findViewById(R.id.sense_button);
         emergencyButton = (ToggleButton) findViewById(R.id.emergency_button);
         connectionConfButton = (ToggleButton) findViewById(R.id.connection_button);
+        configButton = (Button) findViewById(R.id.config_button);
         beatLabel = (TextView) findViewById(R.id.beatLabel);
 
         chartFragment =  (RealtimeUpdatesFragment) getFragmentManager().findFragmentById(R.id.chart_fragment);
@@ -170,8 +195,44 @@ public class MainActivity extends Activity {
                     try {
                         if (connectionConfButton.isSelected()) {
 
-                            tcpTask = new ConnectionTask(sensorID);
-                            tcpTask.execute();
+                            ////////////////////////////////////////
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setTitle("Connect to .. ");
+
+                            // Set up the input
+                            final EditText input = new EditText(mContext);
+                            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                            builder.setView(input);
+
+                            // Set up the buttons
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String connectionString = input.getText().toString();
+                                    hostIp = connectionString.split(":")[0];
+                                    hostPort = connectionString.split(":")[1];
+                                    if (hostIp != null && hostPort != null) {
+                                        sensorID = getMacAddress();
+                                        Log.d("HTTP", "HTTP : connect to " + hostIp);
+                                        Log.d("HTTP", "HTTP : connect to " + hostPort);
+                                        tcpTask = new ConnectionTask(mContext, hostIp, hostPort, sensorID);
+                                        tcpTask.execute();
+                                    }
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
+
+                            //////////////////////////////////
+
                         }
 
                         else
@@ -186,6 +247,76 @@ public class MainActivity extends Activity {
                     }
                 }
             });
+        }
+
+
+        //// Behaviour of the Connection Button //////
+        if (configButton != null) {
+            configButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ////////////////////////////////////////
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Sensor Configuration");
+
+                    View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.config_dialog, (ViewGroup) findViewById(android.R.id.content), false);
+                    // Set up the input
+                    final EditText patientInput = (EditText) viewInflated.findViewById(R.id.config_patient);
+                    final EditText nameInput = (EditText) viewInflated.findViewById(R.id.config_name);
+                    final EditText dataTypeInput = (EditText) viewInflated.findViewById(R.id.config_datatype);
+                    final EditText unitInput = (EditText) viewInflated.findViewById(R.id.config_unit);
+                    builder.setView(viewInflated);
+
+
+                    sensorID = getMacAddress();
+
+                    if (patientInput != null)
+                        patientInput.setText("TEsttttt");
+                    else
+                        Log.e("d3", "FUCK !");
+
+
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String filename = "h2Sensor.config";
+                            JSONObject jsonData = new JSONObject();
+                            try {
+                                jsonData.put("id", sensorID);
+                                jsonData.put("name", nameInput.getText().toString());
+                                jsonData.put("patient", patientInput.getText().toString());
+                                jsonData.put("dataType", dataTypeInput.getText().toString());
+                                jsonData.put("unit", unitInput.getText().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String fileContents = jsonData.toString();
+                            Log.d("CONFIG : ", fileContents);
+                            FileOutputStream outputStream;
+
+                            try {
+                                outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                                outputStream.write(fileContents.getBytes());
+                                outputStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
+                }
+            });
+
         }
     }
 
@@ -272,6 +403,41 @@ public class MainActivity extends Activity {
         }
     }
 
+    public static String getMacAddress() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
+    }
+
+    /*public String getMacAddress(Context context) {
+        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        String macAddress = wimanager.getConnectionInfo().getMacAddress();
+        if (macAddress == null) {
+            macAddress = "Device don't have mac address or wi-fi is disabled";
+        }
+        return macAddress;
+    }*(
+
     /**
      * Specify the behaviour of the listener of the value of Red Light sensor ( what to do with read data )
      */
@@ -284,10 +450,10 @@ public class MainActivity extends Activity {
 
         @Override
         public void OnSensorChanged(SsensorEvent event) {
-            complete = DataManager.getInstance().addRedData(event.values[0]);
-            if (complete){
+            /* complete = */DataManager.getInstance().addRedData(event.values[0]);
+            /*if (complete){
                 averageBeat();
-            }
+            }*/
         }
     }
 }

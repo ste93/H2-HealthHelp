@@ -1,5 +1,6 @@
 package unibo.pc.h2.h2_androidmonitor;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,18 +14,17 @@ import java.io.Serializable;
  */
 public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Serializable {
 
-    private TCPClient socket;
+    private HttpPoster socket;
     private String sensorId;
+    private boolean initialized = false;
 
-    public ConnectionTask(String sensorId) {
-        this.sensorId = sensorId;
-        this.socket = new TCPClient(sensorId, new TCPClient.OnMessageReceived() {
-            @Override
-            public void messageReceived(String message) {
-                Log.d("TCP Task", message);
-            }
-        });
+    public ConnectionTask(Context context, String hostIp, String hostPort, String sensorID) {
+        this.sensorId = sensorID;
+        this.socket = new HttpPoster(context, hostIp, hostPort, sensorId);
+    }
 
+    public void sendConfigMessage() {
+        this.socket.sendConfigurationMessage();
     }
 
     /**
@@ -44,7 +44,10 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Seria
 
    @Override
    protected Void doInBackground(Void... params) {
-       this.socket.connect();
+        if (!initialized){
+            this.socket.sendConfigurationMessage();
+            initialized = true;
+        }
        this.socket.run();
        Log.d("TCP TASK", "doInBackground: Connected to the Internet");
        while(true){}
