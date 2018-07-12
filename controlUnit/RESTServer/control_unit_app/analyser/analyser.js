@@ -6,6 +6,8 @@ var request = require('request');
 var moment = require('moment');
 var publisher = require('../pub_sub/controlUnitPublisher');
 var emergencyManager = require ('../hardware/emergencyManager');
+var lcd = require('../hardware/controlUnitLCD');
+lcd.initializeLcd();
 
 var sensorsList = [];
 
@@ -101,6 +103,7 @@ function analyse(sensorData, sensorInfo) {
         } else if ( value <= 40 || value >= 180) {
           level = 2;
           description = 'warning, something strange is happening';
+          lcd.write("Alert: heartbeat");
         } else {
           level = 1;
           description = 'everything ok';
@@ -114,6 +117,7 @@ function analyse(sensorData, sensorInfo) {
       } else if ( value <= 41) {
         level = 2;
         description = 'warning, something strange is happening';
+        lcd.write("Alert: high temp");
       } else {
         level = 3;
         description = 'just start digging';
@@ -132,6 +136,7 @@ function analyse(sensorData, sensorInfo) {
       } else if ( value <= 200) {
         level = 2;
         description = 'warning, something strange is happening';
+        lcd.write("Alert: glycemia");
       } else {
         level = 3;
         description = 'just start digging';
@@ -145,6 +150,7 @@ function analyse(sensorData, sensorInfo) {
     default:
       level = 2;
       description = 'warning, cannot analyze this parameter !';
+      lcd.write("Alert: Error");
     }
 
     console.log("Analysis completed ! ");

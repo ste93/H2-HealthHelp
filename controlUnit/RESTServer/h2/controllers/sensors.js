@@ -120,6 +120,8 @@ var renderConnectForm = function( req, res, patientList) {
 * GET form for new sensor connection.
 */
 module.exports.sensorConnectNew = function(req, res){
+
+  lcd.write("Adding sensor...");
   // Request patients data to the REST service.
   request.get('http://localhost:3000/api/patients', function (error, response, body) {
     if(error)
@@ -139,6 +141,7 @@ module.exports.sensorConnectNew = function(req, res){
 */
 module.exports.addNewSensors = function(req, res){
   // retrieve data from the submitted form.
+  lcd.write("Added new sensor");
   var postData = {
     id : req.params.sensorID,
     name : req.body.name,
@@ -163,6 +166,7 @@ module.exports.addNewSensors = function(req, res){
 
   //TODO
   //ble.addPairedPeripheral(req.params.sensorID);
+  lcd.reset();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
