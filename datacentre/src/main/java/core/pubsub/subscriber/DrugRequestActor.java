@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  *  Receives request to visualized personal drugs by patient and
  *  sends them to multi drug publisher.
@@ -30,15 +32,13 @@ public class  DrugRequestActor extends AbstractActor {
     private static final String EXCHANGE_NAME = "drugRequest";
     private static final List<String> ROUTING_KEY_ADVICE = Arrays.asList("datacentre.request.drug");
 
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private final MessagesUtils utils = new MessagesUtils();
 
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

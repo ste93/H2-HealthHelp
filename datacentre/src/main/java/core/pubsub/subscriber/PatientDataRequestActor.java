@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Receive request to visualized personal sensor values by patient and
  * sends them to history publisher.
@@ -27,14 +29,12 @@ public class PatientDataRequestActor extends AbstractActor {
     private static final String QUEUE_NAME= "history.queue";
     private static final String EXCHANGE_NAME = "historyRequest";
     private static final List<String> ROUTING_KEY_HISTORY = Arrays.asList("datacentre.request.history");
-
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
+;
 
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_HISTORY, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_HISTORY, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Receives the sensor values from specific patient and store this values
  * and check the value's level.
@@ -33,8 +35,6 @@ public class PatientDataReceiverActor extends AbstractActor {
     private static final String ROUTING_KEY_SENSOR = "datacentre.receive.sensor";
     private static final List<String> ROUTING_KEYS = Arrays.asList(ROUTING_KEY_DATA, ROUTING_KEY_SENSOR);
 
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private final DataSensorManager dataSensorManager = new DataSensorManagerImpl();
     private final MessagesUtils utils = new MessagesUtils();
@@ -42,7 +42,7 @@ public class PatientDataReceiverActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEYS, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

@@ -8,6 +8,8 @@ import core.pubsub.core.TopicPublisherImpl;
 import core.pubsub.message.AdviceMessage;
 import core.pubsub.message.MessagesUtils;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Sends the advice notification written by doctor to the patient.
  *
@@ -16,8 +18,8 @@ import core.pubsub.message.MessagesUtils;
 public class AdvicePublisherActor extends AbstractActor {
 
     private static final String EXCHANGE_NAME = "advice";
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
+    //private static final String HOST_IP = "213.209.230.94";
+    //private static final int PORT = 8088;
 
     private final AdviceManager adviceManager = new AdviceManagerImpl();
     private final MessagesUtils utils = new MessagesUtils();
@@ -26,7 +28,7 @@ public class AdvicePublisherActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
     }
 
     @Override

@@ -40,8 +40,8 @@ public class TopicSubscriberImpl implements TopicSubscriber {
     public TopicSubscriberImpl(String exchangeName, String queueName, List<String> topicBindKey, String hostIP, int port) throws IOException, TimeoutException {
         factory = new ConnectionFactory();
         factory.setHost(hostIP);
-        factory.setUsername("admin");
-        factory.setPassword("exchange");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
         factory.setPort(port);
         connection = factory.newConnection();
         this.exchangeName = exchangeName;

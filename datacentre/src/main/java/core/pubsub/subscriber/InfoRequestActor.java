@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Receives request to visualized personal information related to a requester and
  *  sends them to info publisher.
@@ -32,15 +34,13 @@ public class InfoRequestActor extends AbstractActor {
     private static final String EXCHANGE_NAME = "info";
     private static final List<String> ROUTING_KEY_INFO = Arrays.asList("datacentre.request.info");
 
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private static final UserManager userManager = new UserManagerImpl();
 
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_INFO, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_INFO, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

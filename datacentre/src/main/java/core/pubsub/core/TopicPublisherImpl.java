@@ -45,8 +45,8 @@ public class TopicPublisherImpl implements TopicPublisher {
         this.factory = new ConnectionFactory();
         this.factory.setHost(hostIP);
         this.factory.setPort(port);
-        this.factory.setUsername("admin");
-        this.factory.setPassword("exchange");
+        this.factory.setUsername("guest");
+        this.factory.setPassword("guest");
         mqttSetup();
     }
 

@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Receives prescribed drugs written by doctors for patients and store in application Knowledge base.
  *
@@ -31,8 +33,6 @@ public class DrugReceiverActor extends AbstractActor {
     private static final String EXCHANGE_NAME = "drug";
     private static final List<String> ROUTING_KEY_DRUG = Arrays.asList("datacentre.receive.drug");
 
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private final MessagesUtils utils = new MessagesUtils();
     private final DrugManager drugManager = new DrugManagerImpl();
@@ -40,7 +40,7 @@ public class DrugReceiverActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_DRUG, HOST_IP, PORT);
+        TopicSubscriber subscribe = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_DRUG, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscribe.getChannel()) {
             @Override

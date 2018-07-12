@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.util.stream.IntStream;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Sends the emergency (level 3) or alert (level 2) to the patient's doctors.
  *
@@ -19,8 +21,6 @@ import java.util.stream.IntStream;
 public class LevelPublisherActor extends AbstractActor{
 
     private static final String EXCHANGE_NAME = "level";
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private PatientManager patientManager = new PatientManagerImpl();
     private TopicPublisher publisher;
@@ -28,7 +28,7 @@ public class LevelPublisherActor extends AbstractActor{
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
     }
 
     @Override

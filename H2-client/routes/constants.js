@@ -1,4 +1,5 @@
-var amqpAddress = 'amqp://admin:exchange@213.209.230.94:8088';
+//var amqpAddress = 'amqp://admin:exchange@213.209.230.94:8088';
+var amqpAddress = 'amqp://guest:guest@192.168.43.120:5672';
 var exchangeTypeConstant = 'topic'
 var notificationLevelExchangeName = 'level'
 var notificationLevel2QueueName = "level2.queue";

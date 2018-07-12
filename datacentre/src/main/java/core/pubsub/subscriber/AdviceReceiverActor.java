@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Receives advices written by doctors for patients and sends them to advice publisher.
  *
@@ -27,14 +29,12 @@ public class AdviceReceiverActor extends AbstractActor {
     private static final String EXCHANGE_NAME = "advice";
     private static final List<String> ROUTING_KEY_ADVICE = Arrays.asList("datacentre.receive.advice");
 
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     @Override
     public void preStart() throws Exception {
         super.preStart();
 
-        TopicSubscriber subscriber = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP, PORT);
+        TopicSubscriber subscriber = new TopicSubscriberImpl(EXCHANGE_NAME, QUEUE_NAME, ROUTING_KEY_ADVICE, HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
 
         Consumer consumer = new DefaultConsumer(subscriber.getChannel()) {
             @Override

@@ -11,6 +11,8 @@ import org.json.JSONArray;
 
 import java.util.Optional;
 
+import static core.pubsub.IpAndPort.HOST_IP_AND_PORT;
+
 /**
  * Sends to the requester all drugs relative to a specific patient on a time range.
  *
@@ -19,8 +21,6 @@ import java.util.Optional;
 public class MultiDrugPublisherActor extends AbstractActor {
 
     private static final String EXCHANGE_NAME = "drugRequest";
-    private static final String HOST_IP = "213.209.230.94";
-    private static final int PORT = 8088;
 
     private DrugManager drugManager = new DrugManagerImpl();
     private TopicPublisher publisher;
@@ -28,7 +28,7 @@ public class MultiDrugPublisherActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP,PORT);
+        this.publisher = new TopicPublisherImpl(EXCHANGE_NAME,HOST_IP_AND_PORT.getIp(),HOST_IP_AND_PORT.getPort());
     }
 
     @Override
