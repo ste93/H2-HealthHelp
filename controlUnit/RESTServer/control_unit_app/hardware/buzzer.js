@@ -78,12 +78,16 @@ function switchSound() {
 */
 function endAlarm() {
   clearInterval(beepInterval);
-  buzzer.writeSync(0);
+  if (buzzer){
+  	buzzer.writeSync(0);
+  }
 }
 
 // clean exit when the process is terminated.
 process.on('SIGINT', function () {
-  endBeep();
-  buzzer.unexport();
+  endAlarm();
+  if(buzzer){
+     buzzer.unexport();
+  }
   process.exit();
 });

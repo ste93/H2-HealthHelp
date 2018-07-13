@@ -8,6 +8,7 @@ var publisher = require('../pub_sub/controlUnitPublisher');
 var emergencyManager = require ('../hardware/emergencyManager');
 var lcd = require('../hardware/controlUnitLCD');
 lcd.initializeLcd();
+var lcdHasMessage = false;
 
 var sensorsList = [];
 
@@ -94,7 +95,9 @@ function analyse(sensorData, sensorInfo) {
     case 'heartbeat':
         if (value <= 20 || value >= 250 ){
           level = 3;
-          description = 'just start digging';
+          description = 'Emergency: critical heart beat';
+          lcd.write("Emergency: heart");
+          lcdHasMessage = true;
           emergencyCount += 1;
           if (emergencyCount >= emergencyThreshold){
             emergencyManager.startEmergency() ;
@@ -102,25 +105,37 @@ function analyse(sensorData, sensorInfo) {
           }
         } else if ( value <= 40 || value >= 180) {
           level = 2;
-          description = 'warning, something strange is happening';
+          description = 'Warning: high heart beat !';
           lcd.write("Alert: heartbeat");
+          lcdHasMessage = true;
         } else {
           level = 1;
-          description = 'everything ok';
+          description = 'Heart Beat OK !';
+		  if (lcdHasMessage ) {
+			  lcd.reset();
+			  lcdHasMessage = false;
+		  }
         }
         break;
 
     case 'temperature':
       if (value >= 33 && value < 37 ){
         level = 1;
-        description = 'everything ok';
-      } else if ( value <= 41) {
+        description = 'Temperature OK !';
+		if (lcdHasMessage ) {
+			  lcd.reset();
+			  lcdHasMessage = false;
+		  }
+      } else if ( value >= 37 && value <= 41) {
         level = 2;
-        description = 'warning, something strange is happening';
+        description = 'Warning: high temperature';
         lcd.write("Alert: high temp");
+		lcdHasMessage = true;
       } else {
         level = 3;
-        description = 'just start digging';
+        description = 'Emergency: critical temperature';
+        lcd.write("Emergency: temp");
+        lcdHasMessage = true;
         emergencyCount += 1;
         if (emergencyCount >= emergencyThreshold){
           emergencyManager.startEmergency() ;
@@ -132,14 +147,21 @@ function analyse(sensorData, sensorInfo) {
     case 'glycemia' :
       if (value >= 60 && value < 110 ){
         level = 1;
-        description = 'everything ok';
-      } else if ( value <= 200) {
+        description = 'Glycemia OK !';
+		if (lcdHasMessage ) {
+			  lcd.reset();
+			  lcdHasMessage = false;
+		  }
+      } else if ( value >= 100 && value <= 200) {
         level = 2;
-        description = 'warning, something strange is happening';
+        description = 'Warning: high glycemia level';
         lcd.write("Alert: glycemia");
+		lcdHasMessage = true;
       } else {
         level = 3;
-        description = 'just start digging';
+        description = 'Emergency: Critical Glycemia level';
+        lcd.write("Emergency: glyc");
+        lcdHasMessage = true;
         emergencyCount += 1;
         if (emergencyCount >= emergencyThreshold){
           emergencyManager.startEmergency() ;
@@ -149,8 +171,9 @@ function analyse(sensorData, sensorInfo) {
       break;
     default:
       level = 2;
-      description = 'warning, cannot analyze this parameter !';
+      description = 'Warning: Cannot analyze this parameter !';
       lcd.write("Alert: Error");
+	  lcdHasMessage = true;
     }
 
     console.log("Analysis completed ! ");
