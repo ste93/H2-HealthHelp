@@ -211,8 +211,13 @@ public class MainActivity extends Activity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     String connectionString = input.getText().toString();
-                                    hostIp = connectionString.split(":")[0];
-                                    hostPort = connectionString.split(":")[1];
+                                    try {
+                                        hostIp = connectionString.split(":")[0];
+                                        hostPort = connectionString.split(":")[1];
+                                    } catch (IndexOutOfBoundsException ex) {
+                                        Toast.makeText(getApplicationContext(), "Invalid Address ", Toast.LENGTH_LONG).show();
+                                        dialog.cancel();
+                                    }
                                     if (hostIp != null && hostPort != null) {
                                         sensorID = getMacAddress();
                                         Log.d("HTTP", "HTTP : connect to " + hostIp);
