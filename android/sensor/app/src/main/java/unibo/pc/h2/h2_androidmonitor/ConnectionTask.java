@@ -23,6 +23,9 @@ public class ConnectionTask extends AsyncTask<Void, Void, Void> implements Seria
         this.socket = new HttpPoster(context, hostIp, hostPort, sensorId);
     }
 
+    /**
+     * Send a message with the information about the sensor and his user.
+     */
     public void sendConfigMessage() {
         this.socket.sendConfigurationMessage();
     }

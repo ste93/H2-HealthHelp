@@ -52,9 +52,6 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "H2-HeartBeatMonitor";
 
-    //todo: il sensor id dovrà essere gestito in modo univoco.
-    //private static final String sensorID = "AHB-42";
-
     private String sensorID = null;
     SsensorManager SSensorManager = null;
     SsensorExtension SsensorExtension = null;
@@ -138,8 +135,8 @@ public class MainActivity extends Activity {
                                 Toast.makeText(mContext, e.getMessage(),Toast.LENGTH_SHORT).show();
                                 mContext.finish();
                             }
-                            // HRM ON
 
+                            // HRM ON
                             chartFragment.reset();
                             if (SSensorManager != null) {
                                 SSensorManager.registerListener(IRlistener, IRSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -165,10 +162,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onClick(View v) {
-
-
                     emergencyButton.setSelected(!emergencyButton.isSelected());
-
                     try {
                         if (emergencyButton.isSelected()) {
                             DataManager.getInstance().setEmergency(true);
@@ -186,16 +180,11 @@ public class MainActivity extends Activity {
         //// Behaviour of the Connection Button //////
         if (connectionConfButton != null) {
             connectionConfButton.setOnClickListener(new OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
-
                     connectionConfButton.setSelected(!connectionConfButton.isSelected());
-
                     try {
                         if (connectionConfButton.isSelected()) {
-
-                            ////////////////////////////////////////
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                             builder.setTitle("Connect to .. ");
@@ -233,20 +222,13 @@ public class MainActivity extends Activity {
                                     dialog.cancel();
                                 }
                             });
-
                             builder.show();
-
-                            //////////////////////////////////
-
                         }
-
-                        else
-                        {
+                        else {
                             if (tcpTask != null)
                                 tcpTask.stop();
                             tcpTask = null;
                         }
-
                     } catch (IllegalArgumentException e) {
                         ErrorToast(e);
                     }
@@ -274,13 +256,6 @@ public class MainActivity extends Activity {
 
 
                     sensorID = getMacAddress();
-
-                    if (patientInput != null)
-                        patientInput.setText("TEsttttt");
-                    else
-                        Log.e("d3", "FUCK !");
-
-
 
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -390,24 +365,9 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Specify the behaviour of the listener of the value of Infrared sensor ( what to do with read data )
+     * Try to retrieve the MAC address of the device in which the application is run.
+     * @return - the MAC address of the device.
      */
-    private class SSListenerIR implements SsensorEventListener {
-
-        private boolean complete = false;
-
-        @Override
-        public void OnAccuracyChanged(Ssensor arg0, int arg1) {}
-
-        @Override
-        public void OnSensorChanged(SsensorEvent event) {
-            complete = DataManager.getInstance().addIRData(event.values[0]);
-            if (complete){
-                averageBeat();
-            }
-        }
-    }
-
     public static String getMacAddress() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -434,19 +394,10 @@ public class MainActivity extends Activity {
         return "02:00:00:00:00:00";
     }
 
-    /*public String getMacAddress(Context context) {
-        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        String macAddress = wimanager.getConnectionInfo().getMacAddress();
-        if (macAddress == null) {
-            macAddress = "Device don't have mac address or wi-fi is disabled";
-        }
-        return macAddress;
-    }*(
-
     /**
-     * Specify the behaviour of the listener of the value of Red Light sensor ( what to do with read data )
+     * Specify the behaviour of the listener of the value of Infrared sensor ( what to do with read data )
      */
-    private class SSListenerRED implements SsensorEventListener {
+    private class SSListenerIR implements SsensorEventListener {
 
         private boolean complete = false;
 
@@ -455,10 +406,24 @@ public class MainActivity extends Activity {
 
         @Override
         public void OnSensorChanged(SsensorEvent event) {
-            /* complete = */DataManager.getInstance().addRedData(event.values[0]);
-            /*if (complete){
+            complete = DataManager.getInstance().addIRData(event.values[0]);
+            if (complete){
                 averageBeat();
-            }*/
+            }
+        }
+    }
+
+    /**
+     * Specify the behaviour of the listener of the value of Red Light sensor ( what to do with read data )
+     */
+    private class SSListenerRED implements SsensorEventListener {
+
+        @Override
+        public void OnAccuracyChanged(Ssensor arg0, int arg1) {}
+
+        @Override
+        public void OnSensorChanged(SsensorEvent event) {
+            DataManager.getInstance().addRedData(event.values[0]);
         }
     }
 }

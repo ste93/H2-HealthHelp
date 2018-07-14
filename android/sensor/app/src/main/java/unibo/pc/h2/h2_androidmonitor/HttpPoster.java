@@ -30,7 +30,7 @@ import java.util.Queue;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Simple class to handle Http POST to the server.
+ * Simple class to handle Http POST request to the server.
  *
  * @author ManuBottax
  * @version 0.1.1 - June 2018
@@ -70,8 +70,12 @@ public class HttpPoster {
         }
     }
 
+    /**
+     * Send a message to the server contain the information about the sensor and his user saved in the
+     * local SharedPreferences. This information are required only the first time the sensor is connected
+     * to a new control unit. After that are saved on the server's host and there are no nedd to send it again.
+     */
     public void sendConfigurationMessage() {
-
         String sensorInfo = "{}";
 
         try {
@@ -136,6 +140,10 @@ public class HttpPoster {
         }
     }
 
+    /**
+     * Send a message with a measured parameter value to the server
+     * @param message - the message to be send.
+     */
     private void sendMessage(String message) {
         try {
             Log.d("HTTP Client","HTTP REQUEST - URI : " + url.toString());
