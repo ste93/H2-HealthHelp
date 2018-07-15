@@ -82,12 +82,17 @@ public class ControlUnit extends Thread{
                 e.printStackTrace();
             }
 
-            System.out.println("Adding Temperature Sensor to " + patientId + " !");
-            boolean isAssociated = h2SensorManager.addNewSensorType(patientId, SensorType.TEMPERATURE);
-            System.out.println("Associated ? " + isAssociated);
+
 
             patientList.add(patient);
             System.out.println("[CONTROL UNIT] Patient created : " + patientId);
+        }
+        
+        for (int i = countFrom; i < countFrom + patients; i ++) {
+            String patientId = "patient.test." + i;
+            System.out.println("Adding Temperature Sensor to " + patientId + " !");
+            boolean isAssociated = h2SensorManager.addNewSensorType(patientId, SensorType.TEMPERATURE);
+            System.out.println("Associated ? " + isAssociated);
         }
 
         System.out.println(" --- Control Unit n° " + ((countFrom + 10) / 10 ) + " initialized ! --- ");
