@@ -1,19 +1,25 @@
 package controlUnitSimulator.simulator.core;
 
-
-import controlUnitSimulator.simulator.dbmanager.associations.AssociationsManager;
-import controlUnitSimulator.simulator.dbmanager.associations.AssociationsManagerImpl;
-import controlUnitSimulator.simulator.dbmanager.associations.PatientManager;
-import controlUnitSimulator.simulator.dbmanager.associations.PatientManagerImpl;
-import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManager;
-import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManagerImpl;
-import controlUnitSimulator.simulator.dbmanager.h2application.User;
-import controlUnitSimulator.simulator.dbmanager.h2application.UserRole;
 import controlUnitSimulator.simulator.mqtt.PatientDataPublisher;
+import core.SensorType;
+import core.UserRole;
+import core.dbmanager.associations.AssociationsManager;
+import core.dbmanager.associations.AssociationsManagerImpl;
+import core.dbmanager.associations.PatientManager;
+import core.dbmanager.associations.PatientManagerImpl;
+import core.dbmanager.h2dbManager.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to simulate the behaviour of a single Control Unit.
+ * Every control unit has a certain amount of simulated patient associated with one or multiple doctors (1-3).
+ *
+ * N.B.: For simplicity only temperature-related messages are handled in the current version.
+ *
+ * @author ManuBottax
+ */
 public class ControlUnit extends Thread{
 
     private static final int ASSOCIATION_AMOUNT = 3;
@@ -22,40 +28,65 @@ public class ControlUnit extends Thread{
     private List<PatientDataPublisher> publisherList;
     private PatientManager patientManager;
     private AssociationsManager associationsManager;
-    private H2dbManager h2dbManager;
+    private UserManager h2dbManager;
+    private DataSensorManager h2SensorManager;
 
     private boolean run = false;
     private boolean stop = false;
 
+    /**
+     * Create a single simulated control unit with a specific amount of patients.
+     * Every patient is created and associated with the doctor in H2 environment.
+     *
+     * @param patients - The amount of patients in thi control unit.
+     * @param countFrom - A progressive value used for having unique ID for the patient also in different control unit.
+     * @param lastDoctorIndex - The index of the last doctors created that can be associated with patient.
+     */
     public ControlUnit(int patients, int countFrom, int lastDoctorIndex){
 
         this.patientList = new ArrayList<>();
         this.publisherList = new ArrayList<>();
         this.patientManager = new PatientManagerImpl();
         this.associationsManager = new AssociationsManagerImpl();
-        this.h2dbManager = new H2dbManagerImpl();
+        this.h2dbManager = new UserManagerImpl();
+        this.h2SensorManager = new DataSensorManagerImpl();
 
         for (int i = countFrom; i < countFrom + patients; i ++){
             String patientId = "patient.test." + i;
-            Patient p = new Patient(patientId);
+            Patient patient = new Patient(patientId);
+            PatientDataPublisher publisher = new PatientDataPublisher(patientId);
 
-            publisherList.add(new PatientDataPublisher(patientId));
+            publisherList.add(publisher);
             // add patient to application db
             h2dbManager.registration(new User(patientId,"test", "test", "patient" + i, "TESTTESTTEST", "123456789", "test@test.com", UserRole.PATIENT.getRole()));
-            // add patient to association
+            // add patient to association db
             patientManager.createNewUser(patientId, "patient" , "test" + i , "TSTTST12A34B345C");
             try {
+                // associate patient with some random doctors.
+                // N.B.: If attempt to associate with a doctor already associated to him nothing happened, so this can
+                // generate 1 to 3 different association randomly.
                 for( int j = 0; j < ASSOCIATION_AMOUNT ; j++ ) {
-                    String doctorID = "test.doctor" + (int) (Math.random() * lastDoctorIndex);
+                    int id = (int) (Math.random() * lastDoctorIndex);
+                    String doctorID;
+                    if ( id != 0) {
+                        doctorID = "test.doctor" + id;
+                    }
+                    else {
+                        doctorID = "test.doctor";
+                    }
                     System.out.println("Associating with doctor " + doctorID);
-                    p.addDoctor(doctorID);
+                    patient.addDoctor(doctorID);
                     associationsManager.createNewAssociation(patientId, doctorID);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            patientList.add(p);
+            System.out.println("Adding Temperature Sensor to " + patientId + " !");
+            boolean isAssociated = h2SensorManager.addNewSensorType(patientId, SensorType.TEMPERATURE);
+            System.out.println("Associated ? " + isAssociated);
+
+            patientList.add(patient);
             System.out.println("[CONTROL UNIT] Patient created : " + patientId);
         }
 
@@ -76,11 +107,17 @@ public class ControlUnit extends Thread{
                     for (PatientDataPublisher pub : publisherList) {
                         String message = generateFakeMessage(pub.getPatientId());
                         pub.sendData(message);
+                        try {
+                            Thread.sleep(((long)(Math.random() * 3000)));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
                 try {
-                    Thread.sleep(((long)(Math.random() * 5000)) + 10000);
+                    // wait some time before send new message.
+                    Thread.sleep(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -89,6 +126,11 @@ public class ControlUnit extends Thread{
             clearDB();
     }
 
+    /**
+     * Generate fake message to publish to data center.
+     * @param patientId - the id of the patient that send that message.
+     * @return the message generated. (json format string)
+     */
     private String generateFakeMessage(String patientId){
 
         double value = ((Math.random() * 7) + 36);
@@ -97,13 +139,13 @@ public class ControlUnit extends Thread{
 
         if (value >= 33 && value < 37 ){
             level = 1;
-            description = "everything ok";
-        } else if ( value <= 41) {
+            description = "Temperature ok";
+        } else if ( value >= 37 && value <= 41) {
             level = 2;
-            description = "warning, something strange is happening";
+            description = "Warning: High Temperature.";
         } else {
             level = 3;
-            description = "just start digging";
+            description = "Emergency: Critical Temperature.";
         }
 
         String message =  "{\"type\" : \"" + "temperature" + "\", " +
@@ -135,6 +177,9 @@ public class ControlUnit extends Thread{
         run = false;
     }
 
+    /**
+     * Delete
+     */
     private void clearDB() {
         System.out.println("[CONTROL UNIT] Cleaning up database !");
         for (Patient patient : patientList){

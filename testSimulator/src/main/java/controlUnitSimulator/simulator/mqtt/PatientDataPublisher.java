@@ -10,7 +10,7 @@ public class PatientDataPublisher {
     private static final String EXCHANGE_NAME = "patientData";
     private static final String ROUTING_KEY = "datacentre.receive.patientdata";
 
-    private static final String REMOTE_HOST_IP = "213.209.230.94";
+    private static final String REMOTE_HOST_IP = "2.34.233.198";
     private static final int REMOTE_HOST_PORT = 8088;
 
     private TopicPublisher publisher;

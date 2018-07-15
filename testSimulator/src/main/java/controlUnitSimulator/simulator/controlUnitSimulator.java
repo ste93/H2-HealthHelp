@@ -4,12 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 import controlUnitSimulator.simulator.core.ControlUnit;
-import controlUnitSimulator.simulator.dbmanager.associations.DoctorManager;
-import controlUnitSimulator.simulator.dbmanager.associations.DoctorManagerImpl;
-import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManager;
-import controlUnitSimulator.simulator.dbmanager.h2application.H2dbManagerImpl;
-import controlUnitSimulator.simulator.dbmanager.h2application.User;
-import controlUnitSimulator.simulator.dbmanager.h2application.UserRole;
+import core.UserRole;
+import core.dbmanager.associations.DoctorManager;
+import core.dbmanager.associations.DoctorManagerImpl;
+import core.dbmanager.h2dbManager.User;
+import core.dbmanager.h2dbManager.UserManager;
+import core.dbmanager.h2dbManager.UserManagerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +34,13 @@ public class controlUnitSimulator {
 
     private static DoctorManager doctorManager;
     private static List<String> doctorList;
-    private static H2dbManager h2dbManager;
+    private static UserManager h2dbManager;
 
     public static void main(String[] args) {
 
         doctorManager = new DoctorManagerImpl();
         doctorList = new ArrayList<>();
-        h2dbManager = new H2dbManagerImpl();
+        h2dbManager = new UserManagerImpl();
 
         ////// GUI ///////////////////////////////////////////////
         JFrame frame = new JFrame("H2 Test Simulator GUI");
