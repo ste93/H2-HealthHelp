@@ -14,8 +14,6 @@ module.exports.addValue = function(req, res, next){
     var type = req.param('type');
     var message = req.param('message');
 
-    console.log(message);
-   
     _addValue(idCode, type, message, res);
 };
 
@@ -65,16 +63,18 @@ function _addValue(idCode, type, message, res){
 
     var entireMessage = _sensorValueJsonFormat(message)
     var messagetoInsert = JSON.parse(entireMessage)
-
+    console.log("ENTRATO");
     patients.findOne({"idCode": idCode}, function(err, response){
         if(response == null) {
+            console.log("ENTRATO"+err);
             res.send(404);
         } else {
-        collection.create(messagetoInsert, function(err, value){
+        collection.save(messagetoInsert, function(err, value){
             if(err){
-                console.log(err);
+                console.log("ENTRATO"+err);
                 res.send(500);
             } else {
+                console.log("ENTRATO"+err);
                 res.send(200);
             }
         });
@@ -122,7 +122,7 @@ function _deleteAllValues(idCode, type, res){
  * @param {Response} res - response of RESTful request
  */
 function _deleteAllValuesOnRange(idCode, type, start, end, res){
-    var collection = _getCollection(idCode,type);
+    var collection = _getCollection(idCode,type);  var nameCollection= ""+idCode+"."+type;
     
     var enddate;
     var startdate = new Date(start);
@@ -204,7 +204,6 @@ function _getCollection(idCode,type){
     var nameCollection= ""+idCode+"."+type;
     var Schema = require('../models/sensorData');
     return mongoose.model( idCode, Schema, nameCollection );   
-    
 }
 
 /**Returns the sensor's value message in format to covert in JSON object after.

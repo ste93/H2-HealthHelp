@@ -7,6 +7,7 @@
 /** Model scheme of collections */
 var sensorData = require('../models/sensorData');
 var patients = require('../models/patientData');
+var connection = require('../../database');
 
 /** Callback to get the sensor type list related to a specific patient   */
 module.exports.getSensorTypes = function(req,res, next){
@@ -26,13 +27,14 @@ module.exports.putSensorType = function(req, res, next){
     var idCode = req.param('idCode');
     var type = req.param('type');
 
-    patients.findOne({"sensors": type}, function(err, response){
+    patients.findOne({"idCode":idCode,"sensors": type}, function(err, response){
         if(response == null) {
             console.log("sensor type created");
             patients.update({"idCode": idCode},{ $push: { "sensors": [type] }},function(err, sensor){
                 if(err){
                     res.send(500);
                 } 
+               connection.createCollection(idCode+"."+type);
                 res.send(200);
             });
         } else {
