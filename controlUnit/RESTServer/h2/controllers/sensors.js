@@ -56,7 +56,6 @@ module.exports.sensorsHome = function(req, res){
       var sensorsList = JSON.parse(body);
       renderSensorHomepage(req,res, sensorsList);
     }
-    //TODO: GESTIONE DEGLI ERRORI -> RENDER PAGINA ERRORE
   });
 
 };
@@ -81,23 +80,7 @@ module.exports.sensorDetail = function(req, res){
       //console.log("joson : " , body)
       renderSensorDetailPage(req,res, sensorDetails);
     }
-    //TODO: GESTIONE DEGLI ERRORI -> RENDER PAGINA ERRORE
-
   });
-};
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////// use a sensor ////////////////////////////////////////////////
-//TODO: QUESTO NON LO USIAMO MAI; SI PUç ANCHE TOGLIERE.
-// this is an orrible trick to make things work i think....
-// execute server side code and then reload the page.
-module.exports.sensorConnect = function(req, res){
-  //res.render('sensors-connect', sensorConnectParameter);
-  console.log("doing something to connect sensors !");
-  ble.doSomethingWith(req.params.sensorID);
-  console.log("add sensor " + req.params.sensorID  + " to my sensor");
-  console.log("remove from near sensor");
-  res.redirect("/sensors");
 };
 ////////////////////////////////////////////////////////////////////////////////
 

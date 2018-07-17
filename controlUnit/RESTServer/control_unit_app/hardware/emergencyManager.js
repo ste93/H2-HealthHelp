@@ -65,8 +65,7 @@ function emergencyProtocol() {
   lastEmergencyTerminated = false;
   lcd.write("EMERGENCY");
   emergencyLed.blink(250, 10000);
-  //TODO: UNCOMMENT IN LAST VERSION ( COMMENTED DURING TEST BECAUSE THE SOUND IS VERY ANNOYING)
-  /////////////////buzzer.beep();
+  buzzer.beep();
 }
 
 /**
