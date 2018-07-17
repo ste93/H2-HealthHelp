@@ -13,3 +13,5 @@ con.on('error', function (err){
 con.once('open', function (){
    console.log('connessione riuscita!');
 });
+
+module.exports = con;
