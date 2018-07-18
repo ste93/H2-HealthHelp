@@ -35,7 +35,5 @@ block content
                 h4
                   a(href="/sensors/#{sensor.sensorId}/details") #{sensor.value.name}
                   a.btn.btn-default.pull-right(href='/sensors/#{sensor.sensorId}/delete') Delete
-                  - //a.btn.btn-default.pull-right(onclick='#{action}') something
-                  a.btn.btn-default.pull-right(href='/sensors/#{sensor.sensorId}/connect') Use
                 p.list-item
                   | Type: #{sensor.value.dataType} <br/>
