@@ -69,7 +69,7 @@ function _addValue(idCode, type, message, res){
             console.log("ENTRATO"+err);
             res.send(404);
         } else {
-        collection.save(messagetoInsert, function(err, value){
+        collection.create(messagetoInsert, function(err, value){
             if(err){
                 console.log("ENTRATO"+err);
                 res.send(500);
