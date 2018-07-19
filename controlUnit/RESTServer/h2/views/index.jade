@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  #banner.page-header
+    .row
+      .col-lg-6
+        h1= title
+  .row
+    .col-xs-12.col-sm-8
+
+      p Welcome to #{title}
+      a.btn.btn-default.pull-left(href='/sensors/') Sensors List
+      a.btn.btn-default.pull-left(href='/patients/') Patients List

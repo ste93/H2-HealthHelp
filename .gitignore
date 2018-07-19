@@ -6,6 +6,7 @@
 
 # Log file
 *.log
+.directory
 
 # BlueJ files
 *.ctxt
@@ -14,7 +15,9 @@
 build/
 out/
 .gradle/
-gradle/
+*/node_modules
+*/package-lock.json
+node_modules
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

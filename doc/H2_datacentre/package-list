@@ -1,0 +1,9 @@
+core
+core.dbmanager
+core.dbmanager.associations
+core.dbmanager.h2dbManager
+core.pubsub
+core.pubsub.core
+core.pubsub.message
+core.pubsub.publisher
+core.pubsub.subscriber

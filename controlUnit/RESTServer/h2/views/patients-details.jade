@@ -1,0 +1,27 @@
+extends layout
+
+block content
+
+  .row.page-header
+    .col-lg-12
+      h1 #{name}
+  .row
+    .col-xs-12.col-md-9
+  .row
+    .col-xs-12.col-sm-6
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Patient Information
+        .panel-body
+          p Patient ID : #{id}
+          p Patient Name : #{name}
+          - //p Patient ID : #{patient}
+          - //p System : #{system}
+          - //p Type : #{value}
+          - //p Unit : #{unit}
+    .col-xs-12.col-sm-6.location-map
+      .panel.panel-primary
+        .panel-heading
+          h2.panel-title Actions
+        .panel-body
+          a.btn.btn-default.pull-left(href='/patients/#{id}/delete') Delete
