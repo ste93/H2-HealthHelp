@@ -88,7 +88,7 @@ function subscribe(exchangeName,exchangeType,  queue, routingKey, isDurable, cal
         if(!err) {
           ch.bindQueue(q.queue, exchangeName, routingKey);
           ch.consume(q.queue, function(message) {
-            callback(message);
+            callback(message, ch);
           }, {noAck: true});
         }
         else {

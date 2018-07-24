@@ -41,13 +41,13 @@ function receiveHistory (res, idCode){
         constants.receiveHistoryQueueName,
         session.role+"."+idCode+".receive.history",
         false,
-        function(msg) {
+        function(msg, channel) {
             console.log(" [x] %s", msg.content.toString());
             if(msg.content.toString() == "[500]"){
                 var path = "/" + session.role + "/" + session.user;
                 res.redirect(path);
             } else {
-                var message = msg.content;
+                var message = msg.content.toString();
                 var infoHistory = {
                     role: session.role,
                     user: session.user,
@@ -58,6 +58,7 @@ function receiveHistory (res, idCode){
                 }
                 res.render('historyPage', infoHistory);
             }
+            channel.close();
         });
     // var ex = 'historyRequest';
     // var queue = "history";

@@ -43,7 +43,7 @@ function receiveAdvices (res, idCode){
         constants.adviceReceiveQueueName,
         session.role+"."+idCode+".receive.advice",
         false,
-        function(msg) {
+        function(msg, channel) {
             console.log(" [x] %s", msg.content);
             if(msg.content.toString() == "[500]"){
                 var path = "/" + session.role + "/" + session.user;
@@ -61,6 +61,7 @@ function receiveAdvices (res, idCode){
                 }
                 res.render('advicesPage', advices);
             }
+            channel.close();
         });
     // var ex = 'adviceRequest';
     // var queue = "advice";

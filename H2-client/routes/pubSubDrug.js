@@ -32,7 +32,7 @@ function receiveDrugs(res, idCode){
         constants.drugRequestQueueName,
         session.role+"."+idCode+".receive.drug",
         false, 
-        function(msg) {
+        function(msg, channel) {
             console.log(" [x] %s", msg.content);
             if(msg.content.toString() == "[500]"){
                 var path = "/" + session.role + "/" + session.user;
@@ -50,6 +50,7 @@ function receiveDrugs(res, idCode){
                 }
                 res.render('drugsPage', drugs);
             }
+            channel.close();
         });
     // var ex = 'drugRequest';
     // var key = ""+session.role+"."+idCode+".receive.drug";

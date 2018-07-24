@@ -33,7 +33,7 @@ function receiveInfo(res){
         constants.datacentreReceiveInfoQueueName,
         constants.datacentreReceiveInfoRoutingKey,
         false,
-        function(msg) {
+        function(msg, channel) {
             console.log(" [x] %s", msg.content);
             if(msg.content.toString() == "500"){
                 console.log("500")
@@ -56,6 +56,7 @@ function receiveInfo(res){
                 console.log("INFO: " + personalInfo);
                 res.render('infoPage', personalInfo);
             }
+            channel.close();
         });
     // var ex = 'receive.info';
     // var key = 'datacentre.receive.info';
